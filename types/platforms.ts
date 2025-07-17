@@ -67,4 +67,9 @@ export interface ValidationResult {
   recommendations: string[];
 }
 
+export interface SelectedPlatform {
+  platformId: string;
+  formatIds: string[];
+}
+
 export type ExportFormat = 'png' | 'jpg' | 'pdf' | 'mp4' | 'mov' | 'zip'; 

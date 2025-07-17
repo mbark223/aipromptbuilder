@@ -5,6 +5,7 @@ import { Download, Image as ImageIcon, FileText, Package, Video } from 'lucide-r
 import { AdContent, ExportFormat } from '@/types/platforms';
 import { getPlatformById } from '@/lib/platform-configs';
 import { cn, downloadFile, getMediaType, hasMedia } from '@/lib/utils';
+import { usePersistentExportFormats } from '@/lib/persistence';
 
 interface ExportPanelProps {
   content: AdContent;
@@ -24,7 +25,7 @@ export function ExportPanel({
   className
 }: ExportPanelProps) {
   const [isExporting, setIsExporting] = useState(false);
-  const [selectedFormats, setSelectedFormats] = useState<ExportFormat[]>(['png']);
+  const [selectedFormats, setSelectedFormats] = usePersistentExportFormats();
 
   // Update selected formats when content type changes
   useEffect(() => {

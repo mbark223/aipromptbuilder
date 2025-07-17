@@ -1,31 +1,76 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PlatformSelector } from '@/components/platform-selector';
 import { FileUpload } from '@/components/ui/file-upload';
 import { AdPreview } from '@/components/ad-preview';
 import { ValidationPanel } from '@/components/validation-panel';
 import { ExportPanel } from '@/components/export-panel';
 import { AdNaming } from '@/components/ad-naming';
-import { AdContent } from '@/types/platforms';
+import { AdContent, SelectedPlatform } from '@/types/platforms';
 import { generateId } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Monitor, Settings, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
-
-interface SelectedPlatform {
-  platformId: string;
-  formatIds: string[];
-}
+import { 
+  usePersistentPlatforms,
+  usePersistentPreviewIndex,
+  usePersistentSafetyZones,
+  usePersistentAdName,
+  fileManager,
+  projectManager,
+  useAutoSave
+} from '@/lib/persistence';
+import { ProjectManager } from '@/components/project-manager';
 
 export default function Home() {
-  const [selectedPlatforms, setSelectedPlatforms] = useState<SelectedPlatform[]>([]);
-  const [currentPreviewIndex, setCurrentPreviewIndex] = useState(0);
-  const [showSafetyZones, setShowSafetyZones] = useState(true);
-  const [adName, setAdName] = useState<string>('');
+  const [selectedPlatforms, setSelectedPlatforms] = usePersistentPlatforms();
+  const [currentPreviewIndex, setCurrentPreviewIndex] = usePersistentPreviewIndex();
+  const [showSafetyZones, setShowSafetyZones] = usePersistentSafetyZones();
+  const [adName, setAdName] = usePersistentAdName();
   const [content, setContent] = useState<AdContent>({
     id: generateId(),
     textOverlays: []
   });
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  // Load saved file on component mount
+  useEffect(() => {
+    const savedFile = fileManager.loadFile('current_media_file');
+    if (savedFile) {
+      setUploadedFile(savedFile);
+      setContent(prev => ({
+        ...prev,
+        media: savedFile,
+        mediaType: savedFile.type.startsWith('video/') ? 'video' : 'image',
+        image: savedFile.type.startsWith('image/') ? savedFile : undefined,
+        video: savedFile.type.startsWith('video/') ? savedFile : undefined
+      }));
+    }
+  }, []);
+
+  // Auto-save project data whenever key state changes
+  useAutoSave({
+    selectedPlatforms,
+    adName,
+    textOverlays: content.textOverlays,
+    showSafetyZones
+  }, 'auto_save_project', 2000); // Save every 2 seconds
+
+  // Auto-save to project manager
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      projectManager.autoSave({
+        name: adName || 'Untitled Project',
+        selectedPlatforms,
+        adName,
+        textOverlays: content.textOverlays,
+        showSafetyZones,
+        selectedExportFormats: ['png'] // Default, will be overridden by export panel
+      });
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [selectedPlatforms, adName, content.textOverlays, showSafetyZones]);
 
   const handleSelectionChange = (platforms: SelectedPlatform[]) => {
     setSelectedPlatforms(platforms);
@@ -35,7 +80,12 @@ export default function Home() {
     }
   };
 
-  const handleFileSelect = (file: File, duration?: number) => {
+  const handleFileSelect = async (file: File, duration?: number) => {
+    setUploadedFile(file);
+    
+    // Save file to localStorage (if small enough)
+    await fileManager.saveFile('current_media_file', file);
+    
     setContent(prev => ({
       ...prev,
       media: file,
@@ -48,6 +98,11 @@ export default function Home() {
   };
 
   const handleFileRemove = () => {
+    setUploadedFile(null);
+    
+    // Remove file from localStorage
+    fileManager.removeFile('current_media_file');
+    
     setContent(prev => ({
       ...prev,
       media: undefined,
@@ -85,14 +140,20 @@ export default function Home() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              🎬 Social Media Ad Litmus
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Preview your ads across all major social platforms with safety zone validation. 
-              Select multiple platforms and formats to test your creative across different placements.
-            </p>
+          <div className="relative">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                🎬 Social Media Ad Litmus
+              </h1>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Preview your ads across all major social platforms with safety zone validation. 
+                Select multiple platforms and formats to test your creative across different placements.
+              </p>
+            </div>
+            {/* Project Manager in top right */}
+            <div className="absolute top-0 right-0">
+              <ProjectManager />
+            </div>
           </div>
         </div>
       </div>

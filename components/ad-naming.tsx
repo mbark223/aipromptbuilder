@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Calendar, Tag, User, Palette, Ruler, Building, Edit3, Plus, X, Save } from 'lucide-react';
+import { usePersistentNamingValues, usePersistentNamingElements } from '@/lib/persistence';
 
 interface NamingElement {
   id: string;
@@ -17,57 +18,64 @@ interface AdNamingProps {
 }
 
 export function AdNaming({ onNameChange, className }: AdNamingProps) {
-  const [namingValues, setNamingValues] = useState<Record<string, string>>({});
+  const [namingValues, setNamingValues] = usePersistentNamingValues();
 
   // Define initial naming elements - now editable
-  const [namingElements, setNamingElements] = useState<NamingElement[]>([
-    {
-      id: 'partner',
-      label: 'Partner',
-      icon: <Building className="w-4 h-4" />,
-      options: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter', 'meta'],
-      placeholder: 'Select partner'
-    },
-    {
-      id: 'theme',
-      label: 'Theme',
-      icon: <Palette className="w-4 h-4" />,
-      options: ['sale', 'launch', 'brand', 'product', 'seasonal', 'promo', 'awareness', 'reels'],
-      placeholder: 'Select theme'
-    },
-    {
-      id: 'format',
-      label: 'Format',
-      icon: <Tag className="w-4 h-4" />,
-      options: ['feed', 'story', 'banner', 'video', 'carousel', 'collection', 'reels'],
-      placeholder: 'Select format'
-    },
-    {
-      id: 'size',
-      label: 'Size',
-      icon: <Ruler className="w-4 h-4" />,
-      options: ['square', 'landscape', 'portrait', 'banner', 'leaderboard', 'medium', 'vertical'],
-      placeholder: 'Select size'
-    },
-    {
-      id: 'designer',
-      label: 'Designer',
-      icon: <User className="w-4 h-4" />,
-      options: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa'],
-      placeholder: 'Select designer'
-    },
-    {
-      id: 'date',
-      label: 'Date',
-      icon: <Calendar className="w-4 h-4" />,
-      options: [
-        new Date().toISOString().split('T')[0].replace(/-/g, ''), // Today
-        new Date(Date.now() - 86400000).toISOString().split('T')[0].replace(/-/g, ''), // Yesterday
-        new Date(Date.now() + 86400000).toISOString().split('T')[0].replace(/-/g, '') // Tomorrow
-      ],
-      placeholder: 'Select date'
+  const [namingElements, setNamingElements] = usePersistentNamingElements();
+  
+  // Initialize naming elements if empty (first time load)
+  useEffect(() => {
+    if (namingElements.length === 0) {
+      setNamingElements([
+        {
+          id: 'partner',
+          label: 'Partner',
+          icon: <Building className="w-4 h-4" />,
+          options: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter', 'meta'],
+          placeholder: 'Select partner'
+        },
+        {
+          id: 'theme',
+          label: 'Theme',
+          icon: <Palette className="w-4 h-4" />,
+          options: ['sale', 'launch', 'brand', 'product', 'seasonal', 'promo', 'awareness', 'reels'],
+          placeholder: 'Select theme'
+        },
+        {
+          id: 'format',
+          label: 'Format',
+          icon: <Tag className="w-4 h-4" />,
+          options: ['feed', 'story', 'banner', 'video', 'carousel', 'collection', 'reels'],
+          placeholder: 'Select format'
+        },
+        {
+          id: 'size',
+          label: 'Size',
+          icon: <Ruler className="w-4 h-4" />,
+          options: ['square', 'landscape', 'portrait', 'banner', 'leaderboard', 'medium', 'vertical'],
+          placeholder: 'Select size'
+        },
+        {
+          id: 'designer',
+          label: 'Designer',
+          icon: <User className="w-4 h-4" />,
+          options: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa'],
+          placeholder: 'Select designer'
+        },
+        {
+          id: 'date',
+          label: 'Date',
+          icon: <Calendar className="w-4 h-4" />,
+          options: [
+            new Date().toISOString().split('T')[0].replace(/-/g, ''), // Today
+            new Date(Date.now() - 86400000).toISOString().split('T')[0].replace(/-/g, ''), // Yesterday
+            new Date(Date.now() + 86400000).toISOString().split('T')[0].replace(/-/g, '') // Tomorrow
+          ],
+          placeholder: 'Select date'
+        }
+      ]);
     }
-  ]);
+  }, [namingElements.length, setNamingElements]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});

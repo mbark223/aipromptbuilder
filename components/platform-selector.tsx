@@ -5,11 +5,7 @@ import { getPlatformsByCategory } from '@/lib/platform-configs';
 
 import { cn } from '@/lib/utils';
 import { Check, ChevronDown, Plus, X } from 'lucide-react';
-
-interface SelectedPlatform {
-  platformId: string;
-  formatIds: string[];
-}
+import { SelectedPlatform } from '@/types/platforms';
 
 interface PlatformSelectorProps {
   selectedPlatforms: SelectedPlatform[];
