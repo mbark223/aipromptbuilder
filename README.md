@@ -139,36 +139,40 @@ social-media-ad-litmus/
 - **Feed Square**: 1080×1080 (1:1) - Max 30MB (Image/Video)
 - **Feed Portrait**: 1080×1350 (4:5) - Max 30MB (Image/Video)
 - **Stories**: 1080×1920 (9:16) - Max 30MB (Image/Video)
-- **Reels**: 1080×1920 (9:16) - Max 100MB (Video: MP4, MOV)
+- **Reels**: 1080×1920 (9:16) - Max 150MB (Video: MP4, MOV)
 
 ### Facebook
 - **Feed**: 1080×1080 (1:1) - Max 30MB (Image/Video)
 - **Stories**: 1080×1920 (9:16) - Max 30MB (Image/Video)
-- **Reels**: 1080×1920 (9:16) - Max 100MB (Video: MP4, MOV)
+- **Reels**: 1080×1920 (9:16) - Max 150MB (Video: MP4, MOV)
 - **Cover Photo**: 1200×315 (3.8:1) - Max 10MB (Image only)
 
 ### Meta
-- **Reels**: 1080×1920 (9:16) - Max 100MB (Video: MP4, MOV)
-- **Stories**: 1080×1920 (9:16) - Max 100MB (Video/Image)
+- **Reels**: 1080×1920 (9:16) - Max 150MB (Video: MP4, MOV)
+- **Stories**: 1080×1920 (9:16) - Max 150MB (Video/Image)
 
 ### Twitter/X
 - **Post Image**: 1200×675 (16:9) - Max 5MB
 - **Header**: 1500×500 (3:1) - Max 5MB
 
 ### TikTok
-- **Video**: 1080×1920 (9:16) - Max 500MB
+- **Video**: 1080×1920 (9:16) - Max 150MB
+
+### Snapchat
+- **Story**: 1080×1920 (9:16) - Max 150MB (Image/Video)
+- **Snap Ad**: 1080×1920 (9:16) - Max 150MB (Image/Video)
 
 ### Google UAC
-- **Small Banner**: 320×50 (6.4:1) - Max 150KB
-- **Medium Rectangle**: 300×250 (1.2:1) - Max 150KB
-- **Leaderboard**: 728×90 (8.09:1) - Max 150KB
-- **Square Image**: 1200×1200 (1:1) - Max 150KB
-- **Landscape Image**: 1200×628 (1.91:1) - Max 150KB
-- **Portrait Image**: 480×320 (1.5:1) - Max 150KB
+- **Small Banner**: 320×50 (6.4:1) - Max 5MB
+- **Medium Rectangle**: 300×250 (1.2:1) - Max 10MB
+- **Leaderboard**: 728×90 (8.09:1) - Max 10MB
+- **Square Image**: 1200×1200 (1:1) - Max 20MB
+- **Landscape Image**: 1200×628 (1.91:1) - Max 20MB
+- **Portrait Image**: 480×320 (1.5:1) - Max 10MB
 
 ### YouTube
 - **Thumbnail**: 1280×720 (16:9) - Max 2MB
-- **Shorts**: 1080×1920 (9:16) - Max 100MB
+- **Shorts**: 1080×1920 (9:16) - Max 150MB
 
 ## 🔄 API & Integrations
 
