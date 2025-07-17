@@ -116,7 +116,7 @@ export default function Home() {
                 onFileSelect={handleFileSelect}
                 onFileRemove={handleFileRemove}
                 currentFile={content.media instanceof File ? content.media : content.image instanceof File ? content.image : undefined}
-                maxFileSize={50}
+                maxFileSize={150}
               />
             </div>
 

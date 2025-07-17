@@ -34,7 +34,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       reels: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels' },
         safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
-        maxFileSize: 100,
+        maxFileSize: 150,
         allowedFormats: ['mp4', 'mov'],
         description: 'Instagram Reels video format',
         textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
@@ -66,7 +66,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       reels: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels' },
         safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
-        maxFileSize: 100,
+        maxFileSize: 150,
         allowedFormats: ['mp4', 'mov'],
         description: 'Facebook Reels video format',
         textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
@@ -90,7 +90,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       reels: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels' },
         safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
-        maxFileSize: 100,
+        maxFileSize: 150,
         allowedFormats: ['mp4', 'mov'],
         description: 'Meta Reels video format for Instagram and Facebook',
         textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
@@ -98,7 +98,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       story: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Story' },
         safetyZone: { top: 250, bottom: 250, left: 80, right: 80 },
-        maxFileSize: 100,
+        maxFileSize: 150,
         allowedFormats: ['mp4', 'mov', 'jpg', 'png'],
         description: 'Meta Story format for cross-platform publishing',
         textRecommendations: { maxChars: 50, fontSize: '24px-32px' }
@@ -139,7 +139,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       video: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Video' },
         safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
-        maxFileSize: 500,
+        maxFileSize: 150,
         allowedFormats: ['mp4'],
         description: 'TikTok video format',
         textRecommendations: { maxChars: 100, fontSize: '20px-28px' }
@@ -156,7 +156,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       story: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Story' },
         safetyZone: { top: 250, bottom: 250, left: 80, right: 80 },
-        maxFileSize: 32,
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'mp4'],
         description: 'Snapchat Story format',
         textRecommendations: { maxChars: 50, fontSize: '24px-32px' }
@@ -164,7 +164,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       ad: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Snap Ad' },
         safetyZone: { top: 300, bottom: 300, left: 100, right: 100 },
-        maxFileSize: 32,
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'mp4'],
         description: 'Snapchat Snap Ad format'
       }
@@ -180,7 +180,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       small_banner: {
         dimensions: { width: 320, height: 50, aspectRatio: '6.4:1', name: 'Small Banner' },
         safetyZone: { top: 5, bottom: 5, left: 10, right: 10 },
-        maxFileSize: 150,
+        maxFileSize: 5,
         allowedFormats: ['jpg', 'png', 'gif'],
         description: 'Google UAC small banner for mobile',
         textRecommendations: { maxChars: 30, fontSize: '12px-16px' }
@@ -188,7 +188,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       medium_rectangle: {
         dimensions: { width: 300, height: 250, aspectRatio: '1.2:1', name: 'Medium Rectangle' },
         safetyZone: { top: 20, bottom: 20, left: 20, right: 20 },
-        maxFileSize: 150,
+        maxFileSize: 10,
         allowedFormats: ['jpg', 'png', 'gif'],
         description: 'Google UAC medium rectangle display ad',
         textRecommendations: { maxChars: 80, fontSize: '14px-18px' }
@@ -196,7 +196,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       leaderboard: {
         dimensions: { width: 728, height: 90, aspectRatio: '8.09:1', name: 'Leaderboard' },
         safetyZone: { top: 10, bottom: 10, left: 30, right: 30 },
-        maxFileSize: 150,
+        maxFileSize: 10,
         allowedFormats: ['jpg', 'png', 'gif'],
         description: 'Google UAC leaderboard banner',
         textRecommendations: { maxChars: 60, fontSize: '14px-20px' }
@@ -204,7 +204,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       square_image: {
         dimensions: { width: 1200, height: 1200, aspectRatio: '1:1', name: 'Square Image' },
         safetyZone: { top: 60, bottom: 60, left: 60, right: 60 },
-        maxFileSize: 150,
+        maxFileSize: 20,
         allowedFormats: ['jpg', 'png'],
         description: 'Google UAC square image for display and discovery',
         textRecommendations: { maxChars: 100, fontSize: '24px-32px' }
@@ -212,7 +212,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       landscape_image: {
         dimensions: { width: 1200, height: 628, aspectRatio: '1.91:1', name: 'Landscape Image' },
         safetyZone: { top: 40, bottom: 40, left: 60, right: 60 },
-        maxFileSize: 150,
+        maxFileSize: 20,
         allowedFormats: ['jpg', 'png'],
         description: 'Google UAC landscape image for YouTube and display',
         textRecommendations: { maxChars: 120, fontSize: '20px-28px' }
@@ -220,7 +220,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       portrait_image: {
         dimensions: { width: 480, height: 320, aspectRatio: '1.5:1', name: 'Portrait Image' },
         safetyZone: { top: 20, bottom: 20, left: 24, right: 24 },
-        maxFileSize: 150,
+        maxFileSize: 10,
         allowedFormats: ['jpg', 'png'],
         description: 'Google UAC portrait image for mobile placements',
         textRecommendations: { maxChars: 60, fontSize: '16px-22px' }
@@ -244,7 +244,7 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       shorts: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Shorts' },
         safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
-        maxFileSize: 100,
+        maxFileSize: 150,
         allowedFormats: ['mp4'],
         description: 'YouTube Shorts format'
       }
