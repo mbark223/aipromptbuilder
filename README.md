@@ -1,6 +1,8 @@
-# 🎬 Social Media Ad Litmus
+# Social Media Ad Testing Tool
 
-A comprehensive tool for previewing and validating social media advertisements across all major platforms. Create, preview, and export your ads with platform-specific safety zones and validation.
+A comprehensive tool for testing and validating social media advertisements across multiple platforms with full video support.
+
+**🚀 Live Demo**: Coming soon!
 
 ![Social Media Ad Litmus](https://img.shields.io/badge/Status-Complete-brightgreen) ![Next.js](https://img.shields.io/badge/Next.js-15.4.1-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![Tailwind](https://img.shields.io/badge/Tailwind-4.0-blue)
 
@@ -221,5 +223,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For support, please open an issue on GitHub or contact [your-email@domain.com](mailto:your-email@domain.com).
 
 ---
+*Deployment ready* ✅
 
 **Built with Next.js, TypeScript, and Tailwind CSS** 🚀 
