@@ -291,7 +291,7 @@ export function AdPreview({
           <div className="absolute inset-0 pointer-events-none">
             {/* Safe area (inner rectangle) */}
             <div 
-              className="border-2 border-purple-500 border-dashed bg-purple-500/15 relative"
+              className="border-2 border-purple-700 border-dashed bg-purple-600/25 relative"
               style={{
                 left: format.safetyZone.left * scale,
                 top: format.safetyZone.top * scale,
@@ -299,7 +299,7 @@ export function AdPreview({
                 bottom: format.safetyZone.bottom * scale
               }}
             >
-              <div className="absolute top-1 left-1 bg-purple-500 text-white text-xs px-1 py-0.5 rounded text-[10px] font-medium">
+              <div className="absolute top-1 left-1 bg-purple-700 text-white text-xs px-1 py-0.5 rounded text-[10px] font-medium">
                 Safe Area
               </div>
             </div>
@@ -308,7 +308,7 @@ export function AdPreview({
             {/* Top zone */}
             {format.safetyZone.top > 0 && (
               <div 
-                className="absolute bg-red-500/20 border border-red-500/30"
+                className="absolute bg-red-600/35 border border-red-600/50"
                 style={{
                   left: 0,
                   top: 0,
@@ -321,7 +321,7 @@ export function AdPreview({
             {/* Bottom zone */}
             {format.safetyZone.bottom > 0 && (
               <div 
-                className="absolute bg-red-500/20 border border-red-500/30"
+                className="absolute bg-red-600/35 border border-red-600/50"
                 style={{
                   left: 0,
                   bottom: 0,
@@ -334,7 +334,7 @@ export function AdPreview({
             {/* Left zone */}
             {format.safetyZone.left > 0 && (
               <div 
-                className="absolute bg-red-500/20 border border-red-500/30"
+                className="absolute bg-red-600/35 border border-red-600/50"
                 style={{
                   left: 0,
                   top: 0,
@@ -347,7 +347,7 @@ export function AdPreview({
             {/* Right zone */}
             {format.safetyZone.right > 0 && (
               <div 
-                className="absolute bg-red-500/20 border border-red-500/30"
+                className="absolute bg-red-600/35 border border-red-600/50"
                 style={{
                   right: 0,
                   top: 0,

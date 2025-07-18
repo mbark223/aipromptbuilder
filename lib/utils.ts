@@ -64,12 +64,14 @@ export function validateAdContent(
       isValid: false,
       errors: ['Invalid platform or format'],
       warnings: [],
+      questionable: [],
       recommendations: []
     };
   }
 
   const errors: string[] = [];
   const warnings: string[] = [];
+  const questionable: string[] = [];
   const recommendations: string[] = [];
 
   // File size validation for unified media field
@@ -96,8 +98,8 @@ export function validateAdContent(
           if (platformId === 'tiktok' && content.duration > 180) {
             warnings.push('TikTok videos longer than 3 minutes may have reduced reach');
           }
-          if ((platformId === 'instagram' || platformId === 'meta') && formatId === 'reels' && content.duration > 90) {
-            warnings.push('Instagram/Meta Reels longer than 90 seconds may have reduced reach');
+          if ((platformId === 'instagram' || platformId === 'facebook') && formatId === 'reels' && content.duration > 90) {
+            warnings.push('Instagram/Facebook Reels longer than 90 seconds may have reduced reach');
           }
           if (platformId === 'youtube' && formatId === 'shorts' && content.duration > 60) {
             errors.push('YouTube Shorts must be 60 seconds or less');
@@ -125,10 +127,10 @@ export function validateAdContent(
     const hasLargeSafetyZones = format.safetyZone.top > 200 || format.safetyZone.bottom > 200;
     
     if (isVerticalFormat && hasLargeSafetyZones) {
-      errors.push('⚠️ CRITICAL: Important content (text, logos, CTAs) appears to extend into unsafe zones');
-      errors.push('Platform UI elements may cover your content, making it unreadable');
-      recommendations.push('Move all critical text and branding into the purple safe area');
-      recommendations.push('Keep promotional text, logos, and call-to-action buttons away from top/bottom edges');
+      questionable.push('Design elements may extend into unsafe zones where platform UI could overlay');
+      questionable.push('Consider if visual elements in safety zones will impact the overall design');
+      recommendations.push('Keep all critical text, logos, and CTAs in the safe area (outlined region)');
+      recommendations.push('Design elements in safety zones should be non-essential and decorative only');
     }
     
     // Platform-specific safety warnings
@@ -159,8 +161,31 @@ export function validateAdContent(
     });
     
     if (overlaysInUnsafeZone.length > 0) {
-      errors.push(`${overlaysInUnsafeZone.length} text overlay(s) positioned in unsafe zones - will be cut off or covered`);
-      recommendations.push('Move text overlays into the purple safe area to ensure visibility');
+      // Determine if text overlays contain critical content (logos, CTAs, important text)
+      const criticalOverlays = overlaysInUnsafeZone.filter(overlay => {
+        const text = overlay.text.toLowerCase();
+        return text.includes('click') || text.includes('buy') || text.includes('shop') ||
+               text.includes('sign up') || text.includes('download') || text.includes('call') ||
+               text.includes('$') || text.includes('%') || text.includes('offer') ||
+               text.includes('bonus') || text.includes('free') || text.includes('limited') ||
+               overlay.text.length > 20; // Longer text likely important
+      });
+      
+      const decorativeOverlays = overlaysInUnsafeZone.filter(overlay => {
+        const text = overlay.text.toLowerCase();
+        return text.length <= 10 && !text.includes('$') && !text.includes('%') &&
+               !text.includes('click') && !text.includes('buy');
+      });
+      
+      if (criticalOverlays.length > 0) {
+        errors.push(`CRITICAL: ${criticalOverlays.length} text overlay(s) with important content positioned in unsafe zones - will be cut off or covered`);
+        recommendations.push('Move critical text overlays (CTAs, logos, important text) into the safe area immediately');
+      }
+      
+      if (decorativeOverlays.length > 0) {
+        questionable.push(`${decorativeOverlays.length} decorative text overlay(s) positioned in unsafe zones - may be covered by platform UI`);
+        recommendations.push('Consider if decorative text in unsafe zones affects the overall design aesthetic');
+      }
     }
     
     // Check for overlays that are close to unsafe zones
@@ -227,6 +252,7 @@ export function validateAdContent(
     isValid: errors.length === 0,
     errors,
     warnings,
+    questionable,
     recommendations
   };
 }

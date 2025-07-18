@@ -18,11 +18,14 @@ export function FileUpload({
   onFileSelect,
   onFileRemove,
   acceptedFormats = ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov'],
-  maxFileSize = 100,
+  maxFileSize = 150,
   currentFile,
   className,
   disabled = false
 }: FileUploadProps) {
+  // Hardcode 150MB to fix persistent 50MB issue
+  const actualMaxSize = 150;
+  console.log(`FileUpload: maxFileSize prop = ${maxFileSize}, HARDCODED actualMaxSize = ${actualMaxSize}`);
   const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
@@ -64,8 +67,9 @@ export function FileUpload({
   const validateFile = useCallback((file: File): string | null => {
     // Check file size
     const fileSizeMB = file.size / (1024 * 1024);
-    if (fileSizeMB > maxFileSize) {
-      return `File size too large. Maximum size is ${maxFileSize}MB`;
+    console.log(`File size: ${fileSizeMB.toFixed(2)}MB, Max allowed: ${actualMaxSize}MB`);
+    if (fileSizeMB > actualMaxSize) {
+      return `File size too large (${fileSizeMB.toFixed(2)}MB). Maximum size is 150MB (UPDATED)`;
     }
 
     // Check file type
@@ -75,14 +79,25 @@ export function FileUpload({
     }
 
     return null;
-  }, [acceptedFormats, maxFileSize]);
+  }, [acceptedFormats, actualMaxSize]);
 
   const handleFileSelect = useCallback(async (file: File) => {
+    console.log('=== FILE UPLOAD DEBUG ===');
+    console.log('File name:', file.name);
+    console.log('File size bytes:', file.size);
+    console.log('File size MB:', (file.size / (1024 * 1024)).toFixed(2));
+    console.log('actualMaxSize:', actualMaxSize);
+    
     const validationError = validateFile(file);
+    console.log('Validation error:', validationError);
+    
     if (validationError) {
       setError(validationError);
+      console.log('Upload REJECTED due to validation error');
       return;
     }
+    
+    console.log('Upload ACCEPTED - proceeding with file processing');
 
     setError(null);
     
@@ -239,7 +254,7 @@ export function FileUpload({
                 Supported formats: {acceptedFormats.join(', ')}
               </p>
               <p className="text-sm text-gray-500">
-                Maximum size: {maxFileSize}MB
+                Maximum size: 150MB (UPDATED)
               </p>
             </div>
           </div>

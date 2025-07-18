@@ -31,7 +31,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           id: 'partner',
           label: 'Partner',
           icon: <Building className="w-4 h-4" />,
-          options: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter', 'meta'],
+          options: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter'],
           placeholder: 'Select partner'
         },
         {
@@ -61,6 +61,27 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           icon: <User className="w-4 h-4" />,
           options: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa'],
           placeholder: 'Select designer'
+        },
+        {
+          id: 'theme2',
+          label: 'Theme 2',
+          icon: <Palette className="w-4 h-4" />,
+          options: ['88Drums', 'Cleopatra', 'holiday', 'sports', 'gaming', 'finance', 'health', 'tech', 'lifestyle', 'entertainment'],
+          placeholder: 'Select secondary theme'
+        },
+        {
+          id: 'offer',
+          label: 'Offer',
+          icon: <Tag className="w-4 h-4" />,
+          options: ['Bet/Get', 'DYW', 'BonusMatch', 'bonus', 'discount', 'freebets', 'cashback', 'welcome', 'deposit', 'noodeposit', 'loyalty'],
+          placeholder: 'Select offer type'
+        },
+        {
+          id: 'jurisdiction',
+          label: 'Jurisdiction',
+          icon: <Building className="w-4 h-4" />,
+          options: ['US', 'ON', 'NV', 'MI', 'PA', 'NJ', 'WV', 'IA', 'IN', 'IL', 'CO', 'TN', 'VA', 'AZ', 'CT', 'NY', 'UK', 'CA'],
+          placeholder: 'Select jurisdiction'
         },
         {
           id: 'date',
@@ -154,7 +175,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       
       <div className="space-y-4">
         {/* Naming Elements Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-3">
           {namingElements.map((element) => (
             <div key={element.id} className="space-y-2">
               <label className="block text-sm font-medium text-gray-700 flex items-center space-x-2">
@@ -231,7 +252,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
                   </div>
                   
                   {/* Add New Option */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 w-full">
                     <input
                       type="text"
                       value={newOptionInput[element.id] || ''}
@@ -240,7 +261,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
                         [element.id]: e.target.value 
                       }))}
                       placeholder="Add new option..."
-                      className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className="flex-1 min-w-0 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                       onKeyPress={(e) => {
                         if (e.key === 'Enter') {
                           addOption(element.id, newOptionInput[element.id] || '');
@@ -249,7 +270,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
                     />
                     <button
                       onClick={() => addOption(element.id, newOptionInput[element.id] || '')}
-                      className="p-1 text-green-500 hover:text-green-700"
+                      className="flex-shrink-0 p-1 text-green-500 hover:text-green-700"
                       title="Add option"
                     >
                       <Plus className="w-3 h-3" />
@@ -268,7 +289,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
             {generatePreview()}
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            Format: partner_theme_format_size_designer_date
+            Format: partner_theme_format_size_designer_theme2_offer_jurisdiction_date
           </p>
         </div>
 

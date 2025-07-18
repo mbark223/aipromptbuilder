@@ -235,11 +235,11 @@ export function PlatformSelector({
                               )}
                             >
                               <div className="flex justify-between items-start">
-                                <div className="flex-1">
+                                <div className="flex-1 min-w-0 pr-2">
                                   <p className="font-medium text-sm">{format.dimensions.name}</p>
                                   <p className="text-xs text-gray-500 truncate">{format.description}</p>
                                 </div>
-                                <div className="text-right ml-2 flex-shrink-0">
+                                <div className="text-right ml-2 flex-shrink-0 w-20">
                                   <p className="text-xs font-mono text-gray-600">
                                     {format.dimensions.width}×{format.dimensions.height}
                                   </p>
@@ -247,8 +247,8 @@ export function PlatformSelector({
                                 </div>
                               </div>
                               <div className="flex justify-between items-center mt-1 text-xs text-gray-500">
-                                <span>Max: {format.maxFileSize}MB</span>
-                                <span className="truncate ml-2">{format.allowedFormats.join(', ')}</span>
+                                <span className="flex-shrink-0">Max: {format.maxFileSize}MB</span>
+                                <span className="truncate ml-2 text-right">{format.allowedFormats.join(', ')}</span>
                               </div>
                               {isAlreadySelected && (
                                 <div className="mt-1 flex items-center space-x-1 text-green-600">

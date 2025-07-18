@@ -64,6 +64,7 @@ export interface ValidationResult {
   isValid: boolean;
   warnings: string[];
   errors: string[];
+  questionable: string[];
   recommendations: string[];
 }
 

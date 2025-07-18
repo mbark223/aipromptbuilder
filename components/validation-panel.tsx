@@ -27,6 +27,7 @@ export function ValidationPanel({
         isValid: true,
         errors: [],
         warnings: [],
+        questionable: [],
         recommendations: []
       };
     }
@@ -47,16 +48,17 @@ export function ValidationPanel({
 
   const summaryStats = useMemo(() => {
     if (allValidations.length === 0) {
-      return { totalErrors: 0, totalWarnings: 0, validCount: 0 };
+      return { totalErrors: 0, totalWarnings: 0, totalQuestionable: 0, validCount: 0 };
     }
     
     return allValidations.reduce((stats, { validation }) => {
       return {
         totalErrors: stats.totalErrors + validation.errors.length,
         totalWarnings: stats.totalWarnings + validation.warnings.length,
+        totalQuestionable: stats.totalQuestionable + validation.questionable.length,
         validCount: stats.validCount + (validation.isValid ? 1 : 0)
       };
-    }, { totalErrors: 0, totalWarnings: 0, validCount: 0 });
+    }, { totalErrors: 0, totalWarnings: 0, totalQuestionable: 0, validCount: 0 });
   }, [allValidations]);
 
   // Show multiple combinations validation
@@ -71,16 +73,20 @@ export function ValidationPanel({
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+        <div className="grid grid-cols-4 gap-2">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-2 text-center">
             <div className="text-lg font-semibold text-green-700">{summaryStats.validCount}</div>
             <div className="text-xs text-green-600">Valid</div>
           </div>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-center">
             <div className="text-lg font-semibold text-red-700">{summaryStats.totalErrors}</div>
-            <div className="text-xs text-red-600">Errors</div>
+            <div className="text-xs text-red-600">Critical</div>
           </div>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 text-center">
+            <div className="text-lg font-semibold text-orange-700">{summaryStats.totalQuestionable}</div>
+            <div className="text-xs text-orange-600">Questionable</div>
+          </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 text-center">
             <div className="text-lg font-semibold text-yellow-700">{summaryStats.totalWarnings}</div>
             <div className="text-xs text-yellow-600">Warnings</div>
           </div>
@@ -95,12 +101,12 @@ export function ValidationPanel({
         )}
 
         {/* Issues List */}
-        {(summaryStats.totalErrors > 0 || summaryStats.totalWarnings > 0) && (
+        {(summaryStats.totalErrors > 0 || summaryStats.totalWarnings > 0 || summaryStats.totalQuestionable > 0) && (
           <div className="border-t pt-4">
             <h4 className="font-medium mb-2 text-sm">Issues by Format</h4>
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {allValidations.map(({ platformId: pid, formatId: fid, validation }) => {
-                if (validation.errors.length === 0 && validation.warnings.length === 0) return null;
+                if (validation.errors.length === 0 && validation.warnings.length === 0 && validation.questionable.length === 0) return null;
                 
                 return (
                   <div key={`${pid}-${fid}`} className="bg-gray-50 rounded p-2 text-sm">
@@ -111,6 +117,12 @@ export function ValidationPanel({
                       <div key={i} className="flex items-center space-x-1 text-red-600">
                         <XCircle className="w-3 h-3" />
                         <span className="text-xs">{error}</span>
+                      </div>
+                    ))}
+                    {validation.questionable.map((questionable, i) => (
+                      <div key={i} className="flex items-center space-x-1 text-orange-600">
+                        <AlertTriangle className="w-3 h-3" />
+                        <span className="text-xs">{questionable}</span>
                       </div>
                     ))}
                     {validation.warnings.map((warning, i) => (
@@ -162,6 +174,7 @@ interface ValidationResultsProps {
     isValid: boolean;
     errors: string[];
     warnings: string[];
+    questionable: string[];
     recommendations: string[];
   };
 }
@@ -204,10 +217,38 @@ function ValidationResults({ validation }: ValidationResultsProps) {
               </div>
               <p className="text-red-600 mt-1">
                 Your ad may not display properly and could be rejected by the platform.
-                Move critical content into the purple safe area immediately.
+                Move critical content into the safe area (outlined region) immediately.
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Questionable Issues */}
+      {validation.questionable.length > 0 && (
+        <div className="p-3 bg-orange-50 border border-orange-200 rounded-md">
+          <div className="flex items-center space-x-2 mb-2">
+            <AlertTriangle className="w-5 h-5 text-orange-600" />
+            <h4 className="font-medium text-orange-800">
+              Questionable Design Elements {validation.questionable.length > 0 && (
+                <span className="bg-orange-600 text-white text-xs px-2 py-1 rounded-full ml-2">
+                  {validation.questionable.length}
+                </span>
+              )}
+            </h4>
+          </div>
+          <ul className="space-y-1">
+            {validation.questionable.map((questionable, index) => (
+              <li key={index} className="text-sm text-orange-700 pl-4">
+                • {questionable}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-2 p-2 bg-orange-100 border border-orange-300 rounded text-xs">
+            <p className="text-orange-700">
+              <strong>Note:</strong> These elements may be acceptable if they&apos;re decorative, but critical content (text, logos, CTAs) should be moved to safe areas.
+            </p>
+          </div>
         </div>
       )}
 
@@ -246,7 +287,7 @@ function ValidationResults({ validation }: ValidationResultsProps) {
       )}
 
       {/* All good message */}
-      {validation.isValid && validation.warnings.length === 0 && validation.recommendations.length === 0 && (
+      {validation.isValid && validation.warnings.length === 0 && validation.questionable.length === 0 && validation.recommendations.length === 0 && (
         <div className="p-3 bg-green-50 border border-green-200 rounded-md">
           <div className="flex items-center space-x-2">
             <CheckCircle className="w-5 h-5 text-green-600" />

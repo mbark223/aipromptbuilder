@@ -8,35 +8,36 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
     brandColor: '#E4405F',
     icon: '📷',
     formats: {
-      feed_square: {
-        dimensions: { width: 1080, height: 1080, aspectRatio: '1:1', name: 'Feed Square' },
-        safetyZone: { top: 80, bottom: 80, left: 80, right: 80 },
-        maxFileSize: 30,
+      feed: {
+        dimensions: { width: 1080, height: 1080, aspectRatio: '1:1', name: 'Feed' },
+        safetyZone: { top: 50, bottom: 50, left: 50, right: 50 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'mp4'],
-        description: 'Standard Instagram feed post',
+        description: 'Instagram feed post',
         textRecommendations: { maxChars: 125, fontSize: '16px-24px' }
-      },
-      feed_portrait: {
-        dimensions: { width: 1080, height: 1350, aspectRatio: '4:5', name: 'Feed Portrait' },
-        safetyZone: { top: 80, bottom: 120, left: 80, right: 80 },
-        maxFileSize: 30,
-        allowedFormats: ['jpg', 'png', 'mp4'],
-        description: 'Vertical Instagram feed post'
       },
       story: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Story' },
-        safetyZone: { top: 250, bottom: 250, left: 80, right: 80 },
-        maxFileSize: 30,
+        safetyZone: { top: 160, bottom: 300, left: 50, right: 50 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'mp4'],
         description: 'Instagram Story format',
         textRecommendations: { maxChars: 50, fontSize: '24px-32px' }
       },
       reels: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels' },
-        safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
+        safetyZone: { top: 200, bottom: 460, left: 50, right: 165 },
         maxFileSize: 150,
         allowedFormats: ['mp4', 'mov'],
         description: 'Instagram Reels video format',
+        textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
+      },
+      reels_primary_post: {
+        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels Primary Post' },
+        safetyZone: { top: 200, bottom: 820, left: 50, right: 165 },
+        maxFileSize: 150,
+        allowedFormats: ['mp4', 'mov'],
+        description: 'Instagram Reels Primary Post format',
         textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
       }
     }
@@ -49,26 +50,34 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
     icon: '📘',
     formats: {
       feed: {
-        dimensions: { width: 1080, height: 1080, aspectRatio: '1:1', name: 'Feed Post' },
-        safetyZone: { top: 80, bottom: 80, left: 80, right: 80 },
-        maxFileSize: 30,
+        dimensions: { width: 1080, height: 1080, aspectRatio: '1:1', name: 'Feed' },
+        safetyZone: { top: 50, bottom: 50, left: 50, right: 50 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'mp4'],
         description: 'Facebook feed post',
         textRecommendations: { maxChars: 125, maxLines: 2 }
       },
       story: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Story' },
-        safetyZone: { top: 250, bottom: 250, left: 80, right: 80 },
-        maxFileSize: 30,
+        safetyZone: { top: 160, bottom: 300, left: 50, right: 50 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'mp4'],
         description: 'Facebook Story format'
       },
       reels: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels' },
-        safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
+        safetyZone: { top: 200, bottom: 460, left: 50, right: 165 },
         maxFileSize: 150,
         allowedFormats: ['mp4', 'mov'],
         description: 'Facebook Reels video format',
+        textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
+      },
+      reels_primary_post: {
+        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels Primary Post' },
+        safetyZone: { top: 200, bottom: 820, left: 50, right: 165 },
+        maxFileSize: 150,
+        allowedFormats: ['mp4', 'mov'],
+        description: 'Facebook Reels Primary Post format',
         textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
       },
       cover: {
@@ -80,31 +89,6 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       }
     }
   },
-  meta: {
-    id: 'meta',
-    name: 'Meta',
-    category: 'social',
-    brandColor: '#0866FF',
-    icon: '🔷',
-    formats: {
-      reels: {
-        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Reels' },
-        safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
-        maxFileSize: 150,
-        allowedFormats: ['mp4', 'mov'],
-        description: 'Meta Reels video format for Instagram and Facebook',
-        textRecommendations: { maxChars: 125, fontSize: '20px-28px' }
-      },
-      story: {
-        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Story' },
-        safetyZone: { top: 250, bottom: 250, left: 80, right: 80 },
-        maxFileSize: 150,
-        allowedFormats: ['mp4', 'mov', 'jpg', 'png'],
-        description: 'Meta Story format for cross-platform publishing',
-        textRecommendations: { maxChars: 50, fontSize: '24px-32px' }
-      }
-    }
-  },
   twitter: {
     id: 'twitter',
     name: 'Twitter/X',
@@ -112,18 +96,18 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
     brandColor: '#1DA1F2',
     icon: '🐦',
     formats: {
-      post: {
-        dimensions: { width: 1200, height: 675, aspectRatio: '16:9', name: 'Post Image' },
+      feed: {
+        dimensions: { width: 1080, height: 1080, aspectRatio: '1:1', name: 'Feed' },
         safetyZone: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxFileSize: 5,
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'gif'],
-        description: 'Twitter/X post image',
+        description: 'Twitter/X feed post',
         textRecommendations: { maxChars: 280 }
       },
-      header: {
-        dimensions: { width: 1500, height: 500, aspectRatio: '3:1', name: 'Header Image' },
-        safetyZone: { top: 40, bottom: 40, left: 60, right: 60 },
-        maxFileSize: 5,
+      profile_header: {
+        dimensions: { width: 1500, height: 500, aspectRatio: '3:1', name: 'Profile Header' },
+        safetyZone: { top: 50, bottom: 50, left: 100, right: 100 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png'],
         description: 'Twitter/X profile header'
       }
@@ -136,12 +120,12 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
     brandColor: '#FF0050',
     icon: '🎵',
     formats: {
-      video: {
-        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Video' },
-        safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
+      feed: {
+        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Feed' },
+        safetyZone: { top: 230, bottom: 460, left: 50, right: 165 },
         maxFileSize: 150,
         allowedFormats: ['mp4'],
-        description: 'TikTok video format',
+        description: 'TikTok feed video format',
         textRecommendations: { maxChars: 100, fontSize: '20px-28px' }
       }
     }
@@ -153,20 +137,40 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
     brandColor: '#FFFC00',
     icon: '👻',
     formats: {
-      story: {
-        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Story' },
-        safetyZone: { top: 250, bottom: 250, left: 80, right: 80 },
-        maxFileSize: 150,
-        allowedFormats: ['jpg', 'png', 'mp4'],
-        description: 'Snapchat Story format',
-        textRecommendations: { maxChars: 50, fontSize: '24px-32px' }
-      },
-      ad: {
+      snap_ad: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Snap Ad' },
-        safetyZone: { top: 300, bottom: 300, left: 100, right: 100 },
+        safetyZone: { top: 150, bottom: 300, left: 50, right: 50 },
         maxFileSize: 150,
         allowedFormats: ['jpg', 'png', 'mp4'],
         description: 'Snapchat Snap Ad format'
+      },
+      snap_ad_skoverlay: {
+        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Snap Ad (SKOverlay)' },
+        safetyZone: { top: 150, bottom: 350, left: 50, right: 50 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'mp4'],
+        description: 'Snapchat Snap Ad with iOS SKOverlay support'
+      },
+      discover_tile: {
+        dimensions: { width: 360, height: 600, aspectRatio: '3:5', name: 'Discover Tile' },
+        safetyZone: { top: 125, bottom: 240, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'mp4'],
+        description: 'Snapchat Discover Tile format'
+      },
+      spotlight: {
+        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Spotlight' },
+        safetyZone: { top: 150, bottom: 430, left: 50, right: 50 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'mp4'],
+        description: 'Snapchat Spotlight format'
+      },
+      spotlight_skoverlay: {
+        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Spotlight (SKOverlay)' },
+        safetyZone: { top: 150, bottom: 480, left: 50, right: 50 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'mp4'],
+        description: 'Snapchat Spotlight with iOS SKOverlay support'
       }
     }
   },
@@ -177,53 +181,93 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
     brandColor: '#4285F4',
     icon: '🎯',
     formats: {
-      small_banner: {
-        dimensions: { width: 320, height: 50, aspectRatio: '6.4:1', name: 'Small Banner' },
-        safetyZone: { top: 5, bottom: 5, left: 10, right: 10 },
-        maxFileSize: 5,
-        allowedFormats: ['jpg', 'png', 'gif'],
-        description: 'Google UAC small banner for mobile',
-        textRecommendations: { maxChars: 30, fontSize: '12px-16px' }
-      },
-      medium_rectangle: {
-        dimensions: { width: 300, height: 250, aspectRatio: '1.2:1', name: 'Medium Rectangle' },
-        safetyZone: { top: 20, bottom: 20, left: 20, right: 20 },
-        maxFileSize: 10,
-        allowedFormats: ['jpg', 'png', 'gif'],
-        description: 'Google UAC medium rectangle display ad',
-        textRecommendations: { maxChars: 80, fontSize: '14px-18px' }
-      },
-      leaderboard: {
-        dimensions: { width: 728, height: 90, aspectRatio: '8.09:1', name: 'Leaderboard' },
-        safetyZone: { top: 10, bottom: 10, left: 30, right: 30 },
-        maxFileSize: 10,
-        allowedFormats: ['jpg', 'png', 'gif'],
-        description: 'Google UAC leaderboard banner',
-        textRecommendations: { maxChars: 60, fontSize: '14px-20px' }
-      },
-      square_image: {
-        dimensions: { width: 1200, height: 1200, aspectRatio: '1:1', name: 'Square Image' },
-        safetyZone: { top: 60, bottom: 60, left: 60, right: 60 },
-        maxFileSize: 20,
+      square_1080x1080: {
+        dimensions: { width: 1080, height: 1080, aspectRatio: '1:1', name: '1080x1080 Square' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png'],
-        description: 'Google UAC square image for display and discovery',
+        description: 'Google UAC 1080x1080 square image',
         textRecommendations: { maxChars: 100, fontSize: '24px-32px' }
       },
-      landscape_image: {
-        dimensions: { width: 1200, height: 628, aspectRatio: '1.91:1', name: 'Landscape Image' },
-        safetyZone: { top: 40, bottom: 40, left: 60, right: 60 },
-        maxFileSize: 20,
+      portrait_1080x1920: {
+        dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: '1080x1920 Portrait' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png'],
-        description: 'Google UAC landscape image for YouTube and display',
+        description: 'Google UAC 1080x1920 portrait image',
+        textRecommendations: { maxChars: 100, fontSize: '24px-32px' }
+      },
+      square_1200x1200: {
+        dimensions: { width: 1200, height: 1200, aspectRatio: '1:1', name: '1200x1200 Square' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png'],
+        description: 'Google UAC 1200x1200 square image',
+        textRecommendations: { maxChars: 100, fontSize: '24px-32px' }
+      },
+      portrait_1200x1500: {
+        dimensions: { width: 1200, height: 1500, aspectRatio: '4:5', name: '1200x1500 Portrait' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png'],
+        description: 'Google UAC 1200x1500 portrait image',
         textRecommendations: { maxChars: 120, fontSize: '20px-28px' }
       },
-      portrait_image: {
-        dimensions: { width: 480, height: 320, aspectRatio: '1.5:1', name: 'Portrait Image' },
-        safetyZone: { top: 20, bottom: 20, left: 24, right: 24 },
-        maxFileSize: 10,
+      landscape_1200x628: {
+        dimensions: { width: 1200, height: 628, aspectRatio: '1.91:1', name: '1200x628 Landscape' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png'],
-        description: 'Google UAC portrait image for mobile placements',
-        textRecommendations: { maxChars: 60, fontSize: '16px-22px' }
+        description: 'Google UAC 1200x628 landscape image',
+        textRecommendations: { maxChars: 120, fontSize: '20px-28px' }
+      },
+      skyscraper_160x600: {
+        dimensions: { width: 160, height: 600, aspectRatio: '4:15', name: '160x600 Skyscraper' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'gif'],
+        description: 'Google UAC 160x600 skyscraper banner',
+        textRecommendations: { maxChars: 30, fontSize: '12px-16px' }
+      },
+      medium_rectangle_300x250: {
+        dimensions: { width: 300, height: 250, aspectRatio: '1.2:1', name: '300x250 Medium Rectangle' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'gif'],
+        description: 'Google UAC 300x250 medium rectangle',
+        textRecommendations: { maxChars: 80, fontSize: '14px-18px' }
+      },
+      large_mobile_300x600: {
+        dimensions: { width: 300, height: 600, aspectRatio: '1:2', name: '300x600 Large Mobile' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'gif'],
+        description: 'Google UAC 300x600 large mobile banner',
+        textRecommendations: { maxChars: 60, fontSize: '14px-18px' }
+      },
+      small_banner_320x50: {
+        dimensions: { width: 320, height: 50, aspectRatio: '6.4:1', name: '320x50 Small Banner' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'gif'],
+        description: 'Google UAC 320x50 small banner',
+        textRecommendations: { maxChars: 30, fontSize: '12px-16px' }
+      },
+      leaderboard_728x90: {
+        dimensions: { width: 728, height: 90, aspectRatio: '8.09:1', name: '728x90 Leaderboard' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'gif'],
+        description: 'Google UAC 728x90 leaderboard banner',
+        textRecommendations: { maxChars: 60, fontSize: '14px-20px' }
+      },
+      billboard_970x250: {
+        dimensions: { width: 970, height: 250, aspectRatio: '3.88:1', name: '970x250 Billboard' },
+        safetyZone: { top: 0, bottom: 0, left: 0, right: 0 },
+        maxFileSize: 150,
+        allowedFormats: ['jpg', 'png', 'gif'],
+        description: 'Google UAC 970x250 billboard banner',
+        textRecommendations: { maxChars: 80, fontSize: '16px-24px' }
       }
     }
   },
@@ -237,13 +281,13 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
       thumbnail: {
         dimensions: { width: 1280, height: 720, aspectRatio: '16:9', name: 'Thumbnail' },
         safetyZone: { top: 60, bottom: 60, left: 80, right: 80 },
-        maxFileSize: 2,
+        maxFileSize: 150,
         allowedFormats: ['jpg', 'png'],
         description: 'YouTube video thumbnail'
       },
       shorts: {
         dimensions: { width: 1080, height: 1920, aspectRatio: '9:16', name: 'Shorts' },
-        safetyZone: { top: 200, bottom: 300, left: 80, right: 80 },
+        safetyZone: { top: 200, bottom: 680, left: 50, right: 165 },
         maxFileSize: 150,
         allowedFormats: ['mp4'],
         description: 'YouTube Shorts format'
@@ -253,7 +297,12 @@ export const PLATFORM_CONFIGS: Record<string, PlatformConfig> = {
 };
 
 export function getAllPlatforms() {
-  return Object.values(PLATFORM_CONFIGS);
+  const platforms = Object.values(PLATFORM_CONFIGS);
+  // Filter out any Meta platforms that might exist from legacy data
+  const filteredPlatforms = platforms.filter(p => p.id !== 'meta' && p.name !== 'Meta');
+  // Debug: log available platforms
+  console.log('Available platforms:', filteredPlatforms.map(p => ({ id: p.id, name: p.name })));
+  return filteredPlatforms;
 }
 
 export function getPlatformById(id: string) {

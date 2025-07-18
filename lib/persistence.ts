@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { AdContent, SelectedPlatform, ExportFormat } from '@/types/platforms';
+import { SelectedPlatform, ExportFormat, TextOverlay } from '@/types/platforms';
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -85,7 +85,17 @@ export function usePersistentState<T>(
 
 // Specialized hooks for different data types
 export function usePersistentPlatforms() {
-  return usePersistentState<SelectedPlatform[]>(STORAGE_KEYS.SELECTED_PLATFORMS, []);
+  const [platforms, setPlatforms] = usePersistentState<SelectedPlatform[]>(STORAGE_KEYS.SELECTED_PLATFORMS, []);
+  
+  // Filter out any Meta platforms that might be persisted from legacy data
+  const filteredPlatforms = platforms.filter(p => p.platformId !== 'meta');
+  
+  // If we filtered anything out, update storage
+  if (filteredPlatforms.length !== platforms.length) {
+    setPlatforms(filteredPlatforms);
+  }
+  
+  return [filteredPlatforms, setPlatforms] as const;
 }
 
 export function usePersistentPreviewIndex() {
@@ -131,7 +141,7 @@ export interface ProjectData {
   selectedPlatforms: SelectedPlatform[];
   adName: string;
   namingValues: Record<string, string>;
-  textOverlays: any[];
+  textOverlays: TextOverlay[];
   showSafetyZones: boolean;
   selectedExportFormats: string[];
   createdAt: string;
@@ -205,85 +215,24 @@ export const projectManager = {
   }
 };
 
-// File handling for persistence (since File objects can't be directly serialized)
-export interface SerializedFile {
-  name: string;
-  size: number;
-  type: string;
-  lastModified: number;
-  dataUrl: string; // base64 data URL
-}
-
+// File handling - no persistence (files are not saved and are erased when removed)
 export const fileManager = {
-  // Serialize file to storable format
-  serializeFile: async (file: File): Promise<SerializedFile> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          lastModified: file.lastModified,
-          dataUrl: reader.result as string
-        });
-      };
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsDataURL(file);
-    });
-  },
-
-  // Deserialize stored file data back to File object
-  deserializeFile: (serializedFile: SerializedFile): File => {
-    // Convert data URL back to File
-    const byteString = atob(serializedFile.dataUrl.split(',')[1]);
-    const mimeString = serializedFile.dataUrl.split(',')[0].split(':')[1].split(';')[0];
-    
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    
-    return new File([ab], serializedFile.name, {
-      type: mimeString,
-      lastModified: serializedFile.lastModified
-    });
-  },
-
-  // Save file to localStorage (with size limits)
+  // No-op save function - files are not persisted
   saveFile: async (key: string, file: File): Promise<void> => {
-    try {
-      // Check file size (localStorage has ~5-10MB limit)
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        console.warn('File too large for localStorage, skipping save');
-        return;
-      }
-      
-      const serializedFile = await fileManager.serializeFile(file);
-      storage.set(key, serializedFile);
-    } catch (error) {
-      console.warn('Failed to save file to localStorage:', error);
-    }
+    // Files are not saved to localStorage - they exist only in memory
+    return Promise.resolve();
   },
 
-  // Load file from localStorage
+  // No-op load function - files are not persisted
   loadFile: (key: string): File | null => {
-    try {
-      const serializedFile = storage.get<SerializedFile | null>(key, null);
-      if (!serializedFile) return null;
-      
-      return fileManager.deserializeFile(serializedFile);
-    } catch (error) {
-      console.warn('Failed to load file from localStorage:', error);
-      return null;
-    }
+    // Files are not loaded from localStorage - they don't persist across sessions
+    return null;
   },
 
-  // Remove file from localStorage
+  // No-op remove function - files are not persisted so nothing to remove from storage
   removeFile: (key: string): void => {
-    storage.remove(key);
+    // Files are not stored so nothing to remove from localStorage
+    return;
   }
 };
 

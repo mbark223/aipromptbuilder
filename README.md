@@ -11,7 +11,6 @@ A comprehensive tool for testing and validating social media advertisements acro
 ### 🎯 **Platform Support**
 - **📷 Instagram** - Feed (Square/Portrait), Stories, Reels (Video)
 - **📘 Facebook** - Feed Posts, Stories, Cover Photos, Reels (Video)
-- **🔷 Meta** - Reels (Cross-platform Video), Stories (Video/Image)
 - **🐦 Twitter/X** - Post Images, Header Images
 - **🎵 TikTok** - Video Format with Safety Zones
 - **👻 Snapchat** - Snap Ad Format, Stories (Video/Image)
@@ -147,9 +146,7 @@ social-media-ad-litmus/
 - **Reels**: 1080×1920 (9:16) - Max 150MB (Video: MP4, MOV)
 - **Cover Photo**: 1200×315 (3.8:1) - Max 10MB (Image only)
 
-### Meta
-- **Reels**: 1080×1920 (9:16) - Max 150MB (Video: MP4, MOV)
-- **Stories**: 1080×1920 (9:16) - Max 150MB (Video/Image)
+
 
 ### Twitter/X
 - **Post Image**: 1200×675 (16:9) - Max 5MB

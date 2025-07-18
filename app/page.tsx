@@ -23,6 +23,33 @@ import {
 import { ProjectManager } from '@/components/project-manager';
 
 export default function Home() {
+  // One-time cleanup of legacy Meta platform data
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Clear any cached Meta platform data
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.includes('meta') || key.includes('Meta')) {
+          try {
+            const data = JSON.parse(localStorage.getItem(key) || '[]');
+            if (Array.isArray(data)) {
+              const filtered = data.filter(item => 
+                item.platformId !== 'meta' && 
+                item.id !== 'meta' && 
+                item.name !== 'Meta'
+              );
+              if (filtered.length !== data.length) {
+                localStorage.setItem(key, JSON.stringify(filtered));
+              }
+            }
+          } catch (e) {
+            // Ignore parsing errors
+          }
+        }
+      });
+    }
+  }, []);
+
   const [selectedPlatforms, setSelectedPlatforms] = usePersistentPlatforms();
   const [currentPreviewIndex, setCurrentPreviewIndex] = usePersistentPreviewIndex();
   const [showSafetyZones, setShowSafetyZones] = usePersistentSafetyZones();
@@ -31,22 +58,9 @@ export default function Home() {
     id: generateId(),
     textOverlays: []
   });
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  // Load saved file on component mount
-  useEffect(() => {
-    const savedFile = fileManager.loadFile('current_media_file');
-    if (savedFile) {
-      setUploadedFile(savedFile);
-      setContent(prev => ({
-        ...prev,
-        media: savedFile,
-        mediaType: savedFile.type.startsWith('video/') ? 'video' : 'image',
-        image: savedFile.type.startsWith('image/') ? savedFile : undefined,
-        video: savedFile.type.startsWith('video/') ? savedFile : undefined
-      }));
-    }
-  }, []);
+  // Files are no longer persisted - they start fresh each session
+  // (removed file loading on mount)
 
   // Auto-save project data whenever key state changes
   useAutoSave({
@@ -81,11 +95,7 @@ export default function Home() {
   };
 
   const handleFileSelect = async (file: File, duration?: number) => {
-    setUploadedFile(file);
-    
-    // Save file to localStorage (if small enough)
-    await fileManager.saveFile('current_media_file', file);
-    
+    // Files are not saved - they exist only in memory for the current session
     setContent(prev => ({
       ...prev,
       media: file,
@@ -98,8 +108,6 @@ export default function Home() {
   };
 
   const handleFileRemove = () => {
-    setUploadedFile(null);
-    
     // Remove file from localStorage
     fileManager.removeFile('current_media_file');
     
