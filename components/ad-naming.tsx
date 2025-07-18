@@ -285,7 +285,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
         {/* Preview */}
         <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Generated Filename Preview:</h3>
-          <div className="font-mono text-sm bg-white p-2 rounded border">
+          <div className="font-mono text-sm bg-white p-2 rounded border break-all overflow-hidden">
             {generatePreview()}
           </div>
           <p className="text-xs text-gray-500 mt-2">
