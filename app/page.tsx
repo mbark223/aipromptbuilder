@@ -26,27 +26,36 @@ export default function Home() {
   // One-time cleanup of legacy Meta platform data
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Clear any cached Meta platform data
-      const keys = Object.keys(localStorage);
-      keys.forEach(key => {
-        if (key.includes('meta') || key.includes('Meta')) {
-          try {
-            const data = JSON.parse(localStorage.getItem(key) || '[]');
-            if (Array.isArray(data)) {
-              const filtered = data.filter(item => 
-                item.platformId !== 'meta' && 
-                item.id !== 'meta' && 
-                item.name !== 'Meta'
-              );
-              if (filtered.length !== data.length) {
-                localStorage.setItem(key, JSON.stringify(filtered));
+      try {
+        // Clear any cached Meta platform data
+        const keys = Object.keys(localStorage);
+        keys.forEach(key => {
+          if (key.includes('meta') || key.includes('Meta')) {
+            try {
+              const data = localStorage.getItem(key);
+              if (data) {
+                const parsed = JSON.parse(data);
+                if (Array.isArray(parsed)) {
+                  const filtered = parsed.filter(item => 
+                    item && item.platformId !== 'meta' && 
+                    item.id !== 'meta' && 
+                    item.name !== 'Meta'
+                  );
+                  if (filtered.length !== parsed.length) {
+                    localStorage.setItem(key, JSON.stringify(filtered));
+                  }
+                }
               }
+            } catch (e) {
+              // If individual key fails, continue with others
+              console.warn(`Failed to process localStorage key: ${key}`, e);
             }
-          } catch (e) {
-            // Ignore parsing errors
           }
-        }
-      });
+        });
+      } catch (error) {
+        // If localStorage access fails entirely, log but don't crash
+        console.error('Failed to access localStorage:', error);
+      }
     }
   }, []);
 

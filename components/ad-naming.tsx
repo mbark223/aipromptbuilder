@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Calendar, Tag, User, Palette, Ruler, Building, Edit3, Plus, X, Save } from 'lucide-react';
-import { usePersistentNamingValues, usePersistentNamingElements } from '@/lib/persistence';
+import { usePersistentNamingValues } from '@/lib/persistence';
 
 interface NamingElement {
   id: string;
@@ -21,7 +21,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   const [namingValues, setNamingValues] = usePersistentNamingValues();
 
   // Define initial naming elements - now editable
-  const [namingElements, setNamingElements] = usePersistentNamingElements();
+  const [namingElements, setNamingElements] = useState<NamingElement[]>([]);
   
   // Initialize naming elements if empty (first time load)
   useEffect(() => {
