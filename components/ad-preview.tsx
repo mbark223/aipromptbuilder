@@ -419,7 +419,7 @@ export function AdPreview({
             style={{ borderColor: platform.brandColor }}
           />
         </div>
-        </div>
+      </div>
       </div>
 
       {/* Selected Overlay Controls */}
