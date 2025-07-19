@@ -42,13 +42,6 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           placeholder: 'Select theme'
         },
         {
-          id: 'theme2',
-          label: 'Theme 2',
-          icon: <Palette className="w-4 h-4" />,
-          options: ['88Drums', 'Cleopatra', 'holiday', 'sports', 'gaming', 'finance', 'health', 'tech', 'lifestyle', 'entertainment'],
-          placeholder: 'Select secondary theme'
-        },
-        {
           id: 'format',
           label: 'Format',
           icon: <Tag className="w-4 h-4" />,
@@ -68,6 +61,13 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           icon: <User className="w-4 h-4" />,
           options: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa'],
           placeholder: 'Select designer'
+        },
+        {
+          id: 'theme2',
+          label: 'Theme 2',
+          icon: <Palette className="w-4 h-4" />,
+          options: ['88Drums', 'Cleopatra', 'holiday', 'sports', 'gaming', 'finance', 'health', 'tech', 'lifestyle', 'entertainment'],
+          placeholder: 'Select secondary theme'
         },
         {
           id: 'offer',
@@ -289,7 +289,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
             {generatePreview()}
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            Format: partner_theme_theme2_format_size_designer_offer_jurisdiction_date
+            Format: partner_theme_format_size_designer_theme2_offer_jurisdiction_date
           </p>
         </div>
 
