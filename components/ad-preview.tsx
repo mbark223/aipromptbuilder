@@ -221,23 +221,24 @@ export function AdPreview({
       </div>
 
       {/* Preview Container */}
-      <div 
-        ref={containerRef}
-        className="relative mx-auto border border-gray-300 rounded-lg overflow-hidden"
-        style={{ 
-          width: previewDimensions.width, 
-          height: previewDimensions.height,
-          backgroundColor: '#f5f5f5'
-        }}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / scale;
-            const y = (e.clientY - rect.top) / scale;
-            addTextOverlay(x, y);
-          }
-        }}
-      >
+      <div className="flex justify-center w-full">
+        <div 
+          ref={containerRef}
+          className="relative border border-gray-300 rounded-lg overflow-hidden"
+          style={{ 
+            width: previewDimensions.width, 
+            height: previewDimensions.height,
+            backgroundColor: '#f5f5f5'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = (e.clientX - rect.left) / scale;
+              const y = (e.clientY - rect.top) / scale;
+              addTextOverlay(x, y);
+            }
+          }}
+        >
         {/* Background Media */}
         {hasMedia(content) && getMediaType(content) === 'image' && (
           <canvas
@@ -417,6 +418,7 @@ export function AdPreview({
             className="absolute inset-0 border-4 rounded-lg"
             style={{ borderColor: platform.brandColor }}
           />
+        </div>
         </div>
       </div>
 
