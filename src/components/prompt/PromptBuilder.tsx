@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 import { PromptSection } from './PromptSection';
-import { type Prompt, type Format } from '@/types';
+import { type Format, type ConsistencySettings } from '@/types';
+import { generateOptimizedPrompt, enhancePrompt } from '@/lib/promptGenerator';
 
 const STYLE_SUGGESTIONS = [
   'photorealistic',
@@ -45,11 +47,12 @@ const COMPOSITION_SUGGESTIONS = [
 
 interface PromptBuilderProps {
   format: Format | null;
-  onSave?: (prompt: Partial<Prompt>) => void;
+  consistency?: ConsistencySettings;
 }
 
-export function PromptBuilder({ format, onSave }: PromptBuilderProps) {
-  const [title, setTitle] = useState('');
+export function PromptBuilder({ format, consistency }: PromptBuilderProps) {
+  const { toast } = useToast();
+  const [selectedPlatform, setSelectedPlatform] = useState<'veo' | 'flows' | 'generic'>('generic');
   const [promptContent, setPromptContent] = useState({
     subject: '',
     style: '',
@@ -67,44 +70,47 @@ export function PromptBuilder({ format, onSave }: PromptBuilderProps) {
   };
 
   const generateFullPrompt = () => {
-    const sections = Object.entries(promptContent)
-      .filter(([, value]) => value.trim())
-      .map(([, value]) => value.trim());
+    if (!format) return '';
     
-    return sections.join('. ');
-  };
-
-  const handleSave = () => {
-    if (!title.trim()) {
-      alert('Please enter a title for your prompt');
-      return;
-    }
-
-    const prompt: Partial<Prompt> = {
-      title,
+    return generateOptimizedPrompt({
       content: promptContent,
-      format: format || undefined,
-    };
-
-    onSave?.(prompt);
+      format,
+      consistency,
+      platform: selectedPlatform
+    });
   };
 
-  const isValid = title.trim() && promptContent.subject.trim() && format;
+  const handleCopyPrompt = async () => {
+    const prompt = generateFullPrompt();
+    try {
+      await navigator.clipboard.writeText(prompt);
+      toast({
+        title: "Prompt copied!",
+        description: `Ready to paste into ${selectedPlatform === 'veo' ? 'Google Veo' : selectedPlatform === 'flows' ? 'Flows' : 'your platform'}`,
+      });
+    } catch {
+      toast({
+        title: "Failed to copy",
+        description: "Please try selecting and copying manually",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getPromptSuggestions = () => {
+    const currentPrompt = generateFullPrompt();
+    return enhancePrompt(currentPrompt);
+  };
+
 
   return (
     <Card className="p-6">
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold mb-4">Prompt Builder</h2>
-          <div className="space-y-2">
-            <Label htmlFor="title">Prompt Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter a descriptive title for your prompt"
-            />
-          </div>
+          <p className="text-muted-foreground text-sm">
+            Create optimized prompts for AI video generation. Fill in the sections below and generate a prompt ready to paste into Veo, Flows, or other platforms.
+          </p>
         </div>
 
         <Separator />
@@ -176,13 +182,60 @@ export function PromptBuilder({ format, onSave }: PromptBuilderProps) {
           <TabsContent value="preview" className="mt-4">
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-2">Full Prompt</h3>
+                <Label htmlFor="platform">Target Platform</Label>
+                <Select 
+                  value={selectedPlatform} 
+                  onValueChange={(value) => setSelectedPlatform(value as 'veo' | 'flows' | 'generic')}
+                >
+                  <SelectTrigger id="platform" className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="generic">Generic</SelectItem>
+                    <SelectItem value="veo">Google Veo</SelectItem>
+                    <SelectItem value="flows">Flows</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-semibold">Optimized Prompt</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleCopyPrompt}
+                    disabled={!generateFullPrompt()}
+                  >
+                    Copy to Clipboard
+                  </Button>
+                </div>
                 <div className="bg-muted rounded-lg p-4">
-                  <p className="text-sm whitespace-pre-wrap">
-                    {generateFullPrompt() || 'Fill in the sections to see your complete prompt...'}
+                  <p className="text-sm whitespace-pre-wrap font-mono">
+                    {generateFullPrompt() || 'Fill in the sections to see your optimized prompt...'}
                   </p>
                 </div>
               </div>
+
+              {generateFullPrompt() && (
+                <div>
+                  <h4 className="font-medium mb-2">Enhancement Suggestions</h4>
+                  <div className="space-y-1">
+                    {getPromptSuggestions().length > 0 ? (
+                      getPromptSuggestions().map((suggestion, index) => (
+                        <div key={index} className="flex items-start gap-2 text-sm">
+                          <span className="text-muted-foreground">•</span>
+                          <span className="text-muted-foreground">{suggestion}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Your prompt looks comprehensive!
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
               
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -194,14 +247,48 @@ export function PromptBuilder({ format, onSave }: PromptBuilderProps) {
                   <p>{generateFullPrompt().length} characters</p>
                 </div>
               </div>
+
+              {selectedPlatform !== 'generic' && (
+                <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg">
+                  <p className="text-sm font-medium mb-1">
+                    {selectedPlatform === 'veo' ? 'Veo' : 'Flows'} Optimization Applied
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedPlatform === 'veo' 
+                      ? 'Optimized for photorealistic rendering and cinematic quality'
+                      : 'Optimized for smooth transitions and dynamic movement'}
+                  </p>
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>
 
         <div className="flex justify-end space-x-2">
-          <Button variant="outline">Save as Template</Button>
-          <Button onClick={handleSave} disabled={!isValid}>
-            Save Prompt
+          <Button 
+            variant="outline"
+            onClick={() => {
+              setPromptContent({
+                subject: '',
+                style: '',
+                composition: '',
+                lighting: '',
+                motion: '',
+                technical: '',
+              });
+              toast({
+                title: "Form cleared",
+                description: "Ready to create a new prompt",
+              });
+            }}
+          >
+            Clear Form
+          </Button>
+          <Button 
+            onClick={handleCopyPrompt} 
+            disabled={!format || !promptContent.subject.trim()}
+          >
+            Generate & Copy Prompt
           </Button>
         </div>
       </div>

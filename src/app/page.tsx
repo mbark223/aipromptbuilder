@@ -51,7 +51,11 @@ export default function Home() {
                   selectedFormat={selectedFormat}
                   onFormatSelect={setSelectedFormat}
                 />
-                <PromptBuilder format={selectedFormat} onSave={handlePromptSave} />
+                <PromptBuilder 
+                  format={selectedFormat} 
+                  consistency={consistencySettings}
+                  onSave={handlePromptSave} 
+                />
               </div>
               <div>
                 <FormatPreview format={selectedFormat} />
