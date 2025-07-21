@@ -13,7 +13,7 @@ import { PRESET_FORMATS, ANIMATION_TEMPLATES } from '@/types';
 export default function StaticToMotionPage() {
   const [assets, setAssets] = useState<StaticAsset[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
-  const [selectedFormats, setSelectedFormats] = useState<Format[]>([PRESET_FORMATS[0]]);
+  const [selectedFormats, setSelectedFormats] = useState<Format[]>([]);
   const [selectedAnimation, setSelectedAnimation] = useState<AnimationProfile>(ANIMATION_TEMPLATES[0]);
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'upload' | 'workshop' | 'queue'>('upload');
@@ -25,14 +25,16 @@ export default function StaticToMotionPage() {
       
       // Set the original format as default
       const firstAsset = newAssets[0];
-      const originalFormat: Format = {
-        aspectRatio: firstAsset.originalFile.dimensions.aspectRatio,
-        width: firstAsset.originalFile.dimensions.width,
-        height: firstAsset.originalFile.dimensions.height,
-        name: 'Original',
-        custom: true
-      };
-      setSelectedFormats([originalFormat]);
+      if (firstAsset.originalFile.dimensions) {
+        const originalFormat: Format = {
+          aspectRatio: firstAsset.originalFile.dimensions.aspectRatio || '16:9',
+          width: firstAsset.originalFile.dimensions.width || 1920,
+          height: firstAsset.originalFile.dimensions.height || 1080,
+          name: 'Original',
+          custom: true
+        };
+        setSelectedFormats([originalFormat]);
+      }
       
       setActiveView('workshop');
     }

@@ -25,18 +25,20 @@ export function FormatSelector({
     const seen = new Set<string>();
     
     selectedAssets.forEach(asset => {
-      const { width, height, aspectRatio } = asset.originalFile.dimensions;
-      const key = `${width}x${height}`;
-      
-      if (!seen.has(key)) {
-        seen.add(key);
-        uniqueFormats.push({
-          aspectRatio,
-          width,
-          height,
-          name: 'Original',
-          custom: true
-        });
+      if (asset?.originalFile?.dimensions) {
+        const { width, height, aspectRatio } = asset.originalFile.dimensions;
+        const key = `${width}x${height}`;
+        
+        if (!seen.has(key) && width && height) {
+          seen.add(key);
+          uniqueFormats.push({
+            aspectRatio: aspectRatio || '16:9',
+            width: width || 1920,
+            height: height || 1080,
+            name: 'Original',
+            custom: true
+          });
+        }
       }
     });
     
@@ -116,7 +118,7 @@ export function FormatSelector({
                     className="bg-muted-foreground/20 rounded"
                     style={{
                       width: '60%',
-                      aspectRatio: format.aspectRatio,
+                      aspectRatio: format.aspectRatio || '16:9',
                     }}
                   />
                 </div>

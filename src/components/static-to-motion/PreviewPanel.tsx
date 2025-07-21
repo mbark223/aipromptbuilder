@@ -50,7 +50,15 @@ export function PreviewPanel({ asset, animation, format }: PreviewPanelProps) {
 
   // Calculate preview dimensions based on format
   const getPreviewStyle = () => {
-    const [widthRatio, heightRatio] = format.aspectRatio.split(':').map(Number);
+    if (!format || !format.aspectRatio) {
+      return {
+        aspectRatio: '16 / 9',
+        maxHeight: '400px'
+      };
+    }
+    const parts = format.aspectRatio.split(':');
+    const widthRatio = Number(parts[0]) || 16;
+    const heightRatio = Number(parts[1]) || 9;
     return {
       aspectRatio: `${widthRatio} / ${heightRatio}`,
       maxHeight: '400px'
@@ -80,7 +88,7 @@ export function PreviewPanel({ asset, animation, format }: PreviewPanelProps) {
             variant="secondary" 
             className="absolute top-2 left-2"
           >
-            {format.name} ({format.aspectRatio})
+            {format?.name || 'Unknown'} ({format?.aspectRatio || 'N/A'})
           </Badge>
         </div>
       </div>

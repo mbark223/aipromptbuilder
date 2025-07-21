@@ -77,7 +77,7 @@ export function AnimationWorkshop({
       <div className="space-y-6">
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Preview</h2>
-          {primaryAsset ? (
+          {primaryAsset && selectedFormats.length > 0 ? (
             <PreviewPanel
               asset={primaryAsset}
               animation={selectedAnimation}
@@ -85,7 +85,9 @@ export function AnimationWorkshop({
             />
           ) : (
             <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-              <p className="text-muted-foreground">Select an asset to preview</p>
+              <p className="text-muted-foreground">
+                {!primaryAsset ? 'Select an asset to preview' : 'Select a format to preview'}
+              </p>
             </div>
           )}
         </Card>
