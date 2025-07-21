@@ -104,6 +104,7 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
   const [elements, setElements] = useState<CustomElement[]>([]);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [selectionBox, setSelectionBox] = useState<{
     startX: number;
     startY: number;
@@ -117,10 +118,12 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isSelecting || !imageRef.current) return;
     
+    e.preventDefault();
     const rect = imageRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
+    setIsDragging(true);
     setSelectionBox({
       startX: x,
       startY: y,
@@ -130,8 +133,9 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!selectionBox || !imageRef.current) return;
+    if (!isDragging || !selectionBox || !imageRef.current) return;
     
+    e.preventDefault();
     const rect = imageRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -144,7 +148,7 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
   };
 
   const handleMouseUp = () => {
-    if (!selectionBox || !imageRef.current) return;
+    if (!isDragging || !selectionBox || !imageRef.current) return;
     
     const bounds = {
       x: Math.min(selectionBox.startX, selectionBox.endX),
@@ -167,6 +171,7 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
       setShowGuide(false);
     }
     
+    setIsDragging(false);
     setSelectionBox(null);
     setIsSelecting(false);
   };
@@ -246,17 +251,24 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
       <div 
         ref={imageRef}
         className={`relative border-2 rounded-lg overflow-hidden ${
-          isSelecting ? 'cursor-crosshair border-primary' : 'border-border'
+          isSelecting ? 'cursor-crosshair border-primary border-dashed' : 'border-border'
         }`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
+        {/* Selection mode indicator */}
+        {isSelecting && (
+          <div className="absolute top-2 left-2 z-20 bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm font-medium animate-pulse">
+            Selection Mode Active - Click and drag to select
+          </div>
+        )}
         <img
           src={imageUrl}
           alt="Select elements"
-          className="w-full h-auto"
+          className="w-full h-auto select-none"
+          draggable={false}
           onLoad={() => setImageLoaded(true)}
         />
         
@@ -297,9 +309,9 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
         ))}
         
         {/* Active selection box */}
-        {selectionBox && (
+        {selectionBox && isDragging && (
           <div
-            className="absolute border-2 border-primary bg-primary/20 pointer-events-none animate-pulse"
+            className="absolute border-2 border-primary bg-primary/20 pointer-events-none animate-pulse z-30"
             style={{
               left: `${Math.min(selectionBox.startX, selectionBox.endX)}px`,
               top: `${Math.min(selectionBox.startY, selectionBox.endY)}px`,
