@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FormatSelector } from './FormatSelector';
 import { AnimationTemplates } from './AnimationTemplates';
 import { AssetGrid } from './AssetGrid';
-import { PreviewPanel } from './PreviewPanel';
+import { PreviewPanelV2 as PreviewPanel } from './PreviewPanelV2';
 import { ElementSelectorV2 as ElementSelector, type CustomElement } from './ElementSelectorV2';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
@@ -36,7 +36,7 @@ export function AnimationWorkshop({
 }: AnimationWorkshopProps) {
   const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
   const primaryAsset = selectedAssetObjects[0];
-  const [_customElements, _setCustomElements] = useState<CustomElement[]>([]);
+  const [customElements, setCustomElements] = useState<CustomElement[]>([]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -81,7 +81,7 @@ export function AnimationWorkshop({
                 <ElementSelector
                   imageUrl={primaryAsset.originalFile.url}
                   onElementsChange={(elements: CustomElement[]) => {
-                    _setCustomElements(elements);
+                    setCustomElements(elements);
                     // Update the custom animation with user-selected elements
                     if (selectedAnimation.id === 'custom-elements') {
                       const updatedAnimation = {
@@ -120,6 +120,7 @@ export function AnimationWorkshop({
               asset={primaryAsset}
               animation={selectedAnimation}
               format={selectedFormats[0]}
+              customElements={selectedAnimation.id === 'custom-elements' ? customElements : undefined}
             />
           ) : (
             <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
