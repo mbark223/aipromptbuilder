@@ -11,6 +11,7 @@ const navigation = [
   { name: 'Projects', href: '/projects', icon: '📁' },
   { name: 'Prompts', href: '/prompts', icon: '✏️' },
   { name: 'Templates', href: '/templates', icon: '📋' },
+  { name: 'Static-to-Motion', href: '/static-to-motion', icon: '🎬' },
   { name: 'Export', href: '/export', icon: '📤' },
 ];
 
