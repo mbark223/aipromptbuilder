@@ -13,18 +13,35 @@ interface AnimationTemplatesProps {
   onSelectAnimation: (animation: AnimationProfile) => void;
 }
 
-const getAnimationIcon = (type: string) => {
-  switch (type) {
-    case 'pulse':
-    case 'sway':
-      return <Icons.wind className="h-4 w-4" />;
-    case 'zoom':
-    case 'pan':
-      return <Icons.camera className="h-4 w-4" />;
-    case 'parallax':
-      return <Icons.layers className="h-4 w-4" />;
+const getAnimationIcon = (movement: any) => {
+  // First check for element-specific icons
+  switch (movement.element) {
+    case 'water':
+      return <Icons.droplet className="h-4 w-4" />;
+    case 'sky':
+      return <Icons.cloud className="h-4 w-4" />;
+    case 'vegetation':
+      return <Icons.leaf className="h-4 w-4" />;
+    case 'fire':
+      return <Icons.flame className="h-4 w-4" />;
+    case 'particles':
+      return <Icons.sparkles className="h-4 w-4" />;
+    case 'specific':
+      return <Icons.target className="h-4 w-4" />;
     default:
-      return <Icons.zap className="h-4 w-4" />;
+      // Fall back to movement type icons
+      switch (movement.type) {
+        case 'pulse':
+        case 'sway':
+          return <Icons.wind className="h-4 w-4" />;
+        case 'zoom':
+        case 'pan':
+          return <Icons.camera className="h-4 w-4" />;
+        case 'parallax':
+          return <Icons.layers className="h-4 w-4" />;
+        default:
+          return <Icons.zap className="h-4 w-4" />;
+      }
   }
 };
 
@@ -105,8 +122,12 @@ export function AnimationTemplates({
             <div className="space-y-2">
               {template.movements.map((movement, idx) => (
                 <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  {getAnimationIcon(movement.type)}
+                  {getAnimationIcon(movement)}
                   <span className="capitalize">
+                    {movement.element !== 'full' && movement.element !== 'background' && movement.element !== 'foreground' 
+                      ? `${movement.element} ` 
+                      : ''
+                    }
                     {movement.type} {movement.direction ? `(${movement.direction})` : ''}
                   </span>
                   <span className="text-xs">• {movement.intensity}/10</span>

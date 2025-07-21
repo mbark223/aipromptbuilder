@@ -142,11 +142,12 @@ export interface AnimationProfile {
 }
 
 export interface Movement {
-  element: 'full' | 'background' | 'foreground' | 'specific';
-  type: 'pan' | 'zoom' | 'float' | 'parallax' | 'pulse' | 'sway';
+  element: 'full' | 'background' | 'foreground' | 'specific' | 'water' | 'sky' | 'vegetation' | 'fabric' | 'hair' | 'smoke' | 'fire' | 'particles';
+  type: 'pan' | 'zoom' | 'float' | 'parallax' | 'pulse' | 'sway' | 'ripple' | 'flutter' | 'shimmer' | 'flow';
   intensity: number; // 1-10
-  direction?: 'up' | 'down' | 'left' | 'right' | 'in' | 'out';
+  direction?: 'up' | 'down' | 'left' | 'right' | 'in' | 'out' | 'radial' | 'circular';
   timing: 'ease' | 'linear' | 'ease-in' | 'ease-out';
+  elementSelector?: string; // AI-detected element selector
 }
 
 export interface TransitionEffect {
@@ -1230,6 +1231,280 @@ export const ANIMATION_TEMPLATES: AnimationProfile[] = [
     transitions: {
       in: { type: 'fade', duration: 0.2, easing: 'ease-out' },
       out: { type: 'fade', duration: 0.2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'living-water',
+    name: 'Living Water',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'water',
+        type: 'ripple',
+        intensity: 4,
+        direction: 'radial',
+        timing: 'ease'
+      },
+      {
+        element: 'water',
+        type: 'flow',
+        intensity: 2,
+        direction: 'right',
+        timing: 'linear'
+      }
+    ],
+    duration: 4,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'sky-dynamics',
+    name: 'Sky Dynamics',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'sky',
+        type: 'flow',
+        intensity: 3,
+        direction: 'right',
+        timing: 'linear'
+      },
+      {
+        element: 'sky',
+        type: 'shimmer',
+        intensity: 2,
+        timing: 'ease'
+      }
+    ],
+    duration: 8,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'nature-breath',
+    name: 'Nature Breath',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'vegetation',
+        type: 'sway',
+        intensity: 3,
+        direction: 'right',
+        timing: 'ease'
+      },
+      {
+        element: 'vegetation',
+        type: 'flutter',
+        intensity: 2,
+        timing: 'ease'
+      }
+    ],
+    duration: 5,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'fabric-dance',
+    name: 'Fabric Dance',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'fabric',
+        type: 'flutter',
+        intensity: 5,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'fabric',
+        type: 'sway',
+        intensity: 4,
+        timing: 'ease'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.3, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'hair-flow',
+    name: 'Hair Flow',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'hair',
+        type: 'flow',
+        intensity: 3,
+        direction: 'right',
+        timing: 'ease'
+      },
+      {
+        element: 'hair',
+        type: 'flutter',
+        intensity: 2,
+        timing: 'ease'
+      }
+    ],
+    duration: 4,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'smoke-drift',
+    name: 'Smoke Drift',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'smoke',
+        type: 'flow',
+        intensity: 4,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'smoke',
+        type: 'shimmer',
+        intensity: 3,
+        timing: 'linear'
+      }
+    ],
+    duration: 6,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'fire-flicker',
+    name: 'Fire Flicker',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'fire',
+        type: 'flutter',
+        intensity: 8,
+        direction: 'up',
+        timing: 'linear'
+      },
+      {
+        element: 'fire',
+        type: 'pulse',
+        intensity: 6,
+        timing: 'ease'
+      },
+      {
+        element: 'fire',
+        type: 'shimmer',
+        intensity: 7,
+        timing: 'linear'
+      }
+    ],
+    duration: 1,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'particle-float',
+    name: 'Particle Float',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'particles',
+        type: 'float',
+        intensity: 3,
+        direction: 'up',
+        timing: 'linear'
+      },
+      {
+        element: 'particles',
+        type: 'shimmer',
+        intensity: 2,
+        timing: 'ease'
+      }
+    ],
+    duration: 5,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'cinemagraph-master',
+    name: 'Cinemagraph Master',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'water',
+        type: 'ripple',
+        intensity: 3,
+        direction: 'radial',
+        timing: 'ease'
+      },
+      {
+        element: 'vegetation',
+        type: 'sway',
+        intensity: 2,
+        timing: 'ease'
+      },
+      {
+        element: 'sky',
+        type: 'flow',
+        intensity: 1,
+        direction: 'right',
+        timing: 'linear'
+      }
+    ],
+    duration: 6,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'selective-motion',
+    name: 'Selective Motion',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'specific',
+        type: 'pulse',
+        intensity: 3,
+        timing: 'ease',
+        elementSelector: 'primary-subject'
+      },
+      {
+        element: 'background',
+        type: 'shimmer',
+        intensity: 1,
+        timing: 'linear'
+      }
+    ],
+    duration: 4,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
     }
   }
 ];
