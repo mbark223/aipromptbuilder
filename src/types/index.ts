@@ -142,12 +142,18 @@ export interface AnimationProfile {
 }
 
 export interface Movement {
-  element: 'full' | 'background' | 'foreground' | 'specific' | 'water' | 'sky' | 'vegetation' | 'fabric' | 'hair' | 'smoke' | 'fire' | 'particles';
-  type: 'pan' | 'zoom' | 'float' | 'parallax' | 'pulse' | 'sway' | 'ripple' | 'flutter' | 'shimmer' | 'flow';
+  element: 'full' | 'background' | 'foreground' | 'specific' | 'water' | 'sky' | 'vegetation' | 'fabric' | 'hair' | 'smoke' | 'fire' | 'particles' | 'custom';
+  type: 'pan' | 'zoom' | 'float' | 'parallax' | 'pulse' | 'sway' | 'ripple' | 'flutter' | 'shimmer' | 'flow' | 'rotate';
   intensity: number; // 1-10
-  direction?: 'up' | 'down' | 'left' | 'right' | 'in' | 'out' | 'radial' | 'circular';
+  direction?: 'up' | 'down' | 'left' | 'right' | 'in' | 'out' | 'radial' | 'circular' | 'clockwise' | 'counter-clockwise';
   timing: 'ease' | 'linear' | 'ease-in' | 'ease-out';
   elementSelector?: string; // AI-detected element selector
+  customBounds?: { // For user-selected elements
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 export interface TransitionEffect {
@@ -1505,6 +1511,82 @@ export const ANIMATION_TEMPLATES: AnimationProfile[] = [
     transitions: {
       in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
       out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'custom-elements',
+    name: 'Custom Elements',
+    type: 'dynamic',
+    movements: [], // Will be populated by user selections
+    duration: 5,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'ferris-wheel-spin',
+    name: 'Ferris Wheel Spin',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'rotate',
+        intensity: 3,
+        direction: 'clockwise',
+        timing: 'linear'
+      }
+    ],
+    duration: 10,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'logo-pulse-glow',
+    name: 'Logo Pulse & Glow',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'custom',
+        type: 'pulse',
+        intensity: 3,
+        timing: 'ease'
+      },
+      {
+        element: 'custom',
+        type: 'shimmer',
+        intensity: 2,
+        timing: 'ease'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'text-typewriter',
+    name: 'Text Typewriter',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'shimmer',
+        intensity: 8,
+        timing: 'linear'
+      }
+    ],
+    duration: 2,
+    loop: false,
+    transitions: {
+      in: { type: 'slide', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
     }
   }
 ];

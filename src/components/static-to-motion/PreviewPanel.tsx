@@ -188,6 +188,23 @@ function getAnimationTransform(animation: AnimationProfile, progress: number): s
         const floatY = intensity * Math.sin(progressFactor * Math.PI * 2);
         transforms.push(`translateY(${floatY}px)`);
         break;
+        
+      case 'rotate':
+        const rotation = movement.direction === 'counter-clockwise' 
+          ? -progressFactor * 360 * (intensity / 10)
+          : progressFactor * 360 * (intensity / 10);
+        transforms.push(`rotate(${rotation}deg)`);
+        break;
+        
+      case 'sway':
+        const swayAngle = intensity * Math.sin(progressFactor * Math.PI * 2);
+        transforms.push(`rotate(${swayAngle}deg)`);
+        break;
+        
+      case 'shimmer':
+        const shimmerOpacity = 0.8 + 0.2 * Math.sin(progressFactor * Math.PI * 4);
+        transforms.push(`opacity(${shimmerOpacity})`);
+        break;
     }
   });
   

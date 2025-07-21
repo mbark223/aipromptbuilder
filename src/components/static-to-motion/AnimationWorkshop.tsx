@@ -9,7 +9,9 @@ import { FormatSelector } from './FormatSelector';
 import { AnimationTemplates } from './AnimationTemplates';
 import { AssetGrid } from './AssetGrid';
 import { PreviewPanel } from './PreviewPanel';
+import { ElementSelector } from './ElementSelector';
 import { Icons } from '@/components/icons';
+import { useState } from 'react';
 
 interface AnimationWorkshopProps {
   assets: StaticAsset[];
@@ -34,6 +36,7 @@ export function AnimationWorkshop({
 }: AnimationWorkshopProps) {
   const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
   const primaryAsset = selectedAssetObjects[0];
+  const [customElements, setCustomElements] = useState<any[]>([]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -50,9 +53,12 @@ export function AnimationWorkshop({
 
         <Card className="p-6">
           <Tabs defaultValue="formats" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="formats">Formats</TabsTrigger>
               <TabsTrigger value="animation">Animation</TabsTrigger>
+              <TabsTrigger value="elements" disabled={selectedAnimation.id !== 'custom-elements'}>
+                Elements
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="formats" className="space-y-4">
@@ -68,6 +74,34 @@ export function AnimationWorkshop({
                 selectedAnimation={selectedAnimation}
                 onSelectAnimation={onSelectAnimation}
               />
+            </TabsContent>
+            
+            <TabsContent value="elements" className="space-y-4">
+              {primaryAsset && (
+                <ElementSelector
+                  imageUrl={primaryAsset.originalFile.url}
+                  onElementsChange={(elements) => {
+                    setCustomElements(elements);
+                    // Update the custom animation with user-selected elements
+                    if (selectedAnimation.id === 'custom-elements') {
+                      const updatedAnimation = {
+                        ...selectedAnimation,
+                        movements: elements
+                          .filter(el => el.animation)
+                          .map(el => ({
+                            element: 'custom' as const,
+                            type: el.animation!.type as any,
+                            intensity: el.animation!.intensity,
+                            direction: el.animation!.direction as any,
+                            timing: 'ease' as const,
+                            customBounds: el.bounds
+                          }))
+                      };
+                      onSelectAnimation(updatedAnimation);
+                    }
+                  }}
+                />
+              )}
             </TabsContent>
           </Tabs>
         </Card>
