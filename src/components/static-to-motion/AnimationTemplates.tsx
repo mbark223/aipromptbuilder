@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { AnimationProfile, ANIMATION_TEMPLATES } from '@/types';
+import { AnimationProfile, ANIMATION_TEMPLATES, Movement } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ interface AnimationTemplatesProps {
   onSelectAnimation: (animation: AnimationProfile) => void;
 }
 
-const getAnimationIcon = (movement: any) => {
+const getAnimationIcon = (movement: Movement) => {
   // First check for element-specific icons
   switch (movement.element) {
     case 'water':
@@ -81,7 +81,7 @@ export function AnimationTemplates({
         />
       </div>
 
-      <Tabs value={selectedType} onValueChange={(v) => setSelectedType(v as any)}>
+      <Tabs value={selectedType} onValueChange={(v) => setSelectedType(v as 'all' | 'subtle' | 'moderate' | 'dynamic')}>
         <TabsList className="grid grid-cols-4 w-full">
           <TabsTrigger value="all">All ({templateCounts.all})</TabsTrigger>
           <TabsTrigger value="subtle">Subtle ({templateCounts.subtle})</TabsTrigger>
