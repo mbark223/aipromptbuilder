@@ -106,7 +106,22 @@ export default function TemplatesPage() {
   );
 }
 
-function TemplateCard({ template }: { template: any }) {
+interface TemplateData {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  content: {
+    subject: string;
+    style: string;
+    composition: string;
+    lighting: string;
+    motion?: string;
+    technical: string;
+  };
+}
+
+function TemplateCard({ template }: { template: TemplateData }) {
   const category = TEMPLATE_CATEGORIES.find((c) => c.id === template.category);
 
   return (

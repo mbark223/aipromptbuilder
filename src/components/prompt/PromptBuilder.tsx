@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { PromptSection } from './PromptSection';
-import { PROMPT_SECTIONS, type Prompt, type Format } from '@/types';
+import { type Prompt, type Format } from '@/types';
 
 const STYLE_SUGGESTIONS = [
   'photorealistic',
@@ -68,8 +68,8 @@ export function PromptBuilder({ format, onSave }: PromptBuilderProps) {
 
   const generateFullPrompt = () => {
     const sections = Object.entries(promptContent)
-      .filter(([_, value]) => value.trim())
-      .map(([_, value]) => value.trim());
+      .filter(([, value]) => value.trim())
+      .map(([, value]) => value.trim());
     
     return sections.join('. ');
   };

@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { usePromptStore } from '@/store/promptStore';
@@ -206,7 +205,7 @@ export default function ExportPage() {
                   <Select
                     value={exportConfig.platform}
                     onValueChange={(value) =>
-                      setExportConfig({ ...exportConfig, platform: value as any })
+                      setExportConfig({ ...exportConfig, platform: value as 'veo' | 'flows' | 'generic' })
                     }
                   >
                     <SelectTrigger id="platform">
@@ -225,7 +224,7 @@ export default function ExportPage() {
                   <Select
                     value={exportConfig.format}
                     onValueChange={(value) =>
-                      setExportConfig({ ...exportConfig, format: value as any })
+                      setExportConfig({ ...exportConfig, format: value as 'json' | 'csv' | 'txt' })
                     }
                   >
                     <SelectTrigger id="format">
