@@ -37,7 +37,7 @@ export function AnimationWorkshop({
 }: AnimationWorkshopProps) {
   const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
   const primaryAsset = selectedAssetObjects[0];
-  const [customElements, setCustomElements] = useState<Array<{
+  const [_customElements, _setCustomElements] = useState<Array<{
     id: string;
     name: string;
     bounds: { x: number; y: number; width: number; height: number };
@@ -87,7 +87,7 @@ export function AnimationWorkshop({
                 <ElementSelector
                   imageUrl={primaryAsset.originalFile.url}
                   onElementsChange={(elements) => {
-                    setCustomElements(elements);
+                    _setCustomElements(elements);
                     // Update the custom animation with user-selected elements
                     if (selectedAnimation.id === 'custom-elements') {
                       const updatedAnimation = {
@@ -98,7 +98,7 @@ export function AnimationWorkshop({
                             element: 'custom' as const,
                             type: el.animation!.type as Movement['type'],
                             intensity: el.animation!.intensity,
-                            direction: el.animation?.direction as Movement['direction'],
+                            direction: el.animation?.direction as Movement['direction'] | undefined,
                             timing: 'ease' as const,
                             customBounds: el.bounds
                           }))

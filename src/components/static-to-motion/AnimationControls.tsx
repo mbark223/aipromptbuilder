@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { Icons } from '@/components/icons';
 import { Movement } from '@/types';
 
 interface AnimationControlsProps {
