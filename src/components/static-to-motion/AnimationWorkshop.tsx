@@ -9,7 +9,7 @@ import { FormatSelector } from './FormatSelector';
 import { AnimationTemplates } from './AnimationTemplates';
 import { AssetGrid } from './AssetGrid';
 import { PreviewPanel } from './PreviewPanel';
-import { ElementSelector, type CustomElement } from './ElementSelector';
+import { ElementSelectorV2 as ElementSelector, type CustomElement } from './ElementSelectorV2';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
 
