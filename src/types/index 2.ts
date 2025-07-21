@@ -67,7 +67,7 @@ export interface ExportConfig {
   platform: 'veo' | 'flows' | 'generic';
   format: 'json' | 'csv' | 'txt';
   includeMetadata: boolean;
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
 }
 
 export interface ConsistencySettings {
