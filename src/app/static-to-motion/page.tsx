@@ -8,7 +8,7 @@ import { AnimationTemplates } from '@/components/static-to-motion/AnimationTempl
 import { AnimationWorkshop } from '@/components/static-to-motion/AnimationWorkshop';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
-import { PRESET_FORMATS, ANIMATION_TEMPLATES } from '@/types';
+import { ANIMATION_TEMPLATES } from '@/types';
 
 // Default model (Veo-3-Fast)
 const DEFAULT_MODEL: AnimationModel = {
@@ -53,7 +53,7 @@ export default function StaticToMotionPage() {
   const [selectedFormats, setSelectedFormats] = useState<Format[]>([]);
   const [selectedAnimation, setSelectedAnimation] = useState<AnimationProfile>(ANIMATION_TEMPLATES[0]);
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(DEFAULT_MODEL);
-  const [modelInputs, setModelInputs] = useState<Record<string, any>>({});
+  const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'upload' | 'workshop' | 'queue'>('upload');
 

@@ -81,8 +81,8 @@ export class ReplicateService {
     return versions[modelId] || 'latest';
   }
 
-  private formatInputsForModel(model: AnimationModel, inputs: ReplicateInput): any {
-    const formattedInputs: any = {};
+  private formatInputsForModel(model: AnimationModel, inputs: ReplicateInput): Record<string, string | number | boolean | null> {
+    const formattedInputs: Record<string, string | number | boolean | null> = {};
 
     // Map inputs based on model requirements
     if (model.inputs) {

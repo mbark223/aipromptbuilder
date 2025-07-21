@@ -190,7 +190,7 @@ export interface ModelInput {
   required: boolean;
   placeholder?: string;
   options?: { value: string; label: string }[];
-  defaultValue?: any;
+  defaultValue?: string | number | boolean;
   min?: number;
   max?: number;
 }

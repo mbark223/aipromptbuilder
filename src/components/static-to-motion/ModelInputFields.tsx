@@ -11,8 +11,8 @@ import { useState } from 'react';
 
 interface ModelInputFieldsProps {
   model: AnimationModel;
-  values: Record<string, any>;
-  onChange: (values: Record<string, any>) => void;
+  values: Record<string, string | number | boolean | null>;
+  onChange: (values: Record<string, string | number | boolean | null>) => void;
   imageUrl?: string; // For models that support image-to-video
 }
 
@@ -22,9 +22,9 @@ export function ModelInputFields({
   onChange,
   imageUrl
 }: ModelInputFieldsProps) {
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [_uploadedImage, setUploadedImage] = useState<string | null>(null);
 
-  const handleInputChange = (name: string, value: any) => {
+  const handleInputChange = (name: string, value: string | number | boolean | null) => {
     onChange({
       ...values,
       [name]: value
@@ -50,7 +50,7 @@ export function ModelInputFields({
           return (
             <Textarea
               id={input.name}
-              value={value}
+              value={String(value)}
               onChange={(e) => handleInputChange(input.name, e.target.value)}
               placeholder={input.placeholder}
               className="min-h-[100px]"
@@ -62,7 +62,7 @@ export function ModelInputFields({
           <Input
             id={input.name}
             type="text"
-            value={value}
+            value={String(value)}
             onChange={(e) => handleInputChange(input.name, e.target.value)}
             placeholder={input.placeholder}
             required={input.required}
@@ -74,8 +74,8 @@ export function ModelInputFields({
           <Input
             id={input.name}
             type="number"
-            value={value}
-            onChange={(e) => handleInputChange(input.name, e.target.value ? Number(e.target.value) : '')}
+            value={String(value)}
+            onChange={(e) => handleInputChange(input.name, e.target.value ? Number(e.target.value) : null)}
             placeholder={input.placeholder}
             min={input.min}
             max={input.max}
@@ -86,7 +86,7 @@ export function ModelInputFields({
       case 'select':
         return (
           <Select
-            value={value.toString()}
+            value={String(value)}
             onValueChange={(val) => handleInputChange(input.name, val)}
             required={input.required}
           >
@@ -109,7 +109,7 @@ export function ModelInputFields({
             <input
               type="checkbox"
               id={input.name}
-              checked={value}
+              checked={Boolean(value)}
               onChange={(e) => handleInputChange(input.name, e.target.checked)}
               className="h-4 w-4 rounded border-gray-300"
             />
@@ -128,7 +128,7 @@ export function ModelInputFields({
             {currentImage && (
               <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
                 <img
-                  src={currentImage}
+                  src={String(currentImage)}
                   alt="Selected image"
                   className="w-full h-full object-cover"
                 />

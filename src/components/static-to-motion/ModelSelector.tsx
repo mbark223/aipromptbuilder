@@ -237,7 +237,7 @@ export function ModelSelector({
       case 'fast':
         return <Icons.zap className="h-3 w-3" />;
       case 'moderate':
-        return <Icons.timer className="h-3 w-3" />;
+        return <Icons.clock className="h-3 w-3" />;
       case 'slow':
         return <Icons.clock className="h-3 w-3" />;
       default:

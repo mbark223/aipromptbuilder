@@ -25,8 +25,8 @@ interface AnimationWorkshopProps {
   onSelectAnimation: (animation: AnimationProfile) => void;
   selectedModel: AnimationModel;
   onSelectModel: (model: AnimationModel) => void;
-  modelInputs: Record<string, any>;
-  onModelInputsChange: (inputs: Record<string, any>) => void;
+  modelInputs: Record<string, string | number | boolean | null>;
+  onModelInputsChange: (inputs: Record<string, string | number | boolean | null>) => void;
   onStartProcessing: () => void;
 }
 

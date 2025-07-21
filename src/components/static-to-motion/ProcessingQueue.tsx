@@ -13,7 +13,7 @@ interface ProcessingQueueProps {
   queue: QueueItem[];
   onUpdateQueue: (queue: QueueItem[]) => void;
   model: AnimationModel;
-  modelInputs: Record<string, any>;
+  modelInputs: Record<string, string | number | boolean | null>;
 }
 
 export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: ProcessingQueueProps) {
@@ -49,6 +49,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
       try {
         // Process the video generation
         const result = await replicateService.generateVideo(model, {
+          prompt: (modelInputs.prompt as string) || 'Generate a video',
           ...modelInputs,
           image: processingItem.asset.originalFile.url
         });
