@@ -7,14 +7,53 @@ import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
 import { AnimationTemplates } from '@/components/static-to-motion/AnimationTemplates';
 import { AnimationWorkshop } from '@/components/static-to-motion/AnimationWorkshop';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
-import { StaticAsset, AnimationProfile, Format, QueueItem } from '@/types';
+import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
 import { PRESET_FORMATS, ANIMATION_TEMPLATES } from '@/types';
+
+// Default model (Veo-3-Fast)
+const DEFAULT_MODEL: AnimationModel = {
+  id: 'google-veo-3-fast',
+  name: 'Veo-3-Fast',
+  provider: 'Google',
+  description: 'Faster/cheaper option with native audio support',
+  capabilities: ['Text-to-Video', 'Native Audio', 'Fast Generation'],
+  speed: 'fast',
+  quality: 'high',
+  costPerGeneration: 0,
+  replicateId: 'google/veo-3-fast',
+  pricing: 'Faster/Cheaper',
+  inputs: [
+    {
+      name: 'prompt',
+      type: 'text',
+      label: 'Prompt',
+      required: true,
+      placeholder: 'Describe the video you want to generate...'
+    },
+    {
+      name: 'negative_prompt',
+      type: 'text',
+      label: 'Negative Prompt',
+      required: false,
+      placeholder: 'What to avoid in the generation...'
+    },
+    {
+      name: 'seed',
+      type: 'number',
+      label: 'Seed',
+      required: false,
+      placeholder: 'Random seed for reproducibility'
+    }
+  ]
+};
 
 export default function StaticToMotionPage() {
   const [assets, setAssets] = useState<StaticAsset[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
   const [selectedFormats, setSelectedFormats] = useState<Format[]>([]);
   const [selectedAnimation, setSelectedAnimation] = useState<AnimationProfile>(ANIMATION_TEMPLATES[0]);
+  const [selectedModel, setSelectedModel] = useState<AnimationModel>(DEFAULT_MODEL);
+  const [modelInputs, setModelInputs] = useState<Record<string, any>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'upload' | 'workshop' | 'queue'>('upload');
 
@@ -100,6 +139,10 @@ export default function StaticToMotionPage() {
             onSelectFormats={setSelectedFormats}
             selectedAnimation={selectedAnimation}
             onSelectAnimation={setSelectedAnimation}
+            selectedModel={selectedModel}
+            onSelectModel={setSelectedModel}
+            modelInputs={modelInputs}
+            onModelInputsChange={setModelInputs}
             onStartProcessing={handleStartProcessing}
           />
         </TabsContent>
@@ -108,6 +151,8 @@ export default function StaticToMotionPage() {
           <ProcessingQueue
             queue={processingQueue}
             onUpdateQueue={setProcessingQueue}
+            model={selectedModel}
+            modelInputs={modelInputs}
           />
         </TabsContent>
       </Tabs>

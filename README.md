@@ -1,6 +1,6 @@
 # AI Prompt Builder for Video Generation
 
-A Next.js application for creating, managing, and optimizing prompts for AI video generation platforms like Veo and Flows.
+A Next.js application for creating, managing, and optimizing prompts for AI video generation platforms like Veo and Flows, with integrated Replicate API support for video generation.
 
 ## Features
 
@@ -10,6 +10,17 @@ A Next.js application for creating, managing, and optimizing prompts for AI vide
 - **Consistency Engine**: Maintain visual coherence with seed IDs, locked parameters, and color palettes
 - **Project Organization**: Group prompts by projects for better management
 - **Export Options**: Export to JSON, CSV, or TXT formats for different platforms
+
+### Static-to-Motion Converter
+- **Replicate API Integration**: Generate videos using state-of-the-art models
+- **Multiple Model Support**:
+  - Google Veo-3-Fast (Text-to-Video with native audio)
+  - Google Veo-3 (Premium quality with native audio)
+  - ByteDance Seedance-1-Pro (Image-to-Video support, $0.40/second)
+  - MiniMax Hailuo-02 (Excellent physics simulation)
+- **Dynamic Input Fields**: Model-specific parameters automatically adjust
+- **Batch Processing**: Queue multiple videos for generation
+- **Real-time Progress**: Track generation status and download results
 
 ### User Interface
 - Clean, modern design with shadcn/ui components
@@ -44,12 +55,21 @@ cd aipromptbuilder
 npm install
 ```
 
-3. Run the development server:
+3. Configure Replicate API (for video generation):
+```bash
+# Copy the example environment file
+cp .env.local.example .env.local
+
+# Edit .env.local and add your Replicate API token
+# Get your token from: https://replicate.com/account/api-tokens
+```
+
+4. Run the development server:
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Usage
 
@@ -70,21 +90,38 @@ npm run dev
 3. Choose your platform and format
 4. Download the exported file
 
+### Using Static-to-Motion Converter
+1. Navigate to the Static-to-Motion page
+2. Upload your static images
+3. Select an AI model:
+   - **Veo-3-Fast**: Fastest option with native audio
+   - **Veo-3**: Premium quality with audio
+   - **Seedance-1-Pro**: Supports image-to-video conversion
+   - **Hailuo-02**: Best for realistic physics
+4. Configure model-specific parameters
+5. Choose animation style and output formats
+6. Start processing and monitor the queue
+7. Download generated videos when complete
+
 ## Project Structure
 
 ```
 src/
 ├── app/              # Next.js app router pages
+│   ├── api/         # API routes (Replicate integration)
+│   └── static-to-motion/ # Video generation page
 ├── components/       # React components
 │   ├── consistency/  # Consistency engine components
 │   ├── format/       # Format selection components
 │   ├── layout/       # Layout components
 │   ├── prompt/       # Prompt builder components
+│   ├── static-to-motion/ # Video generation components
 │   └── ui/          # shadcn/ui components
 ├── hooks/           # Custom React hooks
 ├── store/           # Zustand store
 ├── types/           # TypeScript type definitions
 └── lib/             # Utility functions
+    └── replicate.ts # Replicate API service
 ```
 
 ## Development

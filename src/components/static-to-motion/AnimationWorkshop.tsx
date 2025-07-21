@@ -1,6 +1,6 @@
 'use client';
 
-import { StaticAsset, AnimationProfile, Format } from '@/types';
+import { StaticAsset, AnimationProfile, Format, AnimationModel } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,8 @@ import { AnimationTemplates } from './AnimationTemplates';
 import { AssetGrid } from './AssetGrid';
 import { PreviewPanelV2 as PreviewPanel } from './PreviewPanelV2';
 import { ElementSelectorV2 as ElementSelector, type CustomElement } from './ElementSelectorV2';
+import { ModelSelector } from './ModelSelector';
+import { ModelInputFields } from './ModelInputFields';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
 
@@ -21,6 +23,10 @@ interface AnimationWorkshopProps {
   onSelectFormats: (formats: Format[]) => void;
   selectedAnimation: AnimationProfile;
   onSelectAnimation: (animation: AnimationProfile) => void;
+  selectedModel: AnimationModel;
+  onSelectModel: (model: AnimationModel) => void;
+  modelInputs: Record<string, any>;
+  onModelInputsChange: (inputs: Record<string, any>) => void;
   onStartProcessing: () => void;
 }
 
@@ -32,6 +38,10 @@ export function AnimationWorkshop({
   onSelectFormats,
   selectedAnimation,
   onSelectAnimation,
+  selectedModel,
+  onSelectModel,
+  modelInputs,
+  onModelInputsChange,
   onStartProcessing
 }: AnimationWorkshopProps) {
   const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
@@ -52,14 +62,32 @@ export function AnimationWorkshop({
         </Card>
 
         <Card className="p-6">
-          <Tabs defaultValue="formats" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
+          <Tabs defaultValue="model" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="model">Model</TabsTrigger>
+              <TabsTrigger value="inputs">Inputs</TabsTrigger>
               <TabsTrigger value="formats">Formats</TabsTrigger>
               <TabsTrigger value="animation">Animation</TabsTrigger>
               <TabsTrigger value="elements" disabled={selectedAnimation.id !== 'custom-elements'}>
                 Elements
               </TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="model" className="space-y-4">
+              <ModelSelector
+                selectedModel={selectedModel}
+                onSelectModel={onSelectModel}
+              />
+            </TabsContent>
+            
+            <TabsContent value="inputs" className="space-y-4">
+              <ModelInputFields
+                model={selectedModel}
+                values={modelInputs}
+                onChange={onModelInputsChange}
+                imageUrl={primaryAsset?.originalFile.url}
+              />
+            </TabsContent>
             
             <TabsContent value="formats" className="space-y-4">
               <FormatSelector

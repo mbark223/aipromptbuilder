@@ -6,16 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Icons } from '@/components/icons';
 import { useEffect } from 'react';
-
-import { QueueItem } from '@/types';
+import { createReplicateService } from '@/lib/replicate';
+import { QueueItem, AnimationModel } from '@/types';
 
 interface ProcessingQueueProps {
   queue: QueueItem[];
   onUpdateQueue: (queue: QueueItem[]) => void;
+  model: AnimationModel;
+  modelInputs: Record<string, any>;
 }
 
-export function ProcessingQueue({ queue, onUpdateQueue }: ProcessingQueueProps) {
-  // Simulate processing
+export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: ProcessingQueueProps) {
+  // Process queue items with Replicate API
   useEffect(() => {
     const processingItem = queue.find(item => item.status === 'processing');
     
@@ -26,7 +28,7 @@ export function ProcessingQueue({ queue, onUpdateQueue }: ProcessingQueueProps) 
         onUpdateQueue(
           queue.map(item => 
             item.id === pendingItem.id 
-              ? { ...item, status: 'processing' as const }
+              ? { ...item, status: 'processing' as const, startTime: new Date() }
               : item
           )
         );
@@ -34,35 +36,92 @@ export function ProcessingQueue({ queue, onUpdateQueue }: ProcessingQueueProps) 
       return;
     }
 
-    // Simulate progress
-    const interval = setInterval(() => {
-      onUpdateQueue(
-        queue.map(item => {
-          if (item.id === processingItem.id && item.status === 'processing') {
-            const newProgress = Math.min(item.progress + 10, 100);
-            
-            if (newProgress >= 100) {
-              // Complete processing
+    // Process with Replicate API
+    const processItem = async () => {
+      const replicateService = createReplicateService();
+      
+      if (!replicateService || !model.replicateId) {
+        // Fallback to simulation if no API key or model doesn't support Replicate
+        simulateProcessing();
+        return;
+      }
+
+      try {
+        // Process the video generation
+        const result = await replicateService.generateVideo(model, {
+          ...modelInputs,
+          image: processingItem.asset.originalFile.url
+        });
+
+        // Update queue with success
+        onUpdateQueue(
+          queue.map(item => {
+            if (item.id === processingItem.id) {
               return {
                 ...item,
                 progress: 100,
                 status: 'completed' as const,
-                outputs: item.formats.map(format => ({
-                  format: format.name,
-                  url: '#' // This would be the actual generated video URL
-                }))
+                endTime: new Date(),
+                outputs: [{
+                  format: 'Generated Video',
+                  url: result.videoUrl
+                }]
               };
             }
-            
-            return { ...item, progress: newProgress };
-          }
-          return item;
-        })
-      );
-    }, 500);
+            return item;
+          })
+        );
+      } catch (error) {
+        // Update queue with error
+        onUpdateQueue(
+          queue.map(item => {
+            if (item.id === processingItem.id) {
+              return {
+                ...item,
+                status: 'failed' as const,
+                error: error instanceof Error ? error.message : 'Processing failed',
+                endTime: new Date()
+              };
+            }
+            return item;
+          })
+        );
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [queue, onUpdateQueue]);
+    // Simulate progress for demo purposes
+    const simulateProcessing = () => {
+      const interval = setInterval(() => {
+        onUpdateQueue(
+          queue.map(item => {
+            if (item.id === processingItem.id && item.status === 'processing') {
+              const newProgress = Math.min(item.progress + 10, 100);
+              
+              if (newProgress >= 100) {
+                // Complete processing
+                return {
+                  ...item,
+                  progress: 100,
+                  status: 'completed' as const,
+                  outputs: item.formats.map(format => ({
+                    format: format.name,
+                    url: '#demo-video-url' // Demo URL
+                  }))
+                };
+              }
+              
+              return { ...item, progress: newProgress };
+            }
+            return item;
+          })
+        );
+      }, 500);
+
+      return () => clearInterval(interval);
+    };
+
+    processItem();
+  }, [queue, onUpdateQueue, model, modelInputs]);
 
   const getStatusIcon = (status: QueueItem['status']) => {
     switch (status) {

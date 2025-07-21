@@ -169,10 +169,37 @@ export interface BrandGuidelines {
   styleGuide?: string;
 }
 
+export interface AnimationModel {
+  id: string;
+  name: string;
+  provider: string;
+  description: string;
+  capabilities: string[];
+  speed: 'fast' | 'moderate' | 'slow';
+  quality: 'good' | 'high' | 'very-high';
+  costPerGeneration: number;
+  replicateId?: string;
+  pricing?: string;
+  inputs?: ModelInput[];
+}
+
+export interface ModelInput {
+  name: string;
+  type: 'text' | 'number' | 'select' | 'boolean' | 'image';
+  label: string;
+  required: boolean;
+  placeholder?: string;
+  options?: { value: string; label: string }[];
+  defaultValue?: any;
+  min?: number;
+  max?: number;
+}
+
 export interface BatchProcess {
   assets: StaticAsset[];
   targetFormats: Format[];
   animationProfile: AnimationProfile;
+  model: AnimationModel;
   options: {
     preserveFocalPoint: boolean;
     aiEdgeExtension: boolean;
