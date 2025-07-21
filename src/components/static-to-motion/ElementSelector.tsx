@@ -212,7 +212,7 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
         <h4 className="font-medium mb-3">Selected Elements</h4>
         {elements.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Click "Select Element" and draw a box around elements to animate
+            Click &quot;Select Element&quot; and draw a box around elements to animate
           </p>
         ) : (
           <div className="space-y-2">

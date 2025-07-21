@@ -12,6 +12,7 @@ import { PreviewPanel } from './PreviewPanel';
 import { ElementSelector } from './ElementSelector';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
+import type { Movement } from '@/types';
 
 interface AnimationWorkshopProps {
   assets: StaticAsset[];
@@ -36,7 +37,12 @@ export function AnimationWorkshop({
 }: AnimationWorkshopProps) {
   const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
   const primaryAsset = selectedAssetObjects[0];
-  const [customElements, setCustomElements] = useState<any[]>([]);
+  const [customElements, setCustomElements] = useState<Array<{
+    id: string;
+    name: string;
+    bounds: { x: number; y: number; width: number; height: number };
+    animation?: { type: string; intensity: number; direction?: string };
+  }>>([]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -90,9 +96,9 @@ export function AnimationWorkshop({
                           .filter(el => el.animation)
                           .map(el => ({
                             element: 'custom' as const,
-                            type: el.animation!.type as any,
+                            type: el.animation!.type as Movement['type'],
                             intensity: el.animation!.intensity,
-                            direction: el.animation!.direction as any,
+                            direction: el.animation?.direction as Movement['direction'],
                             timing: 'ease' as const,
                             customBounds: el.bounds
                           }))
