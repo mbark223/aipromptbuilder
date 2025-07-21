@@ -1,8 +1,11 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { AnimationProfile, ANIMATION_TEMPLATES } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons';
 
 interface AnimationTemplatesProps {
@@ -29,9 +32,54 @@ export function AnimationTemplates({
   selectedAnimation,
   onSelectAnimation
 }: AnimationTemplatesProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState<'all' | 'subtle' | 'moderate' | 'dynamic'>('all');
+
+  const filteredTemplates = useMemo(() => {
+    return ANIMATION_TEMPLATES.filter(template => {
+      const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = selectedType === 'all' || template.type === selectedType;
+      return matchesSearch && matchesType;
+    });
+  }, [searchQuery, selectedType]);
+
+  const templateCounts = useMemo(() => {
+    return {
+      all: ANIMATION_TEMPLATES.length,
+      subtle: ANIMATION_TEMPLATES.filter(t => t.type === 'subtle').length,
+      moderate: ANIMATION_TEMPLATES.filter(t => t.type === 'moderate').length,
+      dynamic: ANIMATION_TEMPLATES.filter(t => t.type === 'dynamic').length
+    };
+  }, []);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {ANIMATION_TEMPLATES.map((template) => (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <Input
+          type="text"
+          placeholder="Search animations..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1"
+        />
+      </div>
+
+      <Tabs value={selectedType} onValueChange={(v) => setSelectedType(v as any)}>
+        <TabsList className="grid grid-cols-4 w-full">
+          <TabsTrigger value="all">All ({templateCounts.all})</TabsTrigger>
+          <TabsTrigger value="subtle">Subtle ({templateCounts.subtle})</TabsTrigger>
+          <TabsTrigger value="moderate">Moderate ({templateCounts.moderate})</TabsTrigger>
+          <TabsTrigger value="dynamic">Dynamic ({templateCounts.dynamic})</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto">
+        {filteredTemplates.length === 0 ? (
+          <div className="col-span-full text-center py-8 text-muted-foreground">
+            No animations found matching "{searchQuery}"
+          </div>
+        ) : (
+          filteredTemplates.map((template) => (
         <Card
           key={template.id}
           className={`
@@ -80,7 +128,9 @@ export function AnimationTemplates({
             </div>
           </div>
         </Card>
-      ))}
+          ))
+        )}
+      </div>
     </div>
   );
 }

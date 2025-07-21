@@ -367,5 +367,869 @@ export const ANIMATION_TEMPLATES: AnimationProfile[] = [
       in: { type: 'zoom', duration: 0.2, easing: 'ease-out' },
       out: { type: 'fade', duration: 0.2, easing: 'ease-in' }
     }
+  },
+  {
+    id: 'gentle-drift',
+    name: 'Gentle Drift',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 1,
+        direction: 'right',
+        timing: 'linear'
+      }
+    ],
+    duration: 8,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'vertical-scroll',
+    name: 'Vertical Scroll',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 5,
+        direction: 'up',
+        timing: 'linear'
+      }
+    ],
+    duration: 4,
+    loop: true,
+    transitions: {
+      in: { type: 'slide', duration: 0.3, easing: 'ease-out' },
+      out: { type: 'slide', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'zoom-burst',
+    name: 'Zoom Burst',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 8,
+        direction: 'in',
+        timing: 'ease-out'
+      }
+    ],
+    duration: 1.5,
+    loop: false,
+    transitions: {
+      in: { type: 'zoom', duration: 0.1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'pendulum-sway',
+    name: 'Pendulum Sway',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 4,
+        timing: 'ease'
+      }
+    ],
+    duration: 4,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'spiral-zoom',
+    name: 'Spiral Zoom',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 6,
+        direction: 'out',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 5,
+        timing: 'linear'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'zoom', duration: 0.3, easing: 'ease-out' },
+      out: { type: 'zoom', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'wave-motion',
+    name: 'Wave Motion',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 5,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 3,
+        timing: 'ease'
+      }
+    ],
+    duration: 3.5,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.4, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.4, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'elastic-bounce',
+    name: 'Elastic Bounce',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 7,
+        direction: 'down',
+        timing: 'ease-out'
+      },
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 4,
+        timing: 'ease'
+      }
+    ],
+    duration: 2,
+    loop: true,
+    transitions: {
+      in: { type: 'slide', duration: 0.2, easing: 'ease-out' },
+      out: { type: 'slide', duration: 0.2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'subtle-rotate',
+    name: 'Subtle Rotate',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 1,
+        timing: 'linear'
+      }
+    ],
+    duration: 10,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'heartbeat-pulse',
+    name: 'Heartbeat Pulse',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 5,
+        timing: 'ease'
+      }
+    ],
+    duration: 1.2,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.2, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'diagonal-slide',
+    name: 'Diagonal Slide',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 4,
+        direction: 'right',
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 4,
+        direction: 'down',
+        timing: 'linear'
+      }
+    ],
+    duration: 5,
+    loop: true,
+    transitions: {
+      in: { type: 'slide', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'slide', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'micro-shake',
+    name: 'Micro Shake',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 1,
+        timing: 'linear'
+      }
+    ],
+    duration: 0.1,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'zoom-rotate',
+    name: 'Zoom & Rotate',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 4,
+        direction: 'in',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 6,
+        timing: 'ease'
+      }
+    ],
+    duration: 4,
+    loop: false,
+    transitions: {
+      in: { type: 'zoom', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'glitch-effect',
+    name: 'Glitch Effect',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 9,
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 8,
+        timing: 'linear'
+      }
+    ],
+    duration: 0.5,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'slow-reveal',
+    name: 'Slow Reveal',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 2,
+        direction: 'out',
+        timing: 'linear'
+      }
+    ],
+    duration: 10,
+    loop: false,
+    transitions: {
+      in: { type: 'fade', duration: 2, easing: 'ease-out' },
+      out: { type: 'fade', duration: 2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'butterfly-float',
+    name: 'Butterfly Float',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 4,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 3,
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 2,
+        direction: 'left',
+        timing: 'ease'
+      }
+    ],
+    duration: 6,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'depth-parallax',
+    name: 'Depth Parallax',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'background',
+        type: 'pan',
+        intensity: 1,
+        direction: 'right',
+        timing: 'linear'
+      },
+      {
+        element: 'foreground',
+        type: 'pan',
+        intensity: 6,
+        direction: 'right',
+        timing: 'linear'
+      },
+      {
+        element: 'background',
+        type: 'zoom',
+        intensity: 1,
+        direction: 'out',
+        timing: 'linear'
+      }
+    ],
+    duration: 8,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'liquid-morph',
+    name: 'Liquid Morph',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 6,
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 4,
+        timing: 'ease'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'cinematic-pan',
+    name: 'Cinematic Pan',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 3,
+        direction: 'right',
+        timing: 'ease'
+      }
+    ],
+    duration: 12,
+    loop: false,
+    transitions: {
+      in: { type: 'fade', duration: 1.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'bounce-zoom',
+    name: 'Bounce Zoom',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 7,
+        direction: 'in',
+        timing: 'ease-out'
+      },
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 3,
+        direction: 'out',
+        timing: 'ease-in'
+      }
+    ],
+    duration: 1.5,
+    loop: true,
+    transitions: {
+      in: { type: 'zoom', duration: 0.2, easing: 'ease-out' },
+      out: { type: 'zoom', duration: 0.2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'ethereal-float',
+    name: 'Ethereal Float',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 2,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 1,
+        timing: 'ease'
+      }
+    ],
+    duration: 6,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 2, easing: 'ease-out' },
+      out: { type: 'fade', duration: 2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'rapid-pulse',
+    name: 'Rapid Pulse',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 8,
+        timing: 'linear'
+      }
+    ],
+    duration: 0.3,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'tilt-shift',
+    name: 'Tilt Shift',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 3,
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 2,
+        direction: 'in',
+        timing: 'ease'
+      }
+    ],
+    duration: 5,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'horizon-drift',
+    name: 'Horizon Drift',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 2,
+        direction: 'left',
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 1,
+        direction: 'down',
+        timing: 'ease'
+      }
+    ],
+    duration: 15,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 2, easing: 'ease-out' },
+      out: { type: 'fade', duration: 2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'vortex-spin',
+    name: 'Vortex Spin',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 10,
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 5,
+        direction: 'in',
+        timing: 'linear'
+      }
+    ],
+    duration: 2,
+    loop: true,
+    transitions: {
+      in: { type: 'zoom', duration: 0.3, easing: 'ease-out' },
+      out: { type: 'zoom', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'gentle-wobble',
+    name: 'Gentle Wobble',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 2,
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 1,
+        direction: 'up',
+        timing: 'ease'
+      }
+    ],
+    duration: 4,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'strobe-flash',
+    name: 'Strobe Flash',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 10,
+        timing: 'linear'
+      }
+    ],
+    duration: 0.1,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'infinity-loop',
+    name: 'Infinity Loop',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 4,
+        direction: 'right',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 4,
+        direction: 'left',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 3,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 3,
+        direction: 'down',
+        timing: 'ease'
+      }
+    ],
+    duration: 8,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'dreamy-fade',
+    name: 'Dreamy Fade',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 3,
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 1,
+        direction: 'out',
+        timing: 'ease'
+      }
+    ],
+    duration: 8,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 3, easing: 'ease-out' },
+      out: { type: 'fade', duration: 3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'earthquake-shake',
+    name: 'Earthquake Shake',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 8,
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 6,
+        direction: 'up',
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 6,
+        direction: 'down',
+        timing: 'linear'
+      }
+    ],
+    duration: 1,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'smooth-transition',
+    name: 'Smooth Transition',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 5,
+        direction: 'right',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 3,
+        direction: 'in',
+        timing: 'ease'
+      }
+    ],
+    duration: 6,
+    loop: false,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'hypnotic-spiral',
+    name: 'Hypnotic Spiral',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 7,
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 4,
+        direction: 'in',
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 3,
+        timing: 'linear'
+      }
+    ],
+    duration: 5,
+    loop: true,
+    transitions: {
+      in: { type: 'zoom', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'zoom', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'ocean-wave',
+    name: 'Ocean Wave',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 4,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 2,
+        direction: 'right',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 4,
+        direction: 'down',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 2,
+        direction: 'left',
+        timing: 'ease'
+      }
+    ],
+    duration: 7,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'neon-flicker',
+    name: 'Neon Flicker',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 9,
+        timing: 'linear'
+      }
+    ],
+    duration: 0.2,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'fade', duration: 0.1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'vintage-film',
+    name: 'Vintage Film',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'full',
+        type: 'sway',
+        intensity: 1,
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 2,
+        timing: 'linear'
+      }
+    ],
+    duration: 1,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.2, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.2, easing: 'ease-in' }
+    }
   }
 ];
