@@ -287,7 +287,11 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
               <Select
                 value={selectedEl.animation?.type || ''}
                 onValueChange={(value) => updateElement(selectedEl.id, {
-                  animation: { ...selectedEl.animation, type: value }
+                  animation: { 
+                    type: value,
+                    intensity: selectedEl.animation?.intensity || 5,
+                    direction: selectedEl.animation?.direction
+                  }
                 })}
               >
                 <SelectTrigger>
@@ -312,7 +316,11 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
                   <Slider
                     value={[selectedEl.animation.intensity || 5]}
                     onValueChange={([value]) => updateElement(selectedEl.id, {
-                      animation: { ...selectedEl.animation, intensity: value }
+                      animation: { 
+                        type: selectedEl.animation.type,
+                        intensity: value,
+                        direction: selectedEl.animation.direction
+                      }
                     })}
                     min={1}
                     max={10}
@@ -329,7 +337,11 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
                     <Select
                       value={selectedEl.animation.direction || ''}
                       onValueChange={(value) => updateElement(selectedEl.id, {
-                        animation: { ...selectedEl.animation, direction: value }
+                        animation: { 
+                          type: selectedEl.animation.type,
+                          intensity: selectedEl.animation.intensity,
+                          direction: value
+                        }
                       })}
                     >
                       <SelectTrigger>
