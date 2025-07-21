@@ -7,6 +7,7 @@ import { FormatPreview } from '@/components/format/FormatPreview';
 import { PromptBuilder } from '@/components/prompt/PromptBuilder';
 import { ConsistencyPanel } from '@/components/consistency/ConsistencyPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { QuickSuggestions } from '@/components/prompt/QuickSuggestions';
 import type { Format, ConsistencySettings } from '@/types';
 
 export default function Home() {
@@ -46,8 +47,9 @@ export default function Home() {
                   consistency={consistencySettings}
                 />
               </div>
-              <div>
+              <div className="space-y-6">
                 <FormatPreview format={selectedFormat} />
+                <QuickSuggestions />
               </div>
             </div>
           </TabsContent>

@@ -11,6 +11,13 @@ import { useToast } from '@/hooks/use-toast';
 import { PromptSection } from './PromptSection';
 import { type Format, type ConsistencySettings } from '@/types';
 import { generateOptimizedPrompt, enhancePrompt } from '@/lib/promptGenerator';
+import { 
+  SUBJECT_SUGGESTIONS, 
+  MOTION_SUGGESTIONS, 
+  TECHNICAL_SUGGESTIONS,
+  ATMOSPHERE_SUGGESTIONS,
+  COLOR_PALETTE_SUGGESTIONS 
+} from '@/lib/bettingSuggestions';
 
 const STYLE_SUGGESTIONS = [
   'photorealistic',
@@ -21,6 +28,18 @@ const STYLE_SUGGESTIONS = [
   'retro',
   'futuristic',
   'artistic',
+  'vegas neon aesthetic',
+  'luxury casino atmosphere',
+  'high-stakes dramatic',
+  'sports arena energy',
+  'championship celebration',
+  'premium betting lounge',
+  'digital sports ticker',
+  'golden winner glow',
+  'jackpot celebration',
+  'sports broadcast style',
+  'casino floor excitement',
+  'VIP exclusive feel',
 ];
 
 const LIGHTING_SUGGESTIONS = [
@@ -32,6 +51,18 @@ const LIGHTING_SUGGESTIONS = [
   'natural daylight',
   'studio lighting',
   'candlelit',
+  'casino floor glow',
+  'slot machine lights',
+  'sports stadium floodlights',
+  'jackpot spotlight',
+  'roulette table ambiance',
+  'poker table overhead',
+  'sportsbook screen glow',
+  'winner celebration lights',
+  'championship ceremony lighting',
+  'luxury gold lighting',
+  'neon casino signage',
+  'dramatic win moment lighting',
 ];
 
 const COMPOSITION_SUGGESTIONS = [
@@ -43,6 +74,18 @@ const COMPOSITION_SUGGESTIONS = [
   'centered',
   'dutch angle',
   'over-the-shoulder',
+  'betting slip close-up',
+  'casino table overhead',
+  'slot machine face-on',
+  'sports crowd reaction',
+  'winner celebration shot',
+  'dealer POV',
+  'player hands reveal',
+  'scoreboard focus',
+  'odds display zoom',
+  'chip stack close-up',
+  'roulette wheel spin',
+  'cards dealing sequence',
 ];
 
 interface PromptBuilderProps {
@@ -129,6 +172,7 @@ export function PromptBuilder({ format, consistency }: PromptBuilderProps) {
               placeholder="Describe the main subject and key elements of your video"
               required
               maxLength={300}
+              suggestions={SUBJECT_SUGGESTIONS.slice(0, 8)}
             />
             
             <PromptSection
@@ -167,6 +211,7 @@ export function PromptBuilder({ format, consistency }: PromptBuilderProps) {
               onChange={(value) => handleSectionChange('motion', value)}
               placeholder="Add any specific motion or animation details"
               maxLength={200}
+              suggestions={MOTION_SUGGESTIONS.slice(0, 8)}
             />
             
             <PromptSection
@@ -176,6 +221,7 @@ export function PromptBuilder({ format, consistency }: PromptBuilderProps) {
               placeholder="Include any technical requirements or specifications"
               required
               maxLength={200}
+              suggestions={TECHNICAL_SUGGESTIONS.slice(0, 8)}
             />
           </TabsContent>
           
