@@ -96,14 +96,14 @@ export function FormatSelector({
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">
-                    {format.name}
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">{format.name}</span>
                     {format.custom && selectedAssets.length > 0 && (
-                      <Badge variant="outline" className="ml-1 text-xs">
+                      <Badge variant="outline" className="text-xs">
                         Original
                       </Badge>
                     )}
-                  </span>
+                  </div>
                   {isSelected && (
                     <div className="rounded-full bg-primary p-1">
                       <Icons.check className="h-3 w-3 text-primary-foreground" />
