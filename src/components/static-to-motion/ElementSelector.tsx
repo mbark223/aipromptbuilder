@@ -15,6 +15,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import type { Movement } from '@/types';
+
+interface AnimationConfig {
+  type: Movement['type'];
+  intensity: number;
+  direction?: Movement['direction'];
+}
 
 interface Element {
   id: string;
@@ -25,11 +32,7 @@ interface Element {
     width: number;
     height: number;
   };
-  animation?: {
-    type: string;
-    intensity: number;
-    direction?: string;
-  };
+  animation?: AnimationConfig;
 }
 
 interface ElementSelectorProps {
