@@ -225,6 +225,116 @@ const AVAILABLE_MODELS: AnimationModel[] = [
         defaultValue: true
       }
     ]
+  },
+  {
+    id: 'runway-gen-3',
+    name: 'Gen-3',
+    provider: 'Runway',
+    description: 'High-fidelity video generation with advanced creative control',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Creative Control', 'High Fidelity'],
+    speed: 'moderate',
+    quality: 'very-high',
+    costPerGeneration: 0.75,
+    replicateId: 'runway/gen-3',
+    pricing: '$0.75/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'First Frame Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video'
+      },
+      {
+        name: 'duration',
+        type: 'select',
+        label: 'Duration',
+        required: true,
+        options: [
+          { value: '5', label: '5 seconds' },
+          { value: '10', label: '10 seconds' }
+        ],
+        defaultValue: '5'
+      },
+      {
+        name: 'motion_amount',
+        type: 'select',
+        label: 'Motion Amount',
+        required: false,
+        options: [
+          { value: 'low', label: 'Low' },
+          { value: 'medium', label: 'Medium' },
+          { value: 'high', label: 'High' }
+        ],
+        defaultValue: 'medium'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
+  },
+  {
+    id: 'luma-dream-machine',
+    name: 'Luma Dream Machine',
+    provider: 'Luma AI',
+    description: 'Fast, high-quality video generation with consistent motion',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Fast Generation', 'Consistent Motion'],
+    speed: 'fast',
+    quality: 'high',
+    costPerGeneration: 0.50,
+    replicateId: 'luma/dream-machine',
+    pricing: '$0.50/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'First Frame Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video'
+      },
+      {
+        name: 'duration',
+        type: 'select',
+        label: 'Duration',
+        required: true,
+        options: [
+          { value: '5', label: '5 seconds' }
+        ],
+        defaultValue: '5'
+      },
+      {
+        name: 'enhance_prompt',
+        type: 'boolean',
+        label: 'Enhance Prompt',
+        required: false,
+        defaultValue: true
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
   }
 ];
 
