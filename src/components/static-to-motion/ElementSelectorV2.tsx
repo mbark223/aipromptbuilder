@@ -372,7 +372,7 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
                   animation: {
                     type: anim.value as Movement['type'],
                     intensity: selectedEl.animation?.intensity || 5,
-                    direction: anim.hasDirection ? 
+                    direction: anim.hasDirection && anim.directions && anim.directions.length > 0 ? 
                       (anim.directions[0] as Movement['direction']) : undefined
                   }
                 })}
@@ -418,7 +418,7 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
               </div>
 
               {/* Direction Buttons */}
-              {selectedAnimationType?.hasDirection && (
+              {selectedAnimationType?.hasDirection && selectedAnimationType.directions && (
                 <div className="space-y-2">
                   <Label>Direction</Label>
                   <div className="grid grid-cols-2 gap-2">
