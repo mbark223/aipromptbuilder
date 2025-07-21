@@ -34,7 +34,16 @@ interface ElementSelectorProps {
 }
 
 // Animation descriptions for beginners
-const ANIMATION_TYPES = [
+type AnimationType = {
+  value: string;
+  label: string;
+  icon: string;
+  description: string;
+  hasDirection: boolean;
+  directions?: string[];
+};
+
+const ANIMATION_TYPES: AnimationType[] = [
   { 
     value: 'rotate', 
     label: 'Rotate', 
