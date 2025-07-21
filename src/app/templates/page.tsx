@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePromptBuilderStore } from '@/store/prompt-builder';
 
 const TEMPLATE_CATEGORIES = [
   { id: 'sportsbook', name: 'Sportsbook', icon: '🏈' },
@@ -292,30 +291,22 @@ interface TemplateData {
 function TemplateCard({ template }: { template: TemplateData }) {
   const router = useRouter();
   const category = TEMPLATE_CATEGORIES.find((c) => c.id === template.category);
-  const setPromptData = usePromptBuilderStore((state) => state.setPromptData);
 
   const handleUseTemplate = () => {
-    // Set the template data in the prompt builder store
-    setPromptData({
+    // Create query parameters with template data
+    const params = new URLSearchParams({
+      templateId: template.id,
+      templateName: template.name,
       subject: template.content.subject,
       style: template.content.style,
       composition: template.content.composition,
       lighting: template.content.lighting,
       motion: template.content.motion || '',
-      technical: template.content.technical,
-      color: '',
-      atmosphere: '',
-      cameraWork: '',
-      postProcessing: '',
-      aspect: '16:9',
-      duration: '15-30 seconds',
-      format: 'video/mp4',
-      resolution: '1920x1080',
-      frameRate: '30fps'
+      technical: template.content.technical
     });
     
-    // Navigate to the prompt builder
-    router.push('/prompts');
+    // Navigate to the prompt builder with template data in URL
+    router.push(`/prompts?${params.toString()}`);
   };
 
   return (
