@@ -305,7 +305,7 @@ function TemplateCard({ template }: { template: TemplateData }) {
       technical: template.content.technical
     });
     
-    // Navigate to the prompt builder with template data in URL
+    // Navigate to the prompt builder page with template data in URL
     router.push(`/prompts?${params.toString()}`);
   };
 
