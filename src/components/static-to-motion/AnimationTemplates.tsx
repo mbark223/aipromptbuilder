@@ -5,7 +5,7 @@ import { AnimationProfile, ANIMATION_TEMPLATES, Movement } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Icons } from '@/components/icons';
 
 interface AnimationTemplatesProps {
@@ -93,7 +93,7 @@ export function AnimationTemplates({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto">
         {filteredTemplates.length === 0 ? (
           <div className="col-span-full text-center py-8 text-muted-foreground">
-            No animations found matching "{searchQuery}"
+            No animations found matching &quot;{searchQuery}&quot;
           </div>
         ) : (
           filteredTemplates.map((template) => (
@@ -113,7 +113,7 @@ export function AnimationTemplates({
               <h3 className="font-semibold">{template.name}</h3>
               <Badge 
                 variant={template.type === 'subtle' ? 'secondary' : 
-                        template.type === 'moderate' ? 'default' : 'destructive'}
+                        template.type === 'moderate' ? 'default' : 'destructive' as 'secondary' | 'default' | 'destructive'}
               >
                 {template.type}
               </Badge>
