@@ -22,6 +22,18 @@ export default function StaticToMotionPage() {
     setAssets([...assets, ...newAssets]);
     if (newAssets.length > 0) {
       setSelectedAssets([newAssets[0].id]);
+      
+      // Set the original format as default
+      const firstAsset = newAssets[0];
+      const originalFormat: Format = {
+        aspectRatio: firstAsset.originalFile.dimensions.aspectRatio,
+        width: firstAsset.originalFile.dimensions.width,
+        height: firstAsset.originalFile.dimensions.height,
+        name: 'Original',
+        custom: true
+      };
+      setSelectedFormats([originalFormat]);
+      
       setActiveView('workshop');
     }
   };

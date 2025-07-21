@@ -59,6 +59,7 @@ export function AnimationWorkshop({
               <FormatSelector
                 selectedFormats={selectedFormats}
                 onSelectFormats={onSelectFormats}
+                selectedAssets={selectedAssetObjects}
               />
             </TabsContent>
             

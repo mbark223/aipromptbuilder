@@ -1,26 +1,62 @@
 'use client';
 
-import { Format, PRESET_FORMATS } from '@/types';
+import { Format, PRESET_FORMATS, StaticAsset } from '@/types';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
+import { useMemo } from 'react';
 
 interface FormatSelectorProps {
   selectedFormats: Format[];
   onSelectFormats: (formats: Format[]) => void;
   multiSelect?: boolean;
+  selectedAssets?: StaticAsset[];
 }
 
 export function FormatSelector({
   selectedFormats,
   onSelectFormats,
-  multiSelect = true
+  multiSelect = true,
+  selectedAssets = []
 }: FormatSelectorProps) {
+  // Create original size formats from selected assets
+  const originalFormats = useMemo(() => {
+    const uniqueFormats: Format[] = [];
+    const seen = new Set<string>();
+    
+    selectedAssets.forEach(asset => {
+      const { width, height, aspectRatio } = asset.originalFile.dimensions;
+      const key = `${width}x${height}`;
+      
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueFormats.push({
+          aspectRatio,
+          width,
+          height,
+          name: 'Original',
+          custom: true
+        });
+      }
+    });
+    
+    return uniqueFormats;
+  }, [selectedAssets]);
+
+  // Combine preset formats with original formats
+  const allFormats = useMemo(() => {
+    return [...originalFormats, ...PRESET_FORMATS];
+  }, [originalFormats]);
+
   const handleFormatClick = (format: Format) => {
     if (multiSelect) {
-      const isSelected = selectedFormats.some(f => f.aspectRatio === format.aspectRatio);
+      const isSelected = selectedFormats.some(f => 
+        f.width === format.width && f.height === format.height
+      );
       if (isSelected) {
-        onSelectFormats(selectedFormats.filter(f => f.aspectRatio !== format.aspectRatio));
+        onSelectFormats(selectedFormats.filter(f => 
+          !(f.width === format.width && f.height === format.height)
+        ));
       } else {
         onSelectFormats([...selectedFormats, format]);
       }
@@ -41,12 +77,14 @@ export function FormatSelector({
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {PRESET_FORMATS.map((format) => {
-          const isSelected = selectedFormats.some(f => f.aspectRatio === format.aspectRatio);
+        {allFormats.map((format, index) => {
+          const isSelected = selectedFormats.some(f => 
+            f.width === format.width && f.height === format.height
+          );
           
           return (
             <Card
-              key={format.aspectRatio}
+              key={`${format.width}x${format.height}-${index}`}
               className={`
                 relative p-4 cursor-pointer transition-all duration-200
                 ${isSelected 
@@ -58,7 +96,14 @@ export function FormatSelector({
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{format.name}</span>
+                  <span className="font-medium">
+                    {format.name}
+                    {format.custom && selectedAssets.length > 0 && (
+                      <Badge variant="outline" className="ml-1 text-xs">
+                        Original
+                      </Badge>
+                    )}
+                  </span>
                   {isSelected && (
                     <div className="rounded-full bg-primary p-1">
                       <Icons.check className="h-3 w-3 text-primary-foreground" />
