@@ -320,9 +320,9 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
                     value={[selectedEl.animation.intensity || 5]}
                     onValueChange={([value]) => updateElement(selectedEl.id, {
                       animation: { 
-                        type: selectedEl.animation.type,
+                        type: selectedEl.animation!.type,
                         intensity: value,
-                        direction: selectedEl.animation.direction
+                        direction: selectedEl.animation!.direction
                       }
                     })}
                     min={1}
@@ -341,8 +341,8 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
                       value={selectedEl.animation.direction || ''}
                       onValueChange={(value) => updateElement(selectedEl.id, {
                         animation: { 
-                          type: selectedEl.animation.type,
-                          intensity: selectedEl.animation.intensity,
+                          type: selectedEl.animation!.type,
+                          intensity: selectedEl.animation!.intensity,
                           direction: value as Movement['direction']
                         }
                       })}
