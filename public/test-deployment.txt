@@ -1,0 +1,11 @@
+Deployment Test File
+Created at: 2025-07-21 12:55 PM
+Purpose: Verify GitHub-Vercel connection
+
+If you can see this file at /test-deployment.txt on your deployed site,
+then the deployment pipeline is working correctly.
+
+Latest commits:
+- a8de1f6: Fix TypeScript type casting in ElementSelector
+- 3a2fbe3: Force clean build on Vercel deployment
+- e0561d3: Trigger Vercel deployment
