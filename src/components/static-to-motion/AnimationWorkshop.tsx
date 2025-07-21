@@ -89,14 +89,18 @@ export function AnimationWorkshop({
                         ...selectedAnimation,
                         movements: elements
                           .filter(el => el.animation)
-                          .map(el => ({
-                            element: 'custom' as const,
-                            type: el.animation!.type as Movement['type'],
-                            intensity: el.animation!.intensity,
-                            direction: el.animation?.direction as Movement['direction'] | undefined,
-                            timing: 'ease' as const,
-                            customBounds: el.bounds
-                          }))
+                          .map(el => {
+                            if (!el.animation) return null;
+                            return {
+                              element: 'custom' as const,
+                              type: el.animation.type,
+                              intensity: el.animation.intensity,
+                              direction: el.animation.direction,
+                              timing: 'ease' as const,
+                              customBounds: el.bounds
+                            };
+                          })
+                          .filter((m): m is NonNullable<typeof m> => m !== null)
                       };
                       onSelectAnimation(updatedAnimation);
                     }
