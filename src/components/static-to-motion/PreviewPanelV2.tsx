@@ -231,6 +231,7 @@ function getElementTransform(animation: { type: Movement['type']; intensity: num
   const progressFactor = progress / 100;
   
   switch (animation.type) {
+    // Motion animations
     case 'rotate':
       const rotation = animation.direction === 'counter-clockwise' 
         ? -progressFactor * 360 * (intensity / 10)
@@ -249,11 +250,69 @@ function getElementTransform(animation: { type: Movement['type']; intensity: num
       const swayAngle = intensity * 2 * Math.sin(progressFactor * Math.PI * 2);
       return `rotate(${swayAngle}deg)`;
       
+    case 'bounce':
+      const bounceY = Math.abs(Math.sin(progressFactor * Math.PI * 2)) * intensity * 3;
+      return `translateY(${animation.direction === 'down' ? bounceY : -bounceY}px)`;
+      
+    case 'shake':
+      const shakeX = Math.sin(progressFactor * Math.PI * 10) * intensity * 0.5;
+      return `translateX(${shakeX}px)`;
+      
+    case 'wave':
+      const wavePhase = progressFactor * Math.PI * 2;
+      const waveX = animation.direction === 'left' || animation.direction === 'right' 
+        ? Math.sin(wavePhase) * intensity * 2 : 0;
+      const waveY = animation.direction === 'up' || animation.direction === 'down'
+        ? Math.sin(wavePhase) * intensity * 2 : 0;
+      return `translate(${waveX}px, ${waveY}px)`;
+      
+    // Text animations
+    case 'typewriter':
+      const clipPercent = progressFactor * 100;
+      return `clipPath(inset(0 ${100 - clipPercent}% 0 0))`;
+      
+    case 'fade-in':
+      const fadeOpacity = progressFactor;
+      return `opacity(${fadeOpacity})`;
+      
+    case 'slide-in':
+      const slideDistance = intensity * 10;
+      let slideX = 0, slideY = 0;
+      switch (animation.direction) {
+        case 'left': slideX = slideDistance * (1 - progressFactor); break;
+        case 'right': slideX = -slideDistance * (1 - progressFactor); break;
+        case 'up': slideY = slideDistance * (1 - progressFactor); break;
+        case 'down': slideY = -slideDistance * (1 - progressFactor); break;
+      }
+      return `translate(${slideX}px, ${slideY}px) opacity(${progressFactor})`;
+      
+    case 'blur-in':
+      const blurAmount = intensity * (1 - progressFactor);
+      return `blur(${blurAmount}px) opacity(${progressFactor})`;
+      
+    // Illumination animations
+    case 'glow':
+      const glowIntensity = 0.5 + 0.5 * Math.sin(progressFactor * Math.PI * 2);
+      return `filter(drop-shadow(0 0 ${intensity * glowIntensity}px rgba(255, 255, 150, 0.8)))`;
+      
+    case 'illuminate':
+      const brightness = 1 + (intensity * 0.1 * Math.sin(progressFactor * Math.PI * 2));
+      return `filter(brightness(${brightness}))`;
+      
+    case 'sparkle':
+      const sparkleScale = 1 + (0.1 * Math.sin(progressFactor * Math.PI * 8));
+      const sparkleBrightness = 1 + (0.3 * Math.sin(progressFactor * Math.PI * 12));
+      return `scale(${sparkleScale}) filter(brightness(${sparkleBrightness}))`;
+      
     case 'shimmer':
-      // For shimmer, we'll use opacity
       const shimmerOpacity = 0.7 + 0.3 * Math.sin(progressFactor * Math.PI * 4);
       return `scale(1.02) opacity(${shimmerOpacity})`;
       
+    case 'flicker':
+      const flickerOpacity = 0.5 + 0.5 * (Math.random() > 0.9 ? Math.random() : 1);
+      return `opacity(${flickerOpacity})`;
+      
+    // View animations  
     case 'zoom':
       const scale = animation.direction === 'in' 
         ? 1 + (intensity * 0.02 * progressFactor)

@@ -44,6 +44,7 @@ type AnimationType = {
 };
 
 const ANIMATION_TYPES: AnimationType[] = [
+  // Motion animations
   { 
     value: 'rotate', 
     label: 'Rotate', 
@@ -76,12 +77,95 @@ const ANIMATION_TYPES: AnimationType[] = [
     directions: ['left', 'right']
   },
   { 
+    value: 'bounce', 
+    label: 'Bounce', 
+    icon: '⚡', 
+    description: 'Bouncy motion (balls, playful elements)',
+    hasDirection: true,
+    directions: ['up', 'down']
+  },
+  { 
+    value: 'shake', 
+    label: 'Shake', 
+    icon: '📳', 
+    description: 'Vibrate/shake effect (alerts, emphasis)',
+    hasDirection: false
+  },
+  { 
+    value: 'wave', 
+    label: 'Wave', 
+    icon: '🌊', 
+    description: 'Wavy motion (flags, water, fabric)',
+    hasDirection: true,
+    directions: ['left', 'right', 'up', 'down']
+  },
+  // Text animations
+  { 
+    value: 'typewriter', 
+    label: 'Typewriter', 
+    icon: '⌨️', 
+    description: 'Type text letter by letter',
+    hasDirection: false
+  },
+  { 
+    value: 'fade-in', 
+    label: 'Fade In', 
+    icon: '🌅', 
+    description: 'Gradually appear (text, logos)',
+    hasDirection: false
+  },
+  { 
+    value: 'slide-in', 
+    label: 'Slide In', 
+    icon: '➡️', 
+    description: 'Slide into view (titles, captions)',
+    hasDirection: true,
+    directions: ['left', 'right', 'up', 'down']
+  },
+  { 
+    value: 'blur-in', 
+    label: 'Blur In', 
+    icon: '🔮', 
+    description: 'Focus from blur (dramatic reveals)',
+    hasDirection: false
+  },
+  // Illumination animations
+  { 
+    value: 'glow', 
+    label: 'Glow', 
+    icon: '🔥', 
+    description: 'Soft glowing effect (neon, lights)',
+    hasDirection: false
+  },
+  { 
+    value: 'illuminate', 
+    label: 'Illuminate', 
+    icon: '💡', 
+    description: 'Light up effect (signs, buttons)',
+    hasDirection: false
+  },
+  { 
+    value: 'sparkle', 
+    label: 'Sparkle', 
+    icon: '⭐', 
+    description: 'Twinkling stars effect (jewelry, magic)',
+    hasDirection: false
+  },
+  { 
     value: 'shimmer', 
     label: 'Shimmer', 
     icon: '✨', 
-    description: 'Sparkle and glow (lights, water)',
+    description: 'Shimmering light (water, metal)',
     hasDirection: false
   },
+  { 
+    value: 'flicker', 
+    label: 'Flicker', 
+    icon: '🕯️', 
+    description: 'Flickering light (candles, old signs)',
+    hasDirection: false
+  },
+  // View animations
   { 
     value: 'zoom', 
     label: 'Zoom', 
@@ -382,13 +466,19 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
             <p className="text-xs text-muted-foreground">Select how this element should move</p>
           </div>
           
-          {/* Animation Type Grid */}
-          <div className="grid grid-cols-2 gap-2">
-            {ANIMATION_TYPES.map(anim => (
-              <Button
-                key={anim.value}
-                variant={selectedEl.animation?.type === anim.value ? "default" : "outline"}
-                className="h-auto flex-col items-start justify-start p-3 text-left"
+          {/* Animation Categories */}
+          <div className="space-y-4">
+            {/* Motion Animations */}
+            <div>
+              <h5 className="text-sm font-medium mb-2 text-muted-foreground">Motion Effects</h5>
+              <div className="grid grid-cols-2 gap-2">
+                {ANIMATION_TYPES.filter(anim => 
+                  ['rotate', 'pulse', 'float', 'sway', 'bounce', 'shake', 'wave'].includes(anim.value)
+                ).map(anim => (
+                  <Button
+                    key={anim.value}
+                    variant={selectedEl.animation?.type === anim.value ? "default" : "outline"}
+                    className="h-auto flex-col items-start justify-start p-3 text-left"
                 onClick={() => updateElement(selectedEl.id, {
                   animation: {
                     type: anim.value as Movement['type'],
@@ -397,14 +487,106 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
                       (anim.directions[0] as Movement['direction']) : undefined
                   }
                 })}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">{anim.icon}</span>
-                  <span className="font-medium">{anim.label}</span>
-                </div>
-                <span className="text-xs text-muted-foreground">{anim.description}</span>
-              </Button>
-            ))}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{anim.description}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Text Animations */}
+            <div>
+              <h5 className="text-sm font-medium mb-2 text-muted-foreground">Text Effects</h5>
+              <div className="grid grid-cols-2 gap-2">
+                {ANIMATION_TYPES.filter(anim => 
+                  ['typewriter', 'fade-in', 'slide-in', 'blur-in'].includes(anim.value)
+                ).map(anim => (
+                  <Button
+                    key={anim.value}
+                    variant={selectedEl.animation?.type === anim.value ? "default" : "outline"}
+                    className="h-auto flex-col items-start justify-start p-3 text-left"
+                    onClick={() => updateElement(selectedEl.id, {
+                      animation: {
+                        type: anim.value as Movement['type'],
+                        intensity: selectedEl.animation?.intensity || 5,
+                        direction: anim.hasDirection && anim.directions && anim.directions.length > 0 ? 
+                          (anim.directions[0] as Movement['direction']) : undefined
+                      }
+                    })}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{anim.description}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* Illumination Animations */}
+            <div>
+              <h5 className="text-sm font-medium mb-2 text-muted-foreground">Illumination Effects</h5>
+              <div className="grid grid-cols-2 gap-2">
+                {ANIMATION_TYPES.filter(anim => 
+                  ['glow', 'illuminate', 'sparkle', 'shimmer', 'flicker'].includes(anim.value)
+                ).map(anim => (
+                  <Button
+                    key={anim.value}
+                    variant={selectedEl.animation?.type === anim.value ? "default" : "outline"}
+                    className="h-auto flex-col items-start justify-start p-3 text-left"
+                    onClick={() => updateElement(selectedEl.id, {
+                      animation: {
+                        type: anim.value as Movement['type'],
+                        intensity: selectedEl.animation?.intensity || 5,
+                        direction: anim.hasDirection && anim.directions && anim.directions.length > 0 ? 
+                          (anim.directions[0] as Movement['direction']) : undefined
+                      }
+                    })}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{anim.description}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {/* View Animations */}
+            <div>
+              <h5 className="text-sm font-medium mb-2 text-muted-foreground">View Effects</h5>
+              <div className="grid grid-cols-2 gap-2">
+                {ANIMATION_TYPES.filter(anim => 
+                  ['zoom', 'pan'].includes(anim.value)
+                ).map(anim => (
+                  <Button
+                    key={anim.value}
+                    variant={selectedEl.animation?.type === anim.value ? "default" : "outline"}
+                    className="h-auto flex-col items-start justify-start p-3 text-left"
+                    onClick={() => updateElement(selectedEl.id, {
+                      animation: {
+                        type: anim.value as Movement['type'],
+                        intensity: selectedEl.animation?.intensity || 5,
+                        direction: anim.hasDirection && anim.directions && anim.directions.length > 0 ? 
+                          (anim.directions[0] as Movement['direction']) : undefined
+                      }
+                    })}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{anim.description}</span>
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Animation Controls */}

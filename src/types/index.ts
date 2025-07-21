@@ -143,7 +143,7 @@ export interface AnimationProfile {
 
 export interface Movement {
   element: 'full' | 'background' | 'foreground' | 'specific' | 'water' | 'sky' | 'vegetation' | 'fabric' | 'hair' | 'smoke' | 'fire' | 'particles' | 'custom';
-  type: 'pan' | 'zoom' | 'float' | 'parallax' | 'pulse' | 'sway' | 'ripple' | 'flutter' | 'shimmer' | 'flow' | 'rotate';
+  type: 'pan' | 'zoom' | 'float' | 'parallax' | 'pulse' | 'sway' | 'ripple' | 'flutter' | 'shimmer' | 'flow' | 'rotate' | 'typewriter' | 'fade-in' | 'slide-in' | 'glow' | 'illuminate' | 'sparkle' | 'bounce' | 'shake' | 'wave' | 'blur-in' | 'flicker';
   intensity: number; // 1-10
   direction?: 'up' | 'down' | 'left' | 'right' | 'in' | 'out' | 'radial' | 'circular' | 'clockwise' | 'counter-clockwise';
   timing: 'ease' | 'linear' | 'ease-in' | 'ease-out';
@@ -1577,15 +1577,208 @@ export const ANIMATION_TEMPLATES: AnimationProfile[] = [
     movements: [
       {
         element: 'custom',
-        type: 'shimmer',
-        intensity: 8,
+        type: 'typewriter',
+        intensity: 5,
         timing: 'linear'
       }
     ],
     duration: 2,
     loop: false,
     transitions: {
-      in: { type: 'slide', duration: 0.5, easing: 'ease-out' },
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'neon-glow',
+    name: 'Neon Glow',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'glow',
+        intensity: 7,
+        timing: 'ease'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'illuminate-sign',
+    name: 'Illuminate Sign',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'illuminate',
+        intensity: 6,
+        timing: 'ease'
+      }
+    ],
+    duration: 2,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.3, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'sparkle-magic',
+    name: 'Sparkle Magic',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'custom',
+        type: 'sparkle',
+        intensity: 8,
+        timing: 'ease'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'candle-flicker',
+    name: 'Candle Flicker',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'custom',
+        type: 'flicker',
+        intensity: 4,
+        timing: 'linear'
+      }
+    ],
+    duration: 2,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.2, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.2, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'bounce-playful',
+    name: 'Playful Bounce',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'custom',
+        type: 'bounce',
+        intensity: 6,
+        direction: 'up',
+        timing: 'ease'
+      }
+    ],
+    duration: 2,
+    loop: true,
+    transitions: {
+      in: { type: 'slide', duration: 0.3, easing: 'ease-out' },
+      out: { type: 'slide', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'shake-alert',
+    name: 'Alert Shake',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'shake',
+        intensity: 5,
+        timing: 'linear'
+      }
+    ],
+    duration: 0.5,
+    loop: false,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'wave-flag',
+    name: 'Flag Wave',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'wave',
+        intensity: 4,
+        direction: 'right',
+        timing: 'ease'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'fade-in-elegant',
+    name: 'Elegant Fade In',
+    type: 'subtle',
+    movements: [
+      {
+        element: 'custom',
+        type: 'fade-in',
+        intensity: 5,
+        timing: 'ease'
+      }
+    ],
+    duration: 1.5,
+    loop: false,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'fade', duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'slide-in-dynamic',
+    name: 'Dynamic Slide In',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'slide-in',
+        intensity: 7,
+        direction: 'left',
+        timing: 'ease-out'
+      }
+    ],
+    duration: 1,
+    loop: false,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'blur-focus',
+    name: 'Blur to Focus',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'custom',
+        type: 'blur-in',
+        intensity: 8,
+        timing: 'ease-out'
+      }
+    ],
+    duration: 1.5,
+    loop: false,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
       out: { type: 'none', duration: 0, easing: 'linear' }
     }
   }
