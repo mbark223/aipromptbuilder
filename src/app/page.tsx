@@ -7,8 +7,7 @@ import { FormatPreview } from '@/components/format/FormatPreview';
 import { PromptBuilder } from '@/components/prompt/PromptBuilder';
 import { ConsistencyPanel } from '@/components/consistency/ConsistencyPanel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePrompts } from '@/hooks/usePrompts';
-import type { Format, ConsistencySettings, Prompt } from '@/types';
+import type { Format, ConsistencySettings } from '@/types';
 
 export default function Home() {
   const [selectedFormat, setSelectedFormat] = useState<Format | null>(null);
@@ -16,16 +15,7 @@ export default function Home() {
     lockedParams: [],
     colorPalette: [],
   });
-  const { createPrompt } = usePrompts();
 
-  const handlePromptSave = (promptData: Partial<Prompt>) => {
-    const prompt = createPrompt({
-      ...promptData,
-      consistency: consistencySettings,
-    });
-    console.log('Prompt saved:', prompt);
-    // TODO: Add toast notification
-  };
 
   return (
     <AppLayout>
@@ -54,7 +44,6 @@ export default function Home() {
                 <PromptBuilder 
                   format={selectedFormat} 
                   consistency={consistencySettings}
-                  onSave={handlePromptSave} 
                 />
               </div>
               <div>
