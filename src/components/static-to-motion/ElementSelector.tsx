@@ -291,7 +291,7 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
                 value={selectedEl.animation?.type || ''}
                 onValueChange={(value) => updateElement(selectedEl.id, {
                   animation: { 
-                    type: value,
+                    type: value as Movement['type'],
                     intensity: selectedEl.animation?.intensity || 5,
                     direction: selectedEl.animation?.direction
                   }
@@ -343,7 +343,7 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
                         animation: { 
                           type: selectedEl.animation.type,
                           intensity: selectedEl.animation.intensity,
-                          direction: value
+                          direction: value as Movement['direction']
                         }
                       })}
                     >
