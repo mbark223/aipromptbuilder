@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Prompt Builder for Video Generation
+
+A Next.js application for creating, managing, and optimizing prompts for AI video generation platforms like Veo and Flows.
+
+## Features
+
+### Core Functionality
+- **Format Management**: Support for multiple aspect ratios (1:1, 9:16, 16:9, 4:5) with custom dimensions
+- **Structured Prompt Builder**: Organized sections for subject, style, composition, lighting, motion, and technical specs
+- **Consistency Engine**: Maintain visual coherence with seed IDs, locked parameters, and color palettes
+- **Project Organization**: Group prompts by projects for better management
+- **Export Options**: Export to JSON, CSV, or TXT formats for different platforms
+
+### User Interface
+- Clean, modern design with shadcn/ui components
+- Responsive layout that works on desktop and mobile
+- Real-time preview of format dimensions
+- Dark mode support (CSS variables ready)
+
+## Tech Stack
+
+- **Framework**: Next.js 15.4 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **State Management**: Zustand with persistence
+- **Development**: Turbopack for fast refresh
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+ and npm
 
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/mbark223/aipromptbuilder.git
+cd aipromptbuilder
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## Learn More
+## Usage
 
-To learn more about Next.js, take a look at the following resources:
+### Creating a Prompt
+1. Select a format from the preset options or create a custom size
+2. Fill in the structured sections with your prompt details
+3. Configure consistency settings if creating multiple related prompts
+4. Save your prompt to a project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Managing Projects
+- Create projects to organize related prompts
+- View all prompts within a project
+- Filter and search through your prompt library
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Exporting Prompts
+1. Navigate to the Export page
+2. Select the prompts you want to export
+3. Choose your platform and format
+4. Download the exported file
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/              # Next.js app router pages
+├── components/       # React components
+│   ├── consistency/  # Consistency engine components
+│   ├── format/       # Format selection components
+│   ├── layout/       # Layout components
+│   ├── prompt/       # Prompt builder components
+│   └── ui/          # shadcn/ui components
+├── hooks/           # Custom React hooks
+├── store/           # Zustand store
+├── types/           # TypeScript type definitions
+└── lib/             # Utility functions
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Development
+
+### Available Scripts
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Adding New Features
+1. Types are defined in `src/types/index.ts`
+2. State management is handled in `src/store/promptStore.ts`
+3. Components follow a modular structure in `src/components/`
+
+## Roadmap
+
+### Planned Features
+- [ ] AI-powered prompt suggestions
+- [ ] Visual similarity scoring
+- [ ] Batch creation with variations
+- [ ] Template marketplace
+- [ ] Team collaboration features
+- [ ] API integrations with Veo and Flows
+- [ ] Advanced analytics dashboard
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is open source and available under the MIT License.
