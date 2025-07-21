@@ -9,7 +9,7 @@ import { FormatSelector } from './FormatSelector';
 import { AnimationTemplates } from './AnimationTemplates';
 import { AssetGrid } from './AssetGrid';
 import { PreviewPanel } from './PreviewPanel';
-import { ElementSelector } from './ElementSelector';
+import { ElementSelector, type CustomElement } from './ElementSelector';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
 import type { Movement } from '@/types';
@@ -37,12 +37,7 @@ export function AnimationWorkshop({
 }: AnimationWorkshopProps) {
   const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
   const primaryAsset = selectedAssetObjects[0];
-  const [_customElements, _setCustomElements] = useState<Array<{
-    id: string;
-    name: string;
-    bounds: { x: number; y: number; width: number; height: number };
-    animation?: { type: string; intensity: number; direction?: string };
-  }>>([]);
+  const [_customElements, _setCustomElements] = useState<CustomElement[]>([]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -86,7 +81,7 @@ export function AnimationWorkshop({
               {primaryAsset && (
                 <ElementSelector
                   imageUrl={primaryAsset.originalFile.url}
-                  onElementsChange={(elements) => {
+                  onElementsChange={(elements: CustomElement[]) => {
                     _setCustomElements(elements);
                     // Update the custom animation with user-selected elements
                     if (selectedAnimation.id === 'custom-elements') {

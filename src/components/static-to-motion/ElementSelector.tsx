@@ -23,7 +23,7 @@ interface AnimationConfig {
   direction?: Movement['direction'];
 }
 
-interface Element {
+export interface CustomElement {
   id: string;
   name: string;
   bounds: {
@@ -37,11 +37,11 @@ interface Element {
 
 interface ElementSelectorProps {
   imageUrl: string;
-  onElementsChange: (elements: Element[]) => void;
+  onElementsChange: (elements: CustomElement[]) => void;
 }
 
 export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorProps) {
-  const [elements, setElements] = useState<Element[]>([]);
+  const [elements, setElements] = useState<CustomElement[]>([]);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectionBox, setSelectionBox] = useState<{
@@ -102,7 +102,7 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
     };
     
     if (bounds.width > 10 && bounds.height > 10) {
-      const newElement: Element = {
+      const newElement: CustomElement = {
         id: `element-${Date.now()}`,
         name: `Element ${elements.length + 1}`,
         bounds
@@ -118,7 +118,7 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
     setIsSelecting(false);
   };
 
-  const updateElement = (id: string, updates: Partial<Element>) => {
+  const updateElement = (id: string, updates: Partial<CustomElement>) => {
     const newElements = elements.map(el => 
       el.id === id ? { ...el, ...updates } : el
     );
