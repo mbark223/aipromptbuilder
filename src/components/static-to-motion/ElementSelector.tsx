@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -54,12 +54,12 @@ export function ElementSelector({ imageUrl, onElementsChange }: ElementSelectorP
   const [imageLoaded, setImageLoaded] = useState(false);
 
   // Predefined animation suggestions based on element type
-  const animationSuggestions = {
-    'ferris-wheel': { type: 'rotate', intensity: 3, direction: 'clockwise' },
-    'logo': { type: 'pulse', intensity: 2 },
-    'text': { type: 'float', intensity: 2, direction: 'up' },
-    'building': { type: 'sway', intensity: 1, direction: 'right' },
-    'lights': { type: 'shimmer', intensity: 4 },
+  const animationSuggestions: Record<string, AnimationConfig> = {
+    'ferris-wheel': { type: 'rotate' as Movement['type'], intensity: 3, direction: 'clockwise' as Movement['direction'] },
+    'logo': { type: 'pulse' as Movement['type'], intensity: 2 },
+    'text': { type: 'float' as Movement['type'], intensity: 2, direction: 'up' as Movement['direction'] },
+    'building': { type: 'sway' as Movement['type'], intensity: 1, direction: 'right' as Movement['direction'] },
+    'lights': { type: 'shimmer' as Movement['type'], intensity: 4 },
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {

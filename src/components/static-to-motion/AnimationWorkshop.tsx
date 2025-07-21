@@ -12,7 +12,6 @@ import { PreviewPanel } from './PreviewPanel';
 import { ElementSelector, type CustomElement } from './ElementSelector';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
-import type { Movement } from '@/types';
 
 interface AnimationWorkshopProps {
   assets: StaticAsset[];
