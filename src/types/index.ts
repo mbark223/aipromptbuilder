@@ -131,7 +131,7 @@ export interface ProcessedAsset {
 export interface AnimationProfile {
   id: string;
   name: string;
-  type: 'subtle' | 'moderate' | 'dynamic' | 'custom';
+  type: 'subtle' | 'moderate' | 'dynamic' | 'custom' | 'ai';
   movements: Movement[];
   duration: number; // in seconds
   loop: boolean;
