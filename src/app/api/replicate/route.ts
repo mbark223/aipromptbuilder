@@ -44,19 +44,39 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { model, input } = body;
+    const { model, modelId, input } = body;
+
+    // Determine the correct endpoint based on whether we have a version ID or model ID
+    let endpoint: string;
+    let requestBody: { version?: string; input: Record<string, unknown> };
+
+    if (model && model !== 'latest') {
+      // Using a specific version ID
+      endpoint = 'https://api.replicate.com/v1/predictions';
+      requestBody = {
+        version: model,
+        input,
+      };
+    } else if (modelId) {
+      // Using official model endpoint
+      const [owner, name] = modelId.split('/');
+      endpoint = `https://api.replicate.com/v1/models/${owner}/${name}/predictions`;
+      requestBody = { input };
+    } else {
+      return NextResponse.json(
+        { error: 'Either model version or modelId must be provided' },
+        { status: 400 }
+      );
+    }
 
     // Create prediction
-    const createResponse = await fetch('https://api.replicate.com/v1/predictions', {
+    const createResponse = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Authorization': `Token ${REPLICATE_API_TOKEN}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        version: model,
-        input,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!createResponse.ok) {

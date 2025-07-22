@@ -33,13 +33,15 @@ export class ReplicateService {
 
     try {
       // Create prediction using API route
+      const modelVersion = await this.getModelVersion(model.replicateId);
       const createResponse = await fetch('/api/replicate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: await this.getModelVersion(model.replicateId),
+          model: modelVersion,
+          modelId: modelVersion === 'latest' ? model.replicateId : undefined,
           input: this.formatInputsForModel(model, inputs),
         }),
       });
@@ -69,16 +71,22 @@ export class ReplicateService {
   }
 
   private async getModelVersion(modelId: string): Promise<string> {
-    // In production, you would fetch the latest version from Replicate API
-    // For now, we'll use hardcoded versions
-    const versions: Record<string, string> = {
-      'google/veo-3-fast': 'latest',
-      'google/veo-3': 'latest',
-      'bytedance/seedance-1-pro': 'latest',
-      'minimax/hailuo-02': 'latest',
-    };
+    // Official models that use the models endpoint (not versions)
+    const officialModels = [
+      'google/veo-3-fast',
+      'google/veo-3',
+      'bytedance/seedance-1-pro',
+      'minimax/hailuo-02',
+    ];
 
-    return versions[modelId] || 'latest';
+    // Return 'latest' for official models to signal using the models endpoint
+    if (officialModels.includes(modelId)) {
+      return 'latest';
+    }
+
+    // For other models, you would fetch the actual version ID
+    // This is a placeholder - in production you'd query the Replicate API
+    return 'latest';
   }
 
   private formatInputsForModel(model: AnimationModel, inputs: ReplicateInput): Record<string, string | number | boolean | null> {
