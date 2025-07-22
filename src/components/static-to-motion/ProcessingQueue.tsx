@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Icons } from '@/components/icons';
 import { useEffect, useState } from 'react';
 import { createReplicateService } from '@/lib/replicate';
+import { renderAnimatedImage } from '@/lib/animation-renderer';
 import { QueueItem, AnimationModel } from '@/types';
 import { DownloadDialog } from './DownloadDialog';
 import { BatchDownloadDialog } from './BatchDownloadDialog';
@@ -50,6 +51,12 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
 
     // Process with Replicate API
     const processItem = async () => {
+      // For preserve mode, always use simulation (element animations)
+      if (processingItem.animationType === 'preserve') {
+        simulateProcessing();
+        return;
+      }
+      
       const replicateService = createReplicateService();
       
       if (!replicateService || !model.replicateId) {
@@ -115,6 +122,57 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
     let cleanupSimulation: (() => void) | undefined;
     
     const simulateProcessing = () => {
+      // For preserve animations, process differently
+      if (processingItem.animationType === 'preserve') {
+        // Simulate element animation rendering
+        const processPreserveAnimation = async () => {
+          try {
+            // Update progress incrementally
+            for (let progress = 0; progress <= 100; progress += 20) {
+              await new Promise(resolve => setTimeout(resolve, 300));
+              
+              onUpdateQueue((currentQueue) =>
+                currentQueue.map(item => {
+                  if (item.id === processingItemId) {
+                    if (progress >= 100) {
+                      return {
+                        ...item,
+                        progress: 100,
+                        status: 'completed' as const,
+                        outputs: item.formats.map(format => ({
+                          format: format.name,
+                          url: `https://demo.blob.core.windows.net/animated/${item.id}_${format.name.toLowerCase().replace(/\s+/g, '_')}_preserved.mp4`
+                        }))
+                      };
+                    }
+                    return { ...item, progress };
+                  }
+                  return item;
+                })
+              );
+            }
+          } catch (error) {
+            onUpdateQueue((currentQueue) =>
+              currentQueue.map(item => {
+                if (item.id === processingItemId) {
+                  return {
+                    ...item,
+                    status: 'failed' as const,
+                    error: 'Failed to render animation',
+                    endTime: new Date()
+                  };
+                }
+                return item;
+              })
+            );
+          }
+        };
+        
+        processPreserveAnimation();
+        return;
+      }
+      
+      // Original simulation for other types
       const interval = setInterval(() => {
         onUpdateQueue((currentQueue) => {
           const updatedQueue = currentQueue.map(item => {
@@ -295,6 +353,13 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                 {item.animationType === 'ai' && item.prompt && (
                   <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md mt-2">
                     <span className="font-medium">Prompt:</span> {item.prompt.slice(0, 100)}{item.prompt.length > 100 ? '...' : ''}
+                  </div>
+                )}
+                
+                {/* Preserve Animation preview */}
+                {item.animationType === 'preserve' && item.elementAnimations && (
+                  <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md mt-2">
+                    <span className="font-medium">Element Animations:</span> {item.elementAnimations.length} effects
                   </div>
                 )}
 

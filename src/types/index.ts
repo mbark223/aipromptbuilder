@@ -131,7 +131,7 @@ export interface ProcessedAsset {
 export interface AnimationProfile {
   id: string;
   name: string;
-  type: 'subtle' | 'moderate' | 'dynamic' | 'custom' | 'ai';
+  type: 'subtle' | 'moderate' | 'dynamic' | 'custom' | 'ai' | 'preserve';
   movements: Movement[];
   duration: number; // in seconds
   loop: boolean;
@@ -139,6 +139,7 @@ export interface AnimationProfile {
     in: TransitionEffect;
     out: TransitionEffect;
   };
+  preserveImage?: boolean; // New flag for element-only animations
 }
 
 export interface Movement {
@@ -160,6 +161,48 @@ export interface TransitionEffect {
   type: 'fade' | 'slide' | 'zoom' | 'none';
   duration: number;
   easing: string;
+}
+
+// Element Animation Types for preserving original image
+export interface ElementAnimation {
+  id: string;
+  type: 'ripple' | 'sway' | 'float' | 'parallax' | 'shimmer' | 'glow' | 'particle' | 'distortion';
+  element: DetectedElement | CustomElement;
+  parameters: AnimationParameters;
+  layer: number; // z-index for layering
+}
+
+export interface DetectedElement {
+  type: 'detected';
+  category: 'water' | 'sky' | 'vegetation' | 'fabric' | 'hair' | 'fire' | 'smoke' | 'glass' | 'lights';
+  bounds: ElementBounds;
+  confidence: number;
+  mask?: ImageData; // Optional segmentation mask
+}
+
+export interface CustomElement {
+  type: 'custom';
+  name: string;
+  bounds: ElementBounds;
+  shape: 'rectangle' | 'ellipse' | 'polygon' | 'freeform';
+  points?: { x: number; y: number }[]; // For polygon/freeform
+}
+
+export interface ElementBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface AnimationParameters {
+  intensity: number; // 0-100
+  speed: number; // 0.1-10 (multiplier)
+  direction?: 'horizontal' | 'vertical' | 'radial' | 'circular';
+  frequency?: number; // For wave-like effects
+  amplitude?: number; // For displacement effects
+  color?: string; // For glow/particle effects
+  blendMode?: 'normal' | 'multiply' | 'screen' | 'overlay' | 'soft-light';
 }
 
 export interface BrandGuidelines {
@@ -248,9 +291,10 @@ export interface QueueItem {
   asset: StaticAsset;
   formats: Format[];
   animation: AnimationProfile;
-  animationType: 'ai' | 'generic';
+  animationType: 'ai' | 'generic' | 'preserve';
   model?: AnimationModel;
   prompt?: string;
+  elementAnimations?: ElementAnimation[]; // For preserve mode
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress: number;
   startTime?: Date;
