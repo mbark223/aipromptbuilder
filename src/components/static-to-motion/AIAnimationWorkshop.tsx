@@ -162,7 +162,11 @@ export function AIAnimationWorkshop({
                     type: 'ai',
                     movements: [],
                     duration: 5,
-                    loop: false
+                    loop: false,
+                    transitions: {
+                      in: { type: 'fade', duration: 0.3, easing: 'ease-out' },
+                      out: { type: 'fade', duration: 0.3, easing: 'ease-in' }
+                    }
                   }}
                   format={selectedFormats[0]}
                 />
