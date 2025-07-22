@@ -31,7 +31,7 @@ export class VideoStorageService {
       const uniqueFileName = `videos/${timestamp}_${fileName}`;
 
       // Upload to Vercel Blob
-      const { url, downloadUrl, pathname, contentType, size } = await put(uniqueFileName, blob, {
+      const result = await put(uniqueFileName, blob, {
         access: 'public',
         addRandomSuffix: true,
         contentType: blob.type || 'video/mp4',
@@ -39,11 +39,11 @@ export class VideoStorageService {
       });
 
       return {
-        url,
-        downloadUrl: downloadUrl || url,
-        pathname,
-        contentType,
-        size
+        url: result.url,
+        downloadUrl: result.downloadUrl || result.url,
+        pathname: result.pathname,
+        contentType: result.contentType,
+        size: blob.size
       };
     } catch (error) {
       console.error('Failed to upload video to storage:', error);
@@ -62,7 +62,7 @@ export class VideoStorageService {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const uniqueFileName = `videos/${timestamp}_${file.name}`;
 
-      const { url, downloadUrl, pathname, contentType, size } = await put(uniqueFileName, file, {
+      const result = await put(uniqueFileName, file, {
         access: 'public',
         addRandomSuffix: true,
         contentType: file.type || 'video/mp4',
@@ -70,11 +70,11 @@ export class VideoStorageService {
       });
 
       return {
-        url,
-        downloadUrl: downloadUrl || url,
-        pathname,
-        contentType,
-        size
+        url: result.url,
+        downloadUrl: result.downloadUrl || result.url,
+        pathname: result.pathname,
+        contentType: result.contentType,
+        size: file.size
       };
     } catch (error) {
       console.error('Failed to upload file to storage:', error);
