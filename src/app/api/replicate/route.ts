@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Force runtime edge for better environment variable handling
-export const runtime = 'edge';
+// Use Node.js runtime for environment variables
+export const runtime = 'nodejs';
 
 // Debug function to check environment
 function getReplicateToken(): string | undefined {

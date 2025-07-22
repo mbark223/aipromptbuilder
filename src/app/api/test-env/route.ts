@@ -1,32 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
-  // Get all environment variable keys that contain 'REPLICATE'
-  const replicateKeys = Object.keys(process.env).filter(key => 
+  // Get all environment variable keys
+  const allKeys = Object.keys(process.env);
+  
+  // Filter for various patterns
+  const replicateKeys = allKeys.filter(key => 
     key.toUpperCase().includes('REPLICATE')
   );
+  
+  const apiKeys = allKeys.filter(key => 
+    key.includes('API') || key.includes('TOKEN') || key.includes('KEY')
+  );
+  
+  // Show all env vars starting with certain prefixes
+  const vercelKeys = allKeys.filter(key => key.startsWith('VERCEL'));
+  const nextKeys = allKeys.filter(key => key.startsWith('NEXT_'));
   
   // Check various ways the token might be stored
   const checks = {
     direct: !!process.env.REPLICATE_API_TOKEN,
-    uppercase: !!process.env['REPLICATE_API_TOKEN'],
-    lowercase: !!process.env['replicate_api_token'],
-    withPrefix: !!process.env['NEXT_PUBLIC_REPLICATE_API_TOKEN'],
-    totalEnvVars: Object.keys(process.env).length,
+    totalEnvVars: allKeys.length,
     nodeEnv: process.env.NODE_ENV,
     vercelEnv: process.env.VERCEL_ENV,
     replicateKeys: replicateKeys,
-    hasAnyReplicateKey: replicateKeys.length > 0,
-    // Show first few characters of token if it exists (for debugging)
-    tokenPreview: process.env.REPLICATE_API_TOKEN 
-      ? `${process.env.REPLICATE_API_TOKEN.substring(0, 8)}...` 
-      : 'not found'
+    apiRelatedKeys: apiKeys,
+    vercelKeys: vercelKeys,
+    nextKeys: nextKeys,
+    // Show first 10 env var names (safe system ones)
+    sampleKeys: allKeys.filter(k => !k.includes('SECRET') && !k.includes('TOKEN')).slice(0, 10),
+    // Check if running on Vercel
+    isVercel: !!process.env.VERCEL,
+    runtime: process.env.RUNTIME || 'unknown'
   };
   
   return NextResponse.json({
-    message: 'Environment variable check',
+    message: 'Environment variable diagnostic',
     checks,
     timestamp: new Date().toISOString()
   });
