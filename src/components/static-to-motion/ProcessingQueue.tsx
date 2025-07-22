@@ -5,9 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Icons } from '@/components/icons';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createReplicateService } from '@/lib/replicate';
 import { QueueItem, AnimationModel } from '@/types';
+import { DownloadDialog } from './DownloadDialog';
+import { BatchDownloadDialog } from './BatchDownloadDialog';
 
 interface ProcessingQueueProps {
   queue: QueueItem[];
@@ -17,6 +19,13 @@ interface ProcessingQueueProps {
 }
 
 export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: ProcessingQueueProps) {
+  const [downloadDialog, setDownloadDialog] = useState<{
+    open: boolean;
+    videoUrl: string;
+    fileName: string;
+  }>({ open: false, videoUrl: '', fileName: '' });
+  
+  const [batchDownloadOpen, setBatchDownloadOpen] = useState(false);
   // Process queue items with Replicate API
   useEffect(() => {
     const processingItem = queue.find(item => item.status === 'processing');
@@ -194,7 +203,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                   alert('No completed videos to download');
                   return;
                 }
-                alert(`This is a demo. In production, this would download all ${completedItems.length} completed videos.`);
+                setBatchDownloadOpen(true);
               }}
             >
               <Icons.download className="mr-2 h-4 w-4" />
@@ -288,18 +297,11 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                         variant="outline" 
                         size="sm"
                         onClick={() => {
-                          // For demo, create a sample video file
-                          const link = document.createElement('a');
-                          link.href = output.url;
-                          link.download = `${item.asset.originalFile.name.replace(/\.[^/.]+$/, '')}_animated.mp4`;
-                          // For demo purposes, alert the user
-                          if (output.url === '#demo-video-url') {
-                            alert('This is a demo. In production, this would download the actual generated video.');
-                          } else {
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                          }
+                          setDownloadDialog({
+                            open: true,
+                            videoUrl: output.url,
+                            fileName: item.asset.originalFile.name.replace(/\.[^/.]+$/, '')
+                          });
                         }}
                       >
                         <Icons.download className="mr-2 h-3 w-3" />
@@ -319,6 +321,27 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
           <p className="text-muted-foreground">No items in processing queue</p>
         </Card>
       )}
+      
+      {/* Download Dialog */}
+      <DownloadDialog
+        open={downloadDialog.open}
+        onOpenChange={(open) => setDownloadDialog(prev => ({ ...prev, open }))}
+        videoUrl={downloadDialog.videoUrl}
+        fileName={downloadDialog.fileName}
+        onDownload={(format, quality) => {
+          console.log(`Downloading as ${format} in ${quality} quality`);
+        }}
+      />
+      
+      {/* Batch Download Dialog */}
+      <BatchDownloadDialog
+        open={batchDownloadOpen}
+        onOpenChange={setBatchDownloadOpen}
+        items={queue}
+        onDownload={(format, quality) => {
+          console.log(`Batch downloading as ${format} in ${quality} quality`);
+        }}
+      />
     </div>
   );
 }
