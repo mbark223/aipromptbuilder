@@ -5,7 +5,7 @@ function getReplicateToken(): string | undefined {
   // Try multiple ways to access the token
   const token = process.env.REPLICATE_API_TOKEN || 
                 process.env['REPLICATE_API_TOKEN'] ||
-                (global as any).process?.env?.REPLICATE_API_TOKEN;
+                (global as { process?: { env?: { REPLICATE_API_TOKEN?: string } } }).process?.env?.REPLICATE_API_TOKEN;
   
   console.log('Environment check:', {
     hasToken: !!token,
