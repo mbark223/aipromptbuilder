@@ -7,7 +7,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
-import { enhancePrompt } from '@/lib/promptGenerator';
 import { 
   SUBJECT_SUGGESTIONS, 
   MOTION_SUGGESTIONS, 
@@ -96,8 +95,8 @@ export function PromptBuilderSection({ imageUrl, onPromptChange, value = '' }: P
       .map(([, v]) => v.trim())
       .join(', ');
     
-    const enhanced = await enhancePrompt(basePrompt);
-    onPromptChange(enhanced);
+    // For now, just use the base prompt as enhancePrompt returns suggestions, not an enhanced prompt
+    onPromptChange(basePrompt);
   };
 
   const clearAll = () => {
