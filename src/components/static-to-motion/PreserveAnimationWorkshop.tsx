@@ -77,7 +77,7 @@ export function PreserveAnimationWorkshop({
             variant="outline"
             onClick={() => setPreviewMode(!previewMode)}
           >
-            <Icons.eye className="mr-2 h-4 w-4" />
+            <Icons.target className="mr-2 h-4 w-4" />
             {previewMode ? 'Edit Mode' : 'Preview'}
           </Button>
           <Button
@@ -176,7 +176,7 @@ export function PreserveAnimationWorkshop({
                   handleAddAnimation(globalAnimation);
                 }}
               >
-                <Icons.maximize className="mr-2 h-4 w-4" />
+                <Icons.layers className="mr-2 h-4 w-4" />
                 Subtle Full Animation
               </Button>
             </div>
