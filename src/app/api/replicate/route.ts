@@ -5,8 +5,11 @@ export const runtime = 'nodejs';
 
 // Debug function to check environment
 function getReplicateToken(): string | undefined {
-  // Simply get the token from environment
-  const token = process.env.REPLICATE_API_TOKEN;
+  // Try multiple possible env var names
+  const token = process.env.REPLICATE_API_TOKEN || 
+                process.env.REPLICATEAPITOKEN ||
+                process.env.REPLICATE_TOKEN ||
+                process.env.REPLICATETOKEN;
   
   // Log for debugging (will appear in Vercel function logs)
   console.log('Token check:', {
@@ -14,7 +17,8 @@ function getReplicateToken(): string | undefined {
     length: token?.length || 0,
     prefix: token?.substring(0, 8) || 'none',
     env: process.env.NODE_ENV,
-    vercelEnv: process.env.VERCEL_ENV
+    vercelEnv: process.env.VERCEL_ENV,
+    tried: ['REPLICATE_API_TOKEN', 'REPLICATEAPITOKEN', 'REPLICATE_TOKEN', 'REPLICATETOKEN']
   });
   
   return token;
