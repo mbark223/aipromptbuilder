@@ -22,7 +22,7 @@ const ANIMATION_TYPES = [
   { value: 'float', label: 'Float', icon: Icons.zap },
   { value: 'parallax', label: 'Parallax', icon: Icons.layers },
   { value: 'shimmer', label: 'Shimmer', icon: Icons.sparkles },
-  { value: 'glow', label: 'Glow', icon: Icons.sun },
+  { value: 'glow', label: 'Glow', icon: Icons.zap },
   { value: 'particle', label: 'Particles', icon: Icons.stars },
   { value: 'distortion', label: 'Distortion', icon: Icons.waves }
 ];
