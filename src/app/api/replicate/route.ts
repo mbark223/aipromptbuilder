@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Debug function to check environment
 function getReplicateToken(): string | undefined {
-  // Try multiple ways to access the token
-  const token = process.env.REPLICATE_API_TOKEN || 
-                process.env['REPLICATE_API_TOKEN'] ||
-                (global as { process?: { env?: { REPLICATE_API_TOKEN?: string } } }).process?.env?.REPLICATE_API_TOKEN;
+  // Simply get the token from environment
+  const token = process.env.REPLICATE_API_TOKEN;
   
   console.log('Environment check:', {
     hasToken: !!token,
