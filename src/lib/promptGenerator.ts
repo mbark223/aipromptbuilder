@@ -51,6 +51,11 @@ export function generateOptimizedPrompt({
     parts.push(content.technical.trim());
   }
 
+  // Audio (for Veo-3 and supported models)
+  if ((content as any).audio && platform === 'veo') {
+    parts.push((content as any).audio.trim());
+  }
+
   // Consistency parameters
   if (consistency) {
     const consistencyParts = buildConsistencyInstructions(consistency);
@@ -173,4 +178,49 @@ export function enhancePrompt(basicPrompt: string): string[] {
   }
   
   return suggestions;
+}
+
+// Simple prompt generator for the new builder
+interface SimplePromptOptions {
+  platform?: 'generic' | 'veo' | 'flows';
+  aspectRatio?: string;
+  modelVersion?: string;
+  includeAudio?: boolean;
+}
+
+export function generatePrompt(
+  sections: Record<string, string>,
+  options: SimplePromptOptions = {}
+): string {
+  const parts: string[] = [];
+  
+  // Add main content sections in order
+  if (sections.subject) parts.push(sections.subject);
+  if (sections.action) parts.push(sections.action);
+  if (sections.location) parts.push(sections.location);
+  if (sections.style) parts.push(sections.style);
+  if (sections.camera) parts.push(sections.camera);
+  if (sections.lighting) parts.push(sections.lighting);
+  if (sections.motion) parts.push(sections.motion);
+  if (sections.technical) parts.push(sections.technical);
+  
+  // Add audio for supported platforms
+  if (sections.audio && options.includeAudio) {
+    parts.push(sections.audio);
+  }
+  
+  // Platform-specific enhancements
+  if (options.platform === 'veo') {
+    if (options.modelVersion === 'pro') {
+      parts.push('ultra high quality');
+    }
+  }
+  
+  // Join parts with commas and clean up
+  return parts
+    .filter(p => p && p.trim())
+    .join(', ')
+    .replace(/,\s*,/g, ',')
+    .replace(/\s+/g, ' ')
+    .trim();
 }

@@ -1,18 +1,21 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
 import { AnimationModel } from '@/types';
+import { getAllVideoModels } from '@/lib/openrouter-models';
 
 interface ModelSelectorProps {
   selectedModel: AnimationModel;
   onSelectModel: (model: AnimationModel) => void;
 }
 
-const AVAILABLE_MODELS: AnimationModel[] = [
+const BASE_MODELS: AnimationModel[] = [
   {
     id: 'google-veo-3-fast',
     name: 'Veo-3-Fast',
@@ -417,6 +420,31 @@ export function ModelSelector({
   selectedModel,
   onSelectModel
 }: ModelSelectorProps) {
+  // Get all available models including OpenRouter models
+  const AVAILABLE_MODELS = getAllVideoModels(BASE_MODELS);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProvider, setSelectedProvider] = useState<string>('all');
+
+  // Get unique providers
+  const providers = useMemo(() => {
+    const uniqueProviders = [...new Set(AVAILABLE_MODELS.map(m => m.provider))];
+    return ['all', ...uniqueProviders.sort()];
+  }, []);
+
+  // Filter models based on search and provider
+  const filteredModels = useMemo(() => {
+    return AVAILABLE_MODELS.filter(model => {
+      const matchesSearch = searchQuery === '' || 
+        model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        model.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        model.capabilities.some(cap => cap.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const matchesProvider = selectedProvider === 'all' || model.provider === selectedProvider;
+      
+      return matchesSearch && matchesProvider;
+    });
+  }, [searchQuery, selectedProvider]);
+
   const getSpeedIcon = (speed: string) => {
     switch (speed) {
       case 'fast':
@@ -445,8 +473,42 @@ export function ModelSelector({
 
   return (
     <div className="space-y-4">
+      {/* Search and Filter */}
+      <div className="space-y-3">
+        <div>
+          <Label htmlFor="model-search">Search Models</Label>
+          <Input
+            id="model-search"
+            type="search"
+            placeholder="Search by name, feature, or capability..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full"
+          />
+        </div>
+        
+        <div className="flex gap-2">
+          <Select value={selectedProvider} onValueChange={setSelectedProvider}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="All Providers" />
+            </SelectTrigger>
+            <SelectContent>
+              {providers.map((provider) => (
+                <SelectItem key={provider} value={provider}>
+                  {provider === 'all' ? 'All Providers' : provider}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Badge variant="secondary" className="px-3 py-1">
+            {filteredModels.length} models available
+          </Badge>
+        </div>
+      </div>
+
       <div>
-        <Label htmlFor="model-select">AI Model</Label>
+        <Label htmlFor="model-select">Select Model</Label>
         <Select
           value={selectedModel.id}
           onValueChange={(value) => {
@@ -455,13 +517,18 @@ export function ModelSelector({
           }}
         >
           <SelectTrigger id="model-select" className="w-full">
-            <SelectValue placeholder="Select an AI model" />
+            <SelectValue placeholder="Choose a video generation model" />
           </SelectTrigger>
           <SelectContent>
-            {AVAILABLE_MODELS.map((model) => (
+            {filteredModels.map((model) => (
               <SelectItem key={model.id} value={model.id}>
                 <div className="flex items-center justify-between w-full">
-                  <span>{model.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span>{model.name}</span>
+                    {model.costPerGeneration === 0 && (
+                      <Badge variant="secondary" className="text-xs">Free</Badge>
+                    )}
+                  </div>
                   <span className="text-xs text-muted-foreground ml-2">
                     {model.provider}
                   </span>

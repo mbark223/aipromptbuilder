@@ -1,4 +1,5 @@
 import { AnimationModel } from '@/types';
+import { createOpenRouterService } from './openrouter-service';
 
 export interface ReplicateInput {
   prompt: string;
@@ -31,6 +32,48 @@ export class ReplicateService {
 
     const startTime = Date.now();
 
+    // Check if this is an OpenRouter-only model
+    const openRouterOnlyModels = [
+      'stability-ai/stable-video-diffusion',
+      'pika-labs/pika-1.0',
+      'genmo/mochi-1',
+      'meta/emu-video',
+      'alibaba/i2vgen-xl',
+      'hotshot/hotshot-xl',
+      'lcm/video-stable',
+      'thudm/cogvideo',
+      'meta/make-a-video',
+      'animatediff/motion'
+    ];
+
+    if (openRouterOnlyModels.includes(model.replicateId)) {
+      // Use OpenRouter for these models
+      const openRouterService = createOpenRouterService();
+      if (!openRouterService.isConfigured()) {
+        throw new Error('OpenRouter API key not configured. These models require OpenRouter.');
+      }
+
+      try {
+        const result = await openRouterService.generateVideo({
+          model,
+          inputs
+        });
+
+        const generationTime = (Date.now() - startTime) / 1000;
+        const cost = this.calculateCost(model, generationTime, inputs);
+
+        return {
+          videoUrl: result.videoUrl,
+          generationTime,
+          cost,
+        };
+      } catch (error) {
+        console.error('OpenRouter API error:', error);
+        throw error;
+      }
+    }
+
+    // Use standard Replicate flow for other models
     try {
       // Create prediction using API route
       const modelVersion = await this.getModelVersion(model.replicateId);
