@@ -1808,5 +1808,172 @@ export const ANIMATION_TEMPLATES: AnimationProfile[] = [
       in: { type: 'none', duration: 0, easing: 'linear' },
       out: { type: 'none', duration: 0, easing: 'linear' }
     }
+  },
+  // Model-specific animations
+  {
+    id: 'veo3-cinematic',
+    name: 'Veo3 Cinematic Motion',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 4,
+        direction: 'in',
+        timing: 'ease-out'
+      },
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 3,
+        direction: 'right',
+        timing: 'ease'
+      }
+    ],
+    duration: 5,
+    loop: false,
+    transitions: {
+      in: { type: 'fade', duration: 0.8, easing: 'ease-out' },
+      out: { type: 'fade', duration: 0.8, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'gen3-creative-flow',
+    name: 'Gen-3 Creative Flow',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'background',
+        type: 'parallax',
+        intensity: 3,
+        direction: 'left',
+        timing: 'linear'
+      },
+      {
+        element: 'foreground',
+        type: 'float',
+        intensity: 5,
+        direction: 'up',
+        timing: 'ease'
+      },
+      {
+        element: 'specific',
+        type: 'rotate',
+        intensity: 2,
+        direction: 'clockwise',
+        timing: 'ease'
+      }
+    ],
+    duration: 4,
+    loop: true,
+    transitions: {
+      in: { type: 'zoom', duration: 0.6, easing: 'ease-out' },
+      out: { type: 'zoom', duration: 0.6, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'luma-smooth-motion',
+    name: 'Luma Smooth Motion',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 2,
+        direction: 'right',
+        timing: 'linear'
+      },
+      {
+        element: 'full',
+        type: 'float',
+        intensity: 3,
+        direction: 'up',
+        timing: 'ease'
+      }
+    ],
+    duration: 5,
+    loop: true,
+    transitions: {
+      in: { type: 'slide', duration: 0.4, easing: 'ease-out' },
+      out: { type: 'slide', duration: 0.4, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'veo3-dynamic-zoom',
+    name: 'Veo3 Dynamic Zoom',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 6,
+        direction: 'in',
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'zoom',
+        intensity: 6,
+        direction: 'out',
+        timing: 'ease'
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'none', duration: 0, easing: 'linear' },
+      out: { type: 'none', duration: 0, easing: 'linear' }
+    }
+  },
+  {
+    id: 'gen3-artistic-pan',
+    name: 'Gen-3 Artistic Pan',
+    type: 'moderate',
+    movements: [
+      {
+        element: 'full',
+        type: 'pan',
+        intensity: 5,
+        direction: 'left',
+        timing: 'ease-out'
+      },
+      {
+        element: 'specific',
+        type: 'glow',
+        intensity: 4,
+        timing: 'ease'
+      }
+    ],
+    duration: 6,
+    loop: false,
+    transitions: {
+      in: { type: 'fade', duration: 1, easing: 'ease-out' },
+      out: { type: 'fade', duration: 1, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'luma-fast-pulse',
+    name: 'Luma Fast Pulse',
+    type: 'dynamic',
+    movements: [
+      {
+        element: 'full',
+        type: 'pulse',
+        intensity: 6,
+        timing: 'ease'
+      },
+      {
+        element: 'full',
+        type: 'shimmer',
+        intensity: 4,
+        timing: 'linear'
+      }
+    ],
+    duration: 2,
+    loop: true,
+    transitions: {
+      in: { type: 'zoom', duration: 0.2, easing: 'ease-out' },
+      out: { type: 'zoom', duration: 0.2, easing: 'ease-in' }
+    }
   }
 ];
