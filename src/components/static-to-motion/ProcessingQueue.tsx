@@ -247,6 +247,13 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                   </div>
                 </div>
 
+                {/* AI Prompt preview */}
+                {item.animationType === 'ai' && item.prompt && (
+                  <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md mt-2">
+                    <span className="font-medium">Prompt:</span> {item.prompt.slice(0, 100)}{item.prompt.length > 100 ? '...' : ''}
+                  </div>
+                )}
+
                 {/* Progress */}
                 {item.status === 'processing' && (
                   <div className="space-y-1">

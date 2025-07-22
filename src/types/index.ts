@@ -248,6 +248,9 @@ export interface QueueItem {
   asset: StaticAsset;
   formats: Format[];
   animation: AnimationProfile;
+  animationType: 'ai' | 'generic';
+  model?: AnimationModel;
+  prompt?: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress: number;
   startTime?: Date;

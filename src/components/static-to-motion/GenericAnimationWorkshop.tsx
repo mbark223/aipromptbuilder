@@ -10,8 +10,6 @@ import { AnimationTemplates } from './AnimationTemplates';
 import { AssetGrid } from './AssetGrid';
 import { PreviewPanelV2 as PreviewPanel } from './PreviewPanelV2';
 import { ElementSelectorV2 as ElementSelector, type CustomElement } from './ElementSelectorV2';
-import { ModelSelector } from './ModelSelector';
-import { ModelInputFields } from './ModelInputFields';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
 
@@ -30,7 +28,7 @@ interface AnimationWorkshopProps {
   onStartProcessing: () => void;
 }
 
-export function AnimationWorkshop({
+export function GenericAnimationWorkshop({
   assets,
   selectedAssets,
   onSelectAssets,
@@ -38,10 +36,10 @@ export function AnimationWorkshop({
   onSelectFormats,
   selectedAnimation,
   onSelectAnimation,
-  selectedModel,
-  onSelectModel,
-  modelInputs,
-  onModelInputsChange,
+  selectedModel: _selectedModel,
+  onSelectModel: _onSelectModel,
+  modelInputs: _modelInputs,
+  onModelInputsChange: _onModelInputsChange,
   onStartProcessing
 }: AnimationWorkshopProps) {
   const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
@@ -62,32 +60,14 @@ export function AnimationWorkshop({
         </Card>
 
         <Card className="p-6">
-          <Tabs defaultValue="model" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="model">Model</TabsTrigger>
-              <TabsTrigger value="inputs">Inputs</TabsTrigger>
+          <Tabs defaultValue="animation" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="animation">Templates</TabsTrigger>
               <TabsTrigger value="formats">Formats</TabsTrigger>
-              <TabsTrigger value="animation">Animation</TabsTrigger>
               <TabsTrigger value="elements" disabled={selectedAnimation.id !== 'custom-elements'}>
-                Elements
+                Custom Elements
               </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="model" className="space-y-4">
-              <ModelSelector
-                selectedModel={selectedModel}
-                onSelectModel={onSelectModel}
-              />
-            </TabsContent>
-            
-            <TabsContent value="inputs" className="space-y-4">
-              <ModelInputFields
-                model={selectedModel}
-                values={modelInputs}
-                onChange={onModelInputsChange}
-                imageUrl={primaryAsset?.originalFile.url}
-              />
-            </TabsContent>
             
             <TabsContent value="formats" className="space-y-4">
               <FormatSelector
@@ -142,7 +122,7 @@ export function AnimationWorkshop({
       {/* Right Panel - Preview and Actions */}
       <div className="space-y-6">
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Preview</h2>
+          <h2 className="text-xl font-semibold mb-4">Template Preview</h2>
           {primaryAsset && selectedFormats.length > 0 ? (
             <PreviewPanel
               asset={primaryAsset}
@@ -160,7 +140,7 @@ export function AnimationWorkshop({
         </Card>
 
         <Card className="p-6 space-y-4">
-          <h3 className="font-semibold">Processing Summary</h3>
+          <h3 className="font-semibold">Template Summary</h3>
           
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
@@ -177,19 +157,14 @@ export function AnimationWorkshop({
             </div>
           </div>
 
-          <div className="pt-2 space-y-2">
+          <div className="pt-2">
             <Button 
               className="w-full" 
               onClick={onStartProcessing}
               disabled={selectedAssets.length === 0 || selectedFormats.length === 0}
             >
               <Icons.play className="mr-2 h-4 w-4" />
-              Start Processing
-            </Button>
-            
-            <Button variant="outline" className="w-full">
-              <Icons.wand2 className="mr-2 h-4 w-4" />
-              Generate AI Prompts
+              Apply Template Animation
             </Button>
           </div>
         </Card>
