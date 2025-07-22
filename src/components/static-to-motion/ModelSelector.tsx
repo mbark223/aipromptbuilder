@@ -335,6 +335,81 @@ const AVAILABLE_MODELS: AnimationModel[] = [
         placeholder: 'Random seed for reproducibility'
       }
     ]
+  },
+  {
+    id: 'black-forest-labs-flux-kontext-max',
+    name: 'Flux Kontext Max',
+    provider: 'Black Forest Labs',
+    description: 'Advanced image-to-video generation with precise context control',
+    capabilities: ['Image-to-Video', 'Context Control', 'High Quality', 'Motion Guidance'],
+    speed: 'moderate',
+    quality: 'very-high',
+    costPerGeneration: 0.60,
+    replicateId: 'black-forest-labs/flux-kontext-max',
+    pricing: '$0.60/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the motion and transformation you want...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image',
+        required: true,
+        placeholder: 'Upload the image to animate'
+      },
+      {
+        name: 'num_frames',
+        type: 'number',
+        label: 'Number of Frames',
+        required: false,
+        defaultValue: 25,
+        min: 10,
+        max: 50,
+        placeholder: 'Number of frames in the output video'
+      },
+      {
+        name: 'guidance_scale',
+        type: 'number',
+        label: 'Guidance Scale',
+        required: false,
+        defaultValue: 7.5,
+        min: 1,
+        max: 20,
+        placeholder: 'How closely to follow the prompt (higher = more adherence)'
+      },
+      {
+        name: 'motion_bucket_id',
+        type: 'number',
+        label: 'Motion Intensity',
+        required: false,
+        defaultValue: 127,
+        min: 1,
+        max: 255,
+        placeholder: 'Controls the amount of motion (higher = more motion)'
+      },
+      {
+        name: 'fps',
+        type: 'number',
+        label: 'FPS',
+        required: false,
+        defaultValue: 8,
+        min: 4,
+        max: 30,
+        placeholder: 'Frames per second'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
   }
 ];
 
