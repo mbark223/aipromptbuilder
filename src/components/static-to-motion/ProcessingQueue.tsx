@@ -44,13 +44,16 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
       }
       return;
     }
+    
+    // Capture the processing item ID to avoid stale closures
+    const processingItemId = processingItem.id;
 
     // Process with Replicate API
     const processItem = async () => {
       const replicateService = createReplicateService();
       
       if (!replicateService || !model.replicateId) {
-        // Fallback to simulation if no API key or model doesn't support Replicate
+        // Fallback to simulation if model doesn't support Replicate
         simulateProcessing();
         return;
       }
@@ -64,32 +67,41 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
         });
 
         // Update queue with success
-        onUpdateQueue(
-          queue.map(item => {
-            if (item.id === processingItem.id) {
+        onUpdateQueue((currentQueue) =>
+          currentQueue.map(item => {
+            if (item.id === processingItemId) {
               return {
                 ...item,
                 progress: 100,
                 status: 'completed' as const,
                 endTime: new Date(),
-                outputs: [{
-                  format: 'Generated Video',
+                outputs: item.formats.map(format => ({
+                  format: format.name,
                   url: result.videoUrl
-                }]
+                }))
               };
             }
             return item;
           })
         );
       } catch (error) {
-        // Update queue with error
-        onUpdateQueue(
-          queue.map(item => {
-            if (item.id === processingItem.id) {
+        const errorMessage = error instanceof Error ? error.message : 'Processing failed';
+        
+        // Check if it's an API token error - if so, fall back to simulation
+        if (errorMessage.includes('Replicate API token not configured')) {
+          console.log('No Replicate API token found, using simulation mode');
+          simulateProcessing();
+          return;
+        }
+        
+        // Update queue with error for other failures
+        onUpdateQueue((currentQueue) =>
+          currentQueue.map(item => {
+            if (item.id === processingItemId) {
               return {
                 ...item,
                 status: 'failed' as const,
-                error: error instanceof Error ? error.message : 'Processing failed',
+                error: errorMessage,
                 endTime: new Date()
               };
             }
@@ -100,14 +112,17 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
     };
 
     // Simulate progress for demo purposes
+    let cleanupSimulation: (() => void) | undefined;
+    
     const simulateProcessing = () => {
       const interval = setInterval(() => {
-        onUpdateQueue(
-          queue.map(item => {
-            if (item.id === processingItem.id && item.status === 'processing') {
+        onUpdateQueue((currentQueue) => {
+          const updatedQueue = currentQueue.map(item => {
+            if (item.id === processingItemId && item.status === 'processing') {
               const newProgress = Math.min(item.progress + 10, 100);
               
               if (newProgress >= 100) {
+                clearInterval(interval); // Clear interval when complete
                 // Complete processing
                 return {
                   ...item,
@@ -115,7 +130,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                   status: 'completed' as const,
                   outputs: item.formats.map(format => ({
                     format: format.name,
-                    url: '#demo-video-url' // Demo URL
+                    url: `https://demo.blob.core.windows.net/videos/${item.id}_${format.name.toLowerCase().replace(/\s+/g, '_')}.mp4` // Demo URL that looks more realistic
                   }))
                 };
               }
@@ -123,15 +138,23 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
               return { ...item, progress: newProgress };
             }
             return item;
-          })
-        );
+          });
+          return updatedQueue;
+        });
       }, 500);
 
-      return () => clearInterval(interval);
+      cleanupSimulation = () => clearInterval(interval);
     };
 
-    // For now, always use simulation since Replicate integration needs more work
-    simulateProcessing();
+    // Start processing with Replicate API or fall back to simulation
+    processItem();
+    
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (cleanupSimulation) {
+        cleanupSimulation();
+      }
+    };
   }, [queue, onUpdateQueue, model, modelInputs]);
 
   const getStatusIcon = (status: QueueItem['status']) => {

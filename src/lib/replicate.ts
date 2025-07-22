@@ -122,7 +122,35 @@ export class ReplicateService {
       const prediction = await response.json();
 
       if (prediction.status === 'succeeded') {
-        return prediction.output;
+        const tempVideoUrl = prediction.output;
+        
+        // Upload to permanent storage
+        try {
+          const storageResponse = await fetch('/api/storage/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              tempUrl: tempVideoUrl,
+              fileName: `generated_video_${predictionId}.mp4`,
+              metadata: {
+                predictionId,
+                modelId: prediction.model || 'unknown',
+                createdAt: new Date().toISOString()
+              }
+            })
+          });
+
+          if (storageResponse.ok) {
+            const { data } = await storageResponse.json();
+            return data.url; // Return permanent URL
+          } else {
+            console.warn('Failed to upload to permanent storage, using temporary URL');
+            return tempVideoUrl;
+          }
+        } catch (error) {
+          console.error('Storage upload error:', error);
+          return tempVideoUrl; // Fallback to temporary URL
+        }
       } else if (prediction.status === 'failed') {
         throw new Error(`Prediction failed: ${prediction.error}`);
       }

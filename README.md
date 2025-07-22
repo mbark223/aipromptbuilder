@@ -21,6 +21,8 @@ A Next.js application for creating, managing, and optimizing prompts for AI vide
 - **Dynamic Input Fields**: Model-specific parameters automatically adjust
 - **Batch Processing**: Queue multiple videos for generation
 - **Real-time Progress**: Track generation status and download results
+- **Permanent Storage**: Videos are automatically uploaded to Vercel Blob Storage
+- **Multi-Format Download**: Export as MP4, WebM, MOV, or GIF with quality options
 
 ### User Interface
 - Clean, modern design with shadcn/ui components
@@ -62,14 +64,26 @@ cp .env.local.example .env.local
 
 # Edit .env.local and add your Replicate API token
 # Get your token from: https://replicate.com/account/api-tokens
+REPLICATE_API_TOKEN=your_replicate_api_token_here
 ```
 
-4. Run the development server:
+4. Configure Vercel Blob Storage (for permanent video storage):
+```bash
+# In your Vercel dashboard:
+# 1. Go to your project settings
+# 2. Navigate to the Storage tab
+# 3. Create a new Blob Store
+# 4. Copy the BLOB_READ_WRITE_TOKEN
+# 5. Add it to your .env.local file:
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxxxxxxxxx
+```
+
+5. Run the development server:
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+6. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ## Usage
 

@@ -72,7 +72,9 @@ export function DownloadDialog({
       }
 
       // Handle actual download
-      if (videoUrl && !videoUrl.startsWith('#')) {
+      const isDemoUrl = videoUrl.startsWith('#') || videoUrl.includes('demo.blob.core.windows.net');
+      
+      if (videoUrl && !isDemoUrl) {
         // Real URL - initiate download
         const response = await fetch(videoUrl);
         const blob = await response.blob();
@@ -84,6 +86,9 @@ export function DownloadDialog({
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+      } else {
+        // Demo mode - show message
+        console.log(`Demo mode: Would download ${fileName}.${format} in ${quality} quality`);
       }
 
       // Wait for progress to complete
