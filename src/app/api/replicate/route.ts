@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force runtime edge for better environment variable handling
+export const runtime = 'edge';
+
 // Debug function to check environment
 function getReplicateToken(): string | undefined {
   // Simply get the token from environment
   const token = process.env.REPLICATE_API_TOKEN;
   
-  console.log('Environment check:', {
-    hasToken: !!token,
-    tokenLength: token?.length || 0,
-    nodeEnv: process.env.NODE_ENV,
-    allEnvKeys: Object.keys(process.env).filter(key => key.includes('REPLICATE')),
+  // Log for debugging (will appear in Vercel function logs)
+  console.log('Token check:', {
+    exists: !!token,
+    length: token?.length || 0,
+    prefix: token?.substring(0, 8) || 'none',
+    env: process.env.NODE_ENV,
+    vercelEnv: process.env.VERCEL_ENV
   });
   
   return token;
