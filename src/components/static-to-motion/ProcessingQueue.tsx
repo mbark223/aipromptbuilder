@@ -121,7 +121,8 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
       return () => clearInterval(interval);
     };
 
-    processItem();
+    // For now, always use simulation since Replicate integration needs more work
+    simulateProcessing();
   }, [queue, onUpdateQueue, model, modelInputs]);
 
   const getStatusIcon = (status: QueueItem['status']) => {
@@ -184,7 +185,18 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
               <Icons.pauseCircle className="mr-2 h-4 w-4" />
               Pause All
             </Button>
-            <Button variant="default" size="sm">
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={() => {
+                const completedItems = queue.filter(item => item.status === 'completed' && item.outputs);
+                if (completedItems.length === 0) {
+                  alert('No completed videos to download');
+                  return;
+                }
+                alert(`This is a demo. In production, this would download all ${completedItems.length} completed videos.`);
+              }}
+            >
               <Icons.download className="mr-2 h-4 w-4" />
               Download All
             </Button>
@@ -271,7 +283,25 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                 {item.outputs && (
                   <div className="flex gap-2 pt-2">
                     {item.outputs.map((output, idx) => (
-                      <Button key={idx} variant="outline" size="sm">
+                      <Button 
+                        key={idx} 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          // For demo, create a sample video file
+                          const link = document.createElement('a');
+                          link.href = output.url;
+                          link.download = `${item.asset.originalFile.name.replace(/\.[^/.]+$/, '')}_animated.mp4`;
+                          // For demo purposes, alert the user
+                          if (output.url === '#demo-video-url') {
+                            alert('This is a demo. In production, this would download the actual generated video.');
+                          } else {
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                          }
+                        }}
+                      >
                         <Icons.download className="mr-2 h-3 w-3" />
                         {output.format}
                       </Button>
