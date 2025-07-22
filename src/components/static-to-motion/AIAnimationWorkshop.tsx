@@ -70,7 +70,7 @@ export function AIAnimationWorkshop({
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="prompt">
-                <Icons.fileText className="mr-2 h-4 w-4" />
+                <Icons.sparkles className="mr-2 h-4 w-4" />
                 Prompt
               </TabsTrigger>
               <TabsTrigger value="model">
