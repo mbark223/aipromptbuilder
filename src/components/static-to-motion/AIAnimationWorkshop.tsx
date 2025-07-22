@@ -74,15 +74,15 @@ export function AIAnimationWorkshop({
                 Prompt
               </TabsTrigger>
               <TabsTrigger value="model">
-                <Icons.cpu className="mr-2 h-4 w-4" />
+                <Icons.zap className="mr-2 h-4 w-4" />
                 Model
               </TabsTrigger>
               <TabsTrigger value="settings">
-                <Icons.settings className="mr-2 h-4 w-4" />
+                <Icons.sliders className="mr-2 h-4 w-4" />
                 Settings
               </TabsTrigger>
               <TabsTrigger value="formats">
-                <Icons.layoutGrid className="mr-2 h-4 w-4" />
+                <Icons.layoutTemplate className="mr-2 h-4 w-4" />
                 Formats
               </TabsTrigger>
             </TabsList>
