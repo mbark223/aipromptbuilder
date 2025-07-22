@@ -67,7 +67,7 @@ export function PreserveAnimationWorkshop({
             size="sm"
             onClick={onBack}
           >
-            <Icons.arrowLeft className="mr-2 h-4 w-4" />
+            <Icons.rotateCcw className="mr-2 h-4 w-4" />
             Back
           </Button>
           <h2 className="text-2xl font-semibold">Preserve & Animate</h2>
