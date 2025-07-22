@@ -1,12 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Debug function to check environment
+function getReplicateToken(): string | undefined {
+  // Try multiple ways to access the token
+  const token = process.env.REPLICATE_API_TOKEN || 
+                process.env['REPLICATE_API_TOKEN'] ||
+                (global as any).process?.env?.REPLICATE_API_TOKEN;
+  
+  console.log('Environment check:', {
+    hasToken: !!token,
+    tokenLength: token?.length || 0,
+    nodeEnv: process.env.NODE_ENV,
+    allEnvKeys: Object.keys(process.env).filter(key => key.includes('REPLICATE')),
+  });
+  
+  return token;
+}
+
 export async function POST(request: NextRequest) {
-  const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
+  const REPLICATE_API_TOKEN = getReplicateToken();
   
   if (!REPLICATE_API_TOKEN) {
-    console.error('REPLICATE_API_TOKEN is not set in environment variables');
+    console.error('REPLICATE_API_TOKEN is not set. Available env vars:', Object.keys(process.env));
     return NextResponse.json(
-      { error: 'Replicate API token not configured' },
+      { 
+        error: 'Replicate API token not configured',
+        debug: {
+          hasToken: false,
+          nodeEnv: process.env.NODE_ENV,
+          availableKeys: Object.keys(process.env).length
+        }
+      },
       { status: 500 }
     );
   }
@@ -48,12 +72,18 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
+  const REPLICATE_API_TOKEN = getReplicateToken();
   
   if (!REPLICATE_API_TOKEN) {
-    console.error('REPLICATE_API_TOKEN is not set in environment variables');
+    console.error('REPLICATE_API_TOKEN is not set in GET handler');
     return NextResponse.json(
-      { error: 'Replicate API token not configured' },
+      { 
+        error: 'Replicate API token not configured',
+        debug: {
+          hasToken: false,
+          nodeEnv: process.env.NODE_ENV
+        }
+      },
       { status: 500 }
     );
   }
