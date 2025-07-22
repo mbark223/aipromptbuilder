@@ -13,7 +13,7 @@ import { BatchDownloadDialog } from './BatchDownloadDialog';
 
 interface ProcessingQueueProps {
   queue: QueueItem[];
-  onUpdateQueue: (queue: QueueItem[]) => void;
+  onUpdateQueue: React.Dispatch<React.SetStateAction<QueueItem[]>>;
   model: AnimationModel;
   modelInputs: Record<string, string | number | boolean | null>;
 }
