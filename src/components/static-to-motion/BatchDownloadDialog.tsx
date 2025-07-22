@@ -188,7 +188,7 @@ export function BatchDownloadDialog({
               </div>
               <Progress value={downloadProgress} className="h-2" />
               <p className="text-xs text-muted-foreground text-center">
-                Please don't close this dialog until all downloads complete
+                Please don&apos;t close this dialog until all downloads complete
               </p>
             </div>
           )}
