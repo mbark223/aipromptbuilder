@@ -78,11 +78,11 @@ export function AIAnimationWorkshop({
                 Model
               </TabsTrigger>
               <TabsTrigger value="settings">
-                <Icons.sliders className="mr-2 h-4 w-4" />
+                <Icons.zap className="mr-2 h-4 w-4" />
                 Settings
               </TabsTrigger>
               <TabsTrigger value="formats">
-                <Icons.layoutTemplate className="mr-2 h-4 w-4" />
+                <Icons.layers className="mr-2 h-4 w-4" />
                 Formats
               </TabsTrigger>
             </TabsList>
@@ -229,7 +229,7 @@ export function AIAnimationWorkshop({
             </Button>
             
             <Button variant="outline" className="w-full">
-              <Icons.save className="mr-2 h-4 w-4" />
+              <Icons.download className="mr-2 h-4 w-4" />
               Save Configuration
             </Button>
           </div>

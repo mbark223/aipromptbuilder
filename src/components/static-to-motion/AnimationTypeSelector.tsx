@@ -74,7 +74,7 @@ export function AnimationTypeSelector({ onSelectType }: AnimationTypeSelectorPro
         <div className="p-6 space-y-4">
           <div className="flex items-start justify-between">
             <div className="p-3 bg-secondary/50 rounded-lg">
-              <Icons.layoutTemplate className="h-6 w-6 text-secondary-foreground" />
+              <Icons.layers className="h-6 w-6 text-secondary-foreground" />
             </div>
             <Badge variant="secondary">Quick & Easy</Badge>
           </div>
@@ -103,7 +103,7 @@ export function AnimationTypeSelector({ onSelectType }: AnimationTypeSelectorPro
 
           <div className="pt-2">
             <Button className="w-full" variant="secondary">
-              <Icons.layoutTemplate className="mr-2 h-4 w-4" />
+              <Icons.layers className="mr-2 h-4 w-4" />
               Choose Templates
             </Button>
           </div>
