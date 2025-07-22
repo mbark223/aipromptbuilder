@@ -15,7 +15,7 @@ export function ElementAnimationPreview({
   selectedElement
 }: ElementAnimationPreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number>(0);
   const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {

@@ -19,7 +19,7 @@ interface AnimationEffectPanelProps {
 const ANIMATION_TYPES = [
   { value: 'ripple', label: 'Water Ripple', icon: Icons.droplet },
   { value: 'sway', label: 'Sway', icon: Icons.wind },
-  { value: 'float', label: 'Float', icon: Icons.zap },
+  { value: 'float', label: 'Float', icon: Icons.cloud },
   { value: 'parallax', label: 'Parallax', icon: Icons.layers },
   { value: 'shimmer', label: 'Shimmer', icon: Icons.sparkles },
   { value: 'glow', label: 'Glow', icon: Icons.zap },
