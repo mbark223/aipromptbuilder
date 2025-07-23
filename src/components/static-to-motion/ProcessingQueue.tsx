@@ -11,6 +11,7 @@ import { renderAnimatedImage } from '@/lib/animation-renderer';
 import { QueueItem, AnimationModel } from '@/types';
 import { DownloadDialog } from './DownloadDialog';
 import { BatchDownloadDialog } from './BatchDownloadDialog';
+import { VideoPreview } from './VideoPreview';
 
 interface ProcessingQueueProps {
   queue: QueueItem[];
@@ -27,6 +28,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
   }>({ open: false, videoUrl: '', fileName: '' });
   
   const [batchDownloadOpen, setBatchDownloadOpen] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   // Process queue items with Replicate API
   useEffect(() => {
     const processingItem = queue.find(item => item.status === 'processing');
@@ -197,6 +199,13 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
             }
             return item;
           });
+          
+          // Auto-expand completed items to show preview
+          const completedItem = updatedQueue.find(item => item.id === processingItemId && item.status === 'completed');
+          if (completedItem) {
+            setExpandedItems(prev => new Set(prev).add(processingItemId));
+          }
+          
           return updatedQueue;
         });
       }, 500);
@@ -253,6 +262,18 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
           : item
       )
     );
+  };
+
+  const toggleItemExpanded = (id: string) => {
+    setExpandedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
 
   const completedCount = queue.filter(item => item.status === 'completed').length;
@@ -376,9 +397,26 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                   <p className="text-sm text-destructive">{item.error}</p>
                 )}
 
-                {/* Outputs */}
-                {item.outputs && (
+                {/* Completed Actions */}
+                {item.status === 'completed' && item.outputs && (
                   <div className="flex gap-2 pt-2">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => toggleItemExpanded(item.id)}
+                    >
+                      {expandedItems.has(item.id) ? (
+                        <>
+                          <Icons.eye className="mr-2 h-3 w-3" />
+                          Hide Preview
+                        </>
+                      ) : (
+                        <>
+                          <Icons.play className="mr-2 h-3 w-3" />
+                          Preview Video
+                        </>
+                      )}
+                    </Button>
                     {item.outputs.map((output, idx) => (
                       <Button 
                         key={idx} 
@@ -400,6 +438,29 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                 )}
               </div>
             </div>
+            
+            {/* Video Preview */}
+            {item.status === 'completed' && item.outputs && expandedItems.has(item.id) && (
+              <div className="mt-4 border-t pt-4">
+                <VideoPreview
+                  videoUrl={item.outputs[0].url}
+                  format={item.formats[0] ? {
+                    name: item.formats[0].name,
+                    aspectRatio: item.formats[0].aspectRatio,
+                    width: item.formats[0].width,
+                    height: item.formats[0].height
+                  } : undefined}
+                  modelName={item.model?.name}
+                  onDownload={() => {
+                    setDownloadDialog({
+                      open: true,
+                      videoUrl: item.outputs![0].url,
+                      fileName: item.asset.originalFile.name.replace(/\.[^/.]+$/, '')
+                    });
+                  }}
+                />
+              </div>
+            )}
           </Card>
         ))}
       </div>

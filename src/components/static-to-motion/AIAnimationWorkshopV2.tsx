@@ -13,6 +13,7 @@ import { ModelSelector } from './ModelSelector';
 import { AssetGrid } from './AssetGrid';
 import { FormatSelector } from './FormatSelector';
 import { StaticAsset, AnimationModel, Format } from '@/types';
+import { AnimationElements, AnimationElement } from './AnimationElements';
 
 interface AIAnimationWorkshopV2Props {
   assets: StaticAsset[];
@@ -106,6 +107,58 @@ export function AIAnimationWorkshopV2({
     details: ''
   });
   const [activeSection, setActiveSection] = useState<string>('subject');
+  const [animationElements, setAnimationElements] = useState<AnimationElement[]>([
+    {
+      id: 'text-1',
+      name: 'Text Elements',
+      type: 'text',
+      enabled: false,
+      animationType: 'fade',
+      intensity: 5,
+      delay: 0,
+      duration: 1,
+    },
+    {
+      id: 'object-1',
+      name: 'Main Objects',
+      type: 'object',
+      enabled: false,
+      animationType: 'motion',
+      intensity: 5,
+      delay: 0,
+      duration: 2,
+    },
+    {
+      id: 'bg-1',
+      name: 'Background',
+      type: 'background',
+      enabled: false,
+      animationType: 'scale',
+      intensity: 3,
+      delay: 0,
+      duration: 3,
+    },
+    {
+      id: 'fg-1',
+      name: 'Foreground Elements',
+      type: 'foreground',
+      enabled: false,
+      animationType: 'float',
+      intensity: 4,
+      delay: 0.5,
+      duration: 2,
+    },
+    {
+      id: 'char-1',
+      name: 'Characters',
+      type: 'character',
+      enabled: false,
+      animationType: 'bounce',
+      intensity: 6,
+      delay: 0,
+      duration: 1.5,
+    },
+  ]);
 
   // Build the complete prompt from sections
   const buildCompletePrompt = useCallback(() => {
@@ -169,38 +222,8 @@ export function AIAnimationWorkshopV2({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Left Column - Asset Selection and Model */}
-        <div className="space-y-6">
-          {/* Asset Selection */}
-          <Card className="p-4">
-            <h3 className="font-medium mb-3">Select Images</h3>
-            <AssetGrid
-              assets={assets}
-              selectedAssets={selectedAssets}
-              onSelectAssets={onSelectAssets}
-            />
-          </Card>
-
-          {/* Model Selection */}
-          <ModelSelector
-            selectedModel={selectedModel}
-            onSelectModel={onSelectModel}
-          />
-
-          {/* Format Selection */}
-          <Card className="p-4">
-            <h3 className="font-medium mb-3">Output Formats</h3>
-            <FormatSelector
-              selectedFormats={selectedFormats}
-              onSelectFormats={onSelectFormats}
-            />
-          </Card>
-        </div>
-
-        {/* Middle Column - Prompt Builder */}
-        <div className="lg:col-span-2 space-y-4">
-          <Card className="p-6">
+      {/* Prompt Builder - Now at the top */}
+      <Card className="p-6 mb-6">
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-semibold mb-2">Build Your Prompt</h3>
@@ -367,10 +390,61 @@ export function AIAnimationWorkshopV2({
                 </>
               )}
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-4">
+            </div>
+          </Card>
+
+      {/* Animation Elements Section */}
+      <div className="mb-6">
+        <AnimationElements
+          elements={animationElements}
+          onElementsChange={setAnimationElements}
+        />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left Column - Asset Selection and Model */}
+        <div className="space-y-6">
+          {/* Asset Selection */}
+          <Card className="p-4">
+            <h3 className="font-medium mb-3">Select Images</h3>
+            <AssetGrid
+              assets={assets}
+              selectedAssets={selectedAssets}
+              onSelectAssets={onSelectAssets}
+            />
+          </Card>
+
+          {/* Model Selection */}
+          <ModelSelector
+            selectedModel={selectedModel}
+            onSelectModel={onSelectModel}
+          />
+        </div>
+
+        {/* Right Column - Format Selection and Generate Button */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Format Selection */}
+          <Card className="p-4">
+            <h3 className="font-medium mb-3">Output Formats</h3>
+            <FormatSelector
+              selectedFormats={selectedFormats}
+              onSelectFormats={onSelectFormats}
+            />
+          </Card>
+
+          {/* Generate Button */}
+          <Card className="p-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h3 className="font-medium">Ready to Generate</h3>
+                <p className="text-sm text-muted-foreground">
+                  Your video will be generated with the selected settings
+                </p>
+              </div>
+              <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                  {selectedAssets.length} image{selectedAssets.length !== 1 ? 's' : ''} selected
+                  <div>{selectedAssets.length} image{selectedAssets.length !== 1 ? 's' : ''} selected</div>
+                  <div>{animationElements.filter(el => el.enabled).length} animation{animationElements.filter(el => el.enabled).length !== 1 ? 's' : ''} enabled</div>
                 </div>
                 <Button
                   onClick={onStartProcessing}
