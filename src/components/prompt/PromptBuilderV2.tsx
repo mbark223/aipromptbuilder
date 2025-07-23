@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -162,7 +162,7 @@ export function PromptBuilderV2({ onPromptChange, targetModel = 'veo-3' }: Promp
   const [freestylePrompt, setFreestylePrompt] = useState('');
 
   // Construct prompt from guided fields
-  const constructGuidedPrompt = () => {
+  const constructGuidedPrompt = useCallback(() => {
     const parts = [];
     
     if (guidedFields.subject) {
@@ -193,7 +193,7 @@ export function PromptBuilderV2({ onPromptChange, targetModel = 'veo-3' }: Promp
     }
     
     return parts.join(', ');
-  };
+  }, [guidedFields]);
 
   // Update parent when prompt changes
   useEffect(() => {
