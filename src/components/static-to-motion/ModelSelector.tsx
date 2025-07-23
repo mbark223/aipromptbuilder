@@ -415,16 +415,64 @@ const BASE_MODELS: AnimationModel[] = [
     ]
   },
   {
-    id: 'google-gemini-2.0-flash',
-    name: 'Gemini 2.0 Flash',
-    provider: 'Google',
-    description: 'Ultra-fast multimodal AI with enhanced reasoning and video understanding',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Multimodal', 'Fast Generation', 'Enhanced Reasoning'],
+    id: 'tencent-hunyuan-video',
+    name: 'Hunyuan Video',
+    provider: 'Tencent',
+    description: 'State-of-the-art text-to-video generation model',
+    capabilities: ['Text-to-Video', 'High Quality', 'Open Source'],
+    speed: 'moderate',
+    quality: 'very-high',
+    costPerGeneration: 0.45,
+    replicateId: 'tencent/hunyuan-video',
+    pricing: '$0.45/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'num_frames',
+        type: 'number',
+        label: 'Number of Frames',
+        required: false,
+        defaultValue: 97,
+        min: 49,
+        max: 193,
+        placeholder: 'Number of frames (49-193)'
+      },
+      {
+        name: 'guidance_scale',
+        type: 'number',
+        label: 'Guidance Scale',
+        required: false,
+        defaultValue: 7,
+        min: 1,
+        max: 20,
+        placeholder: 'How closely to follow the prompt'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
+  },
+  {
+    id: 'pixverse-v4.5',
+    name: 'PixVerse v4.5',
+    provider: 'PixVerse',
+    description: 'Enhanced motion generation for 5-8s videos',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Enhanced Motion'],
     speed: 'fast',
     quality: 'high',
-    costPerGeneration: 0,
-    replicateId: 'google/gemini-2.0-flash',
-    pricing: 'Free',
+    costPerGeneration: 0.30,
+    replicateId: 'pixverse/pixverse-v4.5',
+    pricing: '$0.30/generation',
     inputs: [
       {
         name: 'prompt',
@@ -438,280 +486,205 @@ const BASE_MODELS: AnimationModel[] = [
         type: 'image',
         label: 'Input Image (Optional)',
         required: false,
-        placeholder: 'Upload an image for image-to-video generation'
+        placeholder: 'Upload an image for image-to-video'
       },
       {
-        name: 'temperature',
-        type: 'number',
-        label: 'Temperature',
-        required: false,
-        defaultValue: 0.7,
-        min: 0,
-        max: 2,
-        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
+        name: 'duration',
+        type: 'select',
+        label: 'Duration',
+        required: true,
+        options: [
+          { value: '5', label: '5 seconds' },
+          { value: '8', label: '8 seconds' }
+        ],
+        defaultValue: '5'
       },
       {
-        name: 'max_tokens',
+        name: 'seed',
         type: 'number',
-        label: 'Max Tokens',
+        label: 'Seed',
         required: false,
-        defaultValue: 8192,
-        min: 1,
-        max: 8192,
-        placeholder: 'Maximum number of tokens to generate'
+        placeholder: 'Random seed for reproducibility'
       }
     ]
   },
   {
-    id: 'google-gemini-1.5-pro',
-    name: 'Gemini 1.5 Pro',
-    provider: 'Google',
-    description: 'Advanced multimodal model with 2M token context window',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Long Context', 'Multimodal', 'High Quality'],
+    id: 'kling-v2.1',
+    name: 'Kling v2.1',
+    provider: 'Kwai',
+    description: 'Make 5-10s videos with complex actions and motion',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Complex Actions', 'Multiple Resolutions'],
     speed: 'moderate',
-    quality: 'very-high',
+    quality: 'high',
+    costPerGeneration: 0.50,
+    replicateId: 'kwaivgi/kling-v2.1',
+    pricing: '$0.50/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video'
+      },
+      {
+        name: 'duration',
+        type: 'select',
+        label: 'Duration',
+        required: true,
+        options: [
+          { value: '5', label: '5 seconds' },
+          { value: '10', label: '10 seconds' }
+        ],
+        defaultValue: '5'
+      },
+      {
+        name: 'resolution',
+        type: 'select',
+        label: 'Resolution',
+        required: true,
+        options: [
+          { value: '720p', label: '720p' },
+          { value: '1080p', label: '1080p' }
+        ],
+        defaultValue: '720p'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
+  },
+  {
+    id: 'wan-2.1-t2v-480p',
+    name: 'Wan 2.1 Text-to-Video 480p',
+    provider: 'WaveSpeed AI',
+    description: 'Open-source video generation model at 480p resolution',
+    capabilities: ['Text-to-Video', 'Open Source', 'Fast Generation'],
+    speed: 'fast',
+    quality: 'good',
+    costPerGeneration: 0.20,
+    replicateId: 'wavespeedai/wan-2.1-t2v-480p',
+    pricing: '$0.20/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'num_frames',
+        type: 'number',
+        label: 'Number of Frames',
+        required: false,
+        defaultValue: 97,
+        min: 49,
+        max: 193,
+        placeholder: 'Number of frames to generate'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
+  },
+  {
+    id: 'wan-2.1-i2v-480p',
+    name: 'Wan 2.1 Image-to-Video 480p',
+    provider: 'WaveSpeed AI',
+    description: 'Animate images into videos at 480p resolution',
+    capabilities: ['Image-to-Video', 'Open Source', 'Fast Generation'],
+    speed: 'fast',
+    quality: 'good',
+    costPerGeneration: 0.20,
+    replicateId: 'wavespeedai/wan-2.1-i2v-480p',
+    pricing: '$0.20/generation',
+    inputs: [
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image',
+        required: true,
+        placeholder: 'Upload the image to animate'
+      },
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe how to animate the image...'
+      },
+      {
+        name: 'num_frames',
+        type: 'number',
+        label: 'Number of Frames',
+        required: false,
+        defaultValue: 97,
+        min: 49,
+        max: 193,
+        placeholder: 'Number of frames to generate'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
+  },
+  {
+    id: 'luma-ray',
+    name: 'Luma Ray',
+    provider: 'Luma AI',
+    description: 'Fast, high quality image-to-video generation',
+    capabilities: ['Image-to-Video', 'Fast Generation', 'High Quality'],
+    speed: 'fast',
+    quality: 'high',
     costPerGeneration: 0.35,
-    replicateId: 'google/gemini-1.5-pro',
+    replicateId: 'luma/ray',
     pricing: '$0.35/generation',
     inputs: [
       {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
         name: 'image',
         type: 'image',
-        label: 'Input Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video generation'
+        label: 'Input Image',
+        required: true,
+        placeholder: 'Upload the image to animate'
       },
-      {
-        name: 'temperature',
-        type: 'number',
-        label: 'Temperature',
-        required: false,
-        defaultValue: 0.7,
-        min: 0,
-        max: 2,
-        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
-      },
-      {
-        name: 'max_tokens',
-        type: 'number',
-        label: 'Max Tokens',
-        required: false,
-        defaultValue: 8192,
-        min: 1,
-        max: 8192,
-        placeholder: 'Maximum number of tokens to generate'
-      },
-      {
-        name: 'top_p',
-        type: 'number',
-        label: 'Top P',
-        required: false,
-        defaultValue: 0.95,
-        min: 0,
-        max: 1,
-        placeholder: 'Nucleus sampling threshold'
-      }
-    ]
-  },
-  {
-    id: 'google-gemini-1.5-flash',
-    name: 'Gemini 1.5 Flash',
-    provider: 'Google',
-    description: 'Fast and efficient multimodal model for quick generations',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Fast Generation', 'Multimodal', 'Cost-Effective'],
-    speed: 'fast',
-    quality: 'good',
-    costPerGeneration: 0.075,
-    replicateId: 'google/gemini-1.5-flash',
-    pricing: '$0.075/generation',
-    inputs: [
       {
         name: 'prompt',
         type: 'text',
         label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image (Optional)',
         required: false,
-        placeholder: 'Upload an image for image-to-video generation'
+        placeholder: 'Optional: Describe the motion you want...'
       },
       {
-        name: 'temperature',
-        type: 'number',
-        label: 'Temperature',
-        required: false,
-        defaultValue: 0.7,
-        min: 0,
-        max: 2,
-        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
-      },
-      {
-        name: 'max_tokens',
-        type: 'number',
-        label: 'Max Tokens',
-        required: false,
-        defaultValue: 8192,
-        min: 1,
-        max: 8192,
-        placeholder: 'Maximum number of tokens to generate'
-      }
-    ]
-  },
-  {
-    id: 'google-gemini-1.5-flash-8b',
-    name: 'Gemini 1.5 Flash-8B',
-    provider: 'Google',
-    description: 'Lightweight version optimized for edge deployment and speed',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Ultra-Fast', 'Edge Computing', 'Low Latency'],
-    speed: 'fast',
-    quality: 'good',
-    costPerGeneration: 0.037,
-    replicateId: 'google/gemini-1.5-flash-8b',
-    pricing: '$0.037/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video generation'
-      },
-      {
-        name: 'temperature',
-        type: 'number',
-        label: 'Temperature',
-        required: false,
-        defaultValue: 0.7,
-        min: 0,
-        max: 2,
-        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
-      },
-      {
-        name: 'max_tokens',
-        type: 'number',
-        label: 'Max Tokens',
-        required: false,
-        defaultValue: 8192,
-        min: 1,
-        max: 8192,
-        placeholder: 'Maximum number of tokens to generate'
-      }
-    ]
-  },
-  {
-    id: 'google-gemini-1.0-pro',
-    name: 'Gemini 1.0 Pro',
-    provider: 'Google',
-    description: 'Stable production-ready model for reliable video generation',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Stable', 'Production-Ready'],
-    speed: 'moderate',
-    quality: 'high',
-    costPerGeneration: 0.125,
-    replicateId: 'google/gemini-1.0-pro',
-    pricing: '$0.125/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video generation'
-      },
-      {
-        name: 'temperature',
-        type: 'number',
-        label: 'Temperature',
-        required: false,
-        defaultValue: 0.7,
-        min: 0,
-        max: 1,
-        placeholder: 'Controls randomness (0 = deterministic, 1 = very random)'
-      },
-      {
-        name: 'max_tokens',
-        type: 'number',
-        label: 'Max Tokens',
-        required: false,
-        defaultValue: 2048,
-        min: 1,
-        max: 2048,
-        placeholder: 'Maximum number of tokens to generate'
-      }
-    ]
-  },
-  {
-    id: 'google-gemini-experimental',
-    name: 'Gemini Experimental',
-    provider: 'Google',
-    description: 'Cutting-edge experimental features for advanced video generation',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Experimental', 'Advanced Features', 'Research'],
-    speed: 'slow',
-    quality: 'very-high',
-    costPerGeneration: 0,
-    replicateId: 'google/gemini-experimental',
-    pricing: 'Free (Beta)',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video generation'
-      },
-      {
-        name: 'experimental_features',
+        name: 'aspect_ratio',
         type: 'select',
-        label: 'Experimental Features',
+        label: 'Aspect Ratio',
         required: false,
         options: [
-          { value: 'default', label: 'Default' },
-          { value: 'enhanced_physics', label: 'Enhanced Physics' },
-          { value: 'style_transfer', label: 'Style Transfer' },
-          { value: 'temporal_consistency', label: 'Temporal Consistency' }
+          { value: '1:1', label: '1:1' },
+          { value: '16:9', label: '16:9' },
+          { value: '9:16', label: '9:16' }
         ],
-        defaultValue: 'default'
-      },
-      {
-        name: 'temperature',
-        type: 'number',
-        label: 'Temperature',
-        required: false,
-        defaultValue: 0.7,
-        min: 0,
-        max: 2,
-        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
+        defaultValue: '16:9'
       },
       {
         name: 'seed',
@@ -810,7 +783,7 @@ export function ModelSelector({
           </Select>
           
           <Badge variant="secondary" className="px-3 py-1">
-            {filteredModels.length} models available (Total: {AVAILABLE_MODELS.length})
+            {filteredModels.length} models available
           </Badge>
         </div>
       </div>
