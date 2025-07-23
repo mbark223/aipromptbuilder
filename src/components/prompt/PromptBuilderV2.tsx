@@ -209,7 +209,7 @@ export function PromptBuilderV2({ onPromptChange, targetModel = 'veo-3' }: Promp
     }
     
     onPromptChange?.(finalPrompt);
-  }, [guidedFields, selectedTemplate, freestylePrompt, buildMode]);
+  }, [guidedFields, selectedTemplate, freestylePrompt, buildMode, onPromptChange, constructGuidedPrompt]);
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -298,7 +298,7 @@ export function PromptBuilderV2({ onPromptChange, targetModel = 'veo-3' }: Promp
             <Alert>
               <Icons.sparkles className="h-4 w-4" />
               <AlertDescription>
-                Let\'s build your prompt step by step! Start with describing what you want to see.
+                Let&apos;s build your prompt step by step! Start with describing what you want to see.
               </AlertDescription>
             </Alert>
           )}
@@ -332,7 +332,7 @@ export function PromptBuilderV2({ onPromptChange, targetModel = 'veo-3' }: Promp
 
             {/* Action/Movement */}
             <Card className="p-4">
-              <Label className="text-base font-medium">What\'s happening?</Label>
+              <Label className="text-base font-medium">What&apos;s happening?</Label>
               <p className="text-sm text-muted-foreground mb-2">
                 Describe the action or movement
               </p>

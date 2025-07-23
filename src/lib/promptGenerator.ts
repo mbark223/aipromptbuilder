@@ -52,8 +52,12 @@ export function generateOptimizedPrompt({
   }
 
   // Audio (for Veo-3 and supported models)
-  if ((content as any).audio && platform === 'veo') {
-    parts.push((content as any).audio.trim());
+  interface ContentWithAudio extends Prompt['content'] {
+    audio?: string;
+  }
+  const contentWithAudio = content as ContentWithAudio;
+  if (contentWithAudio.audio && platform === 'veo') {
+    parts.push(contentWithAudio.audio.trim());
   }
 
   // Consistency parameters

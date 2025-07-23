@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 }
 
 // OpenRouter webhooks can also use GET for status checks
-export async function GET(request: NextRequest) {
+export async function GET() {
   return NextResponse.json({ 
     status: 'ok',
     endpoint: 'openrouter-webhook' 

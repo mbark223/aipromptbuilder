@@ -2,7 +2,7 @@ import { AnimationModel } from '@/types';
 
 interface OpenRouterGenerationOptions {
   model: AnimationModel;
-  inputs: Record<string, any>;
+  inputs: Record<string, string | number | boolean | null>;
   apiKey?: string;
 }
 
@@ -131,10 +131,10 @@ export class OpenRouterService {
 
   private transformInputsForModel(
     model: AnimationModel, 
-    inputs: Record<string, any>
-  ): Record<string, any> {
+    inputs: Record<string, string | number | boolean | null>
+  ): Record<string, string | number | boolean | null> {
     // Transform inputs based on model requirements
-    const transformed: Record<string, any> = {};
+    const transformed: Record<string, string | number | boolean | null> = {};
 
     // Handle image inputs - some models need base64
     if (inputs.image && model.id === 'stability-ai-stable-video-diffusion') {
@@ -202,9 +202,14 @@ export class OpenRouterService {
 
       const data = await response.json();
       // Filter for video generation models
+      interface ModelData {
+        id: string;
+        capabilities?: string[];
+        type?: string;
+      }
       return data.models
-        .filter((m: any) => m.capabilities?.includes('video') || m.type === 'video')
-        .map((m: any) => m.id);
+        .filter((m: ModelData) => m.capabilities?.includes('video') || m.type === 'video')
+        .map((m: ModelData) => m.id);
     } catch (error) {
       console.error('Error fetching OpenRouter models:', error);
       return [];

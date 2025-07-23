@@ -429,7 +429,7 @@ export function ModelSelector({
   const providers = useMemo(() => {
     const uniqueProviders = [...new Set(AVAILABLE_MODELS.map(m => m.provider))];
     return ['all', ...uniqueProviders.sort()];
-  }, []);
+  }, [AVAILABLE_MODELS]);
 
   // Filter models based on search and provider
   const filteredModels = useMemo(() => {
@@ -443,7 +443,7 @@ export function ModelSelector({
       
       return matchesSearch && matchesProvider;
     });
-  }, [searchQuery, selectedProvider]);
+  }, [searchQuery, selectedProvider, AVAILABLE_MODELS]);
 
   const getSpeedIcon = (speed: string) => {
     switch (speed) {
