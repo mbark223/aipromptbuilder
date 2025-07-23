@@ -7,6 +7,16 @@ interface GeneratePromptOptions {
   platform?: 'veo' | 'flows' | 'generic';
 }
 
+interface ContentWithAudio {
+  subject?: string;
+  style?: string;
+  composition?: string;
+  lighting?: string;
+  motion?: string;
+  technical?: string;
+  audio?: string;
+}
+
 export function generateOptimizedPrompt({
   content,
   format,
@@ -52,9 +62,6 @@ export function generateOptimizedPrompt({
   }
 
   // Audio (for Veo-3 and supported models)
-  interface ContentWithAudio extends Prompt['content'] {
-    audio?: string;
-  }
   const contentWithAudio = content as ContentWithAudio;
   if (contentWithAudio.audio && platform === 'veo') {
     parts.push(contentWithAudio.audio.trim());
