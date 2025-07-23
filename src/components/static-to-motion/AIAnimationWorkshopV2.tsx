@@ -319,7 +319,7 @@ export function AIAnimationWorkshopV2({
                           {input.type === 'number' ? (
                             <Input
                               type="number"
-                              value={modelInputs[input.name] as number || input.defaultValue || ''}
+                              value={modelInputs[input.name] as number || (typeof input.defaultValue === 'number' ? input.defaultValue : '') || ''}
                               onChange={(e) => onModelInputsChange({
                                 ...modelInputs,
                                 [input.name]: parseFloat(e.target.value)
@@ -363,7 +363,7 @@ export function AIAnimationWorkshopV2({
                           ) : (
                             <Input
                               type="text"
-                              value={modelInputs[input.name] as string || input.defaultValue || ''}
+                              value={modelInputs[input.name] as string || (typeof input.defaultValue === 'string' ? input.defaultValue : '') || ''}
                               onChange={(e) => onModelInputsChange({
                                 ...modelInputs,
                                 [input.name]: e.target.value
