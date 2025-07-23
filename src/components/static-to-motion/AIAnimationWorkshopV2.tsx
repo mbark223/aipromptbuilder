@@ -189,7 +189,6 @@ export function AIAnimationWorkshopV2({
               assets={assets}
               selectedAssets={selectedAssets}
               onSelectAssets={onSelectAssets}
-              compact
             />
           </Card>
 
