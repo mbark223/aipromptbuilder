@@ -12,7 +12,6 @@ import { Icons } from '@/components/icons';
 import { ModelSelector } from './ModelSelector';
 import { AssetGrid } from './AssetGrid';
 import { FormatSelector } from './FormatSelector';
-import { PreviewPanelV2 } from './PreviewPanelV2';
 import { StaticAsset, AnimationModel, Format } from '@/types';
 
 interface AIAnimationWorkshopV2Props {
@@ -107,7 +106,6 @@ export function AIAnimationWorkshopV2({
     details: ''
   });
   const [activeSection, setActiveSection] = useState<string>('subject');
-  const [showPreview, setShowPreview] = useState(false);
 
   // Build the complete prompt from sections
   const buildCompletePrompt = useCallback(() => {
@@ -169,14 +167,6 @@ export function AIAnimationWorkshopV2({
           </Button>
           <h2 className="text-2xl font-semibold">AI Video Generation</h2>
         </div>
-        <Button 
-          size="sm" 
-          variant="outline"
-          onClick={() => setShowPreview(!showPreview)}
-        >
-          <Icons.target className="mr-2 h-4 w-4" />
-          {showPreview ? 'Hide' : 'Show'} Preview
-        </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -396,17 +386,6 @@ export function AIAnimationWorkshopV2({
         </div>
       </div>
 
-      {/* Preview Panel */}
-      {showPreview && selectedAssets.length > 0 && (
-        <div className="mt-6">
-          <PreviewPanelV2
-            assets={assets.filter(a => selectedAssets.includes(a.id))}
-            animationType="ai"
-            model={selectedModel}
-            prompt={buildCompletePrompt()}
-          />
-        </div>
-      )}
     </div>
   );
 }
