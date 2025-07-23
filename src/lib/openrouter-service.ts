@@ -138,7 +138,7 @@ export class OpenRouterService {
     const transformed: Record<string, string | number | boolean | null> = {};
 
     // Convert ReplicateInput to plain object
-    const inputObj = inputs as any;
+    const inputObj = inputs as Record<string, string | number | boolean | null | undefined>;
     
     // Handle image inputs - some models need base64
     if (inputObj.image && model.id === 'stability-ai-stable-video-diffusion') {
