@@ -413,6 +413,314 @@ const BASE_MODELS: AnimationModel[] = [
         placeholder: 'Random seed for reproducibility'
       }
     ]
+  },
+  {
+    id: 'google-gemini-2.0-flash',
+    name: 'Gemini 2.0 Flash',
+    provider: 'Google',
+    description: 'Ultra-fast multimodal AI with enhanced reasoning and video understanding',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Multimodal', 'Fast Generation', 'Enhanced Reasoning'],
+    speed: 'fast',
+    quality: 'high',
+    costPerGeneration: 0,
+    replicateId: 'google/gemini-2.0-flash',
+    pricing: 'Free',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video generation'
+      },
+      {
+        name: 'temperature',
+        type: 'number',
+        label: 'Temperature',
+        required: false,
+        defaultValue: 0.7,
+        min: 0,
+        max: 2,
+        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
+      },
+      {
+        name: 'max_tokens',
+        type: 'number',
+        label: 'Max Tokens',
+        required: false,
+        defaultValue: 8192,
+        min: 1,
+        max: 8192,
+        placeholder: 'Maximum number of tokens to generate'
+      }
+    ]
+  },
+  {
+    id: 'google-gemini-1.5-pro',
+    name: 'Gemini 1.5 Pro',
+    provider: 'Google',
+    description: 'Advanced multimodal model with 2M token context window',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Long Context', 'Multimodal', 'High Quality'],
+    speed: 'moderate',
+    quality: 'very-high',
+    costPerGeneration: 0.35,
+    replicateId: 'google/gemini-1.5-pro',
+    pricing: '$0.35/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video generation'
+      },
+      {
+        name: 'temperature',
+        type: 'number',
+        label: 'Temperature',
+        required: false,
+        defaultValue: 0.7,
+        min: 0,
+        max: 2,
+        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
+      },
+      {
+        name: 'max_tokens',
+        type: 'number',
+        label: 'Max Tokens',
+        required: false,
+        defaultValue: 8192,
+        min: 1,
+        max: 8192,
+        placeholder: 'Maximum number of tokens to generate'
+      },
+      {
+        name: 'top_p',
+        type: 'number',
+        label: 'Top P',
+        required: false,
+        defaultValue: 0.95,
+        min: 0,
+        max: 1,
+        placeholder: 'Nucleus sampling threshold'
+      }
+    ]
+  },
+  {
+    id: 'google-gemini-1.5-flash',
+    name: 'Gemini 1.5 Flash',
+    provider: 'Google',
+    description: 'Fast and efficient multimodal model for quick generations',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Fast Generation', 'Multimodal', 'Cost-Effective'],
+    speed: 'fast',
+    quality: 'good',
+    costPerGeneration: 0.075,
+    replicateId: 'google/gemini-1.5-flash',
+    pricing: '$0.075/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video generation'
+      },
+      {
+        name: 'temperature',
+        type: 'number',
+        label: 'Temperature',
+        required: false,
+        defaultValue: 0.7,
+        min: 0,
+        max: 2,
+        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
+      },
+      {
+        name: 'max_tokens',
+        type: 'number',
+        label: 'Max Tokens',
+        required: false,
+        defaultValue: 8192,
+        min: 1,
+        max: 8192,
+        placeholder: 'Maximum number of tokens to generate'
+      }
+    ]
+  },
+  {
+    id: 'google-gemini-1.5-flash-8b',
+    name: 'Gemini 1.5 Flash-8B',
+    provider: 'Google',
+    description: 'Lightweight version optimized for edge deployment and speed',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Ultra-Fast', 'Edge Computing', 'Low Latency'],
+    speed: 'fast',
+    quality: 'good',
+    costPerGeneration: 0.037,
+    replicateId: 'google/gemini-1.5-flash-8b',
+    pricing: '$0.037/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video generation'
+      },
+      {
+        name: 'temperature',
+        type: 'number',
+        label: 'Temperature',
+        required: false,
+        defaultValue: 0.7,
+        min: 0,
+        max: 2,
+        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
+      },
+      {
+        name: 'max_tokens',
+        type: 'number',
+        label: 'Max Tokens',
+        required: false,
+        defaultValue: 8192,
+        min: 1,
+        max: 8192,
+        placeholder: 'Maximum number of tokens to generate'
+      }
+    ]
+  },
+  {
+    id: 'google-gemini-1.0-pro',
+    name: 'Gemini 1.0 Pro',
+    provider: 'Google',
+    description: 'Stable production-ready model for reliable video generation',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Stable', 'Production-Ready'],
+    speed: 'moderate',
+    quality: 'high',
+    costPerGeneration: 0.125,
+    replicateId: 'google/gemini-1.0-pro',
+    pricing: '$0.125/generation',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video generation'
+      },
+      {
+        name: 'temperature',
+        type: 'number',
+        label: 'Temperature',
+        required: false,
+        defaultValue: 0.7,
+        min: 0,
+        max: 1,
+        placeholder: 'Controls randomness (0 = deterministic, 1 = very random)'
+      },
+      {
+        name: 'max_tokens',
+        type: 'number',
+        label: 'Max Tokens',
+        required: false,
+        defaultValue: 2048,
+        min: 1,
+        max: 2048,
+        placeholder: 'Maximum number of tokens to generate'
+      }
+    ]
+  },
+  {
+    id: 'google-gemini-experimental',
+    name: 'Gemini Experimental',
+    provider: 'Google',
+    description: 'Cutting-edge experimental features for advanced video generation',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Experimental', 'Advanced Features', 'Research'],
+    speed: 'slow',
+    quality: 'very-high',
+    costPerGeneration: 0,
+    replicateId: 'google/gemini-experimental',
+    pricing: 'Free (Beta)',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video you want to generate...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload an image for image-to-video generation'
+      },
+      {
+        name: 'experimental_features',
+        type: 'select',
+        label: 'Experimental Features',
+        required: false,
+        options: [
+          { value: 'default', label: 'Default' },
+          { value: 'enhanced_physics', label: 'Enhanced Physics' },
+          { value: 'style_transfer', label: 'Style Transfer' },
+          { value: 'temporal_consistency', label: 'Temporal Consistency' }
+        ],
+        defaultValue: 'default'
+      },
+      {
+        name: 'temperature',
+        type: 'number',
+        label: 'Temperature',
+        required: false,
+        defaultValue: 0.7,
+        min: 0,
+        max: 2,
+        placeholder: 'Controls randomness (0 = deterministic, 2 = very random)'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
   }
 ];
 
@@ -502,7 +810,7 @@ export function ModelSelector({
           </Select>
           
           <Badge variant="secondary" className="px-3 py-1">
-            {filteredModels.length} models available
+            {filteredModels.length} models available (Total: {AVAILABLE_MODELS.length})
           </Badge>
         </div>
       </div>
