@@ -7,8 +7,7 @@ import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
 import { AnimationTemplates } from '@/components/static-to-motion/AnimationTemplates';
 import { GenericAnimationWorkshop } from '@/components/static-to-motion/GenericAnimationWorkshop';
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
-import { AIAnimationWorkshop } from '@/components/static-to-motion/AIAnimationWorkshop';
-import { PreserveAnimationWorkshop } from '@/components/static-to-motion/PreserveAnimationWorkshop';
+import { AIAnimationWorkshopV2 } from '@/components/static-to-motion/AIAnimationWorkshopV2';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
 import { ANIMATION_TEMPLATES } from '@/types';
@@ -59,7 +58,7 @@ export default function StaticToMotionPage() {
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'upload' | 'type-selection' | 'workshop' | 'queue'>('upload');
-  const [animationType, setAnimationType] = useState<'ai' | 'generic' | 'preserve' | null>(null);
+  const [animationType, setAnimationType] = useState<'ai' | 'generic' | null>(null);
 
   const handleFilesUploaded = (newAssets: StaticAsset[]) => {
     setAssets([...assets, ...newAssets]);
@@ -156,37 +155,8 @@ export default function StaticToMotionPage() {
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
-          {animationType === 'preserve' ? (
-            <PreserveAnimationWorkshop
-              assets={assets}
-              selectedAssets={selectedAssets}
-              selectedFormats={selectedFormats}
-              onStartProcessing={(elementAnimations) => {
-                // For preserve mode, we need to handle element animations differently
-                const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
-                const newQueueItems = selectedAssetObjects.map(asset => ({
-                  id: `${asset.id}-${Date.now()}`,
-                  assetId: asset.id,
-                  asset,
-                  formats: selectedFormats,
-                  animation: { 
-                    ...ANIMATION_TEMPLATES[0], 
-                    type: 'preserve' as const,
-                    preserveImage: true 
-                  },
-                  animationType: 'preserve' as const,
-                  elementAnimations, // Store element animations
-                  status: 'pending' as const,
-                  progress: 0
-                }));
-                
-                setProcessingQueue([...processingQueue, ...newQueueItems]);
-                setActiveView('queue');
-              }}
-              onBack={() => setActiveView('type-selection')}
-            />
-          ) : animationType === 'ai' ? (
-            <AIAnimationWorkshop
+          {animationType === 'ai' ? (
+            <AIAnimationWorkshopV2
               assets={assets}
               selectedAssets={selectedAssets}
               onSelectAssets={setSelectedAssets}
@@ -197,6 +167,7 @@ export default function StaticToMotionPage() {
               modelInputs={modelInputs}
               onModelInputsChange={setModelInputs}
               onStartProcessing={handleStartProcessing}
+              onBack={() => setActiveView('type-selection')}
             />
           ) : (
             <GenericAnimationWorkshop

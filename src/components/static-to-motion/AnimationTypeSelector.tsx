@@ -6,69 +6,15 @@ import { Icons } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
 
 interface AnimationTypeSelectorProps {
-  onSelectType: (type: 'ai' | 'generic' | 'preserve') => void;
+  onSelectType: (type: 'ai' | 'generic') => void;
 }
 
 export function AnimationTypeSelector({ onSelectType }: AnimationTypeSelectorProps) {
   return (
-    <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-      {/* Preserve & Animate Option - NEW */}
-      <Card 
-        className="relative overflow-hidden cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg border-2 border-primary/20"
-        onClick={() => onSelectType('preserve')}
-      >
-        <div className="p-6 space-y-4">
-          <div className="flex items-start justify-between">
-            <div className="p-3 bg-primary/10 rounded-lg">
-              <Icons.image className="h-6 w-6 text-primary" />
-            </div>
-            <Badge>Recommended</Badge>
-          </div>
-          
-          <div>
-            <h3 className="text-xl font-semibold mb-2">Preserve & Animate</h3>
-            <p className="text-muted-foreground text-sm">
-              Add subtle animations to elements while keeping your original image intact. Perfect for bringing static images to life.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm">
-              <Icons.check className="h-4 w-4 text-green-500" />
-              <span>Preserves original image</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Icons.check className="h-4 w-4 text-green-500" />
-              <span>Element-specific animations</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Icons.check className="h-4 w-4 text-green-500" />
-              <span>Real-time preview</span>
-            </div>
-          </div>
-
-          <div className="pt-2">
-            <Button className="w-full" variant="default">
-              <Icons.image className="mr-2 h-4 w-4" />
-              Preserve & Animate
-            </Button>
-          </div>
-
-          {/* Effect types preview */}
-          <div className="flex items-center gap-2 pt-2">
-            <span className="text-xs text-muted-foreground">Effects:</span>
-            <div className="flex gap-2">
-              <Badge variant="outline" className="text-xs">Water Ripple</Badge>
-              <Badge variant="outline" className="text-xs">Sky Motion</Badge>
-              <Badge variant="outline" className="text-xs">Fabric Sway</Badge>
-            </div>
-          </div>
-        </div>
-      </Card>
-
+    <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
       {/* AI Models Option */}
       <Card 
-        className="relative overflow-hidden cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg"
+        className="relative overflow-hidden cursor-pointer transition-all hover:scale-[1.02] hover:shadow-lg border-2 border-primary/20"
         onClick={() => onSelectType('ai')}
       >
         <div className="p-6 space-y-4">
@@ -76,7 +22,7 @@ export function AnimationTypeSelector({ onSelectType }: AnimationTypeSelectorPro
             <div className="p-3 bg-primary/10 rounded-lg">
               <Icons.sparkles className="h-6 w-6 text-primary" />
             </div>
-            <Badge variant="secondary">AI Generation</Badge>
+            <Badge>Recommended</Badge>
           </div>
           
           <div>
