@@ -135,7 +135,7 @@ export function VideoPreview({
         </div>
         {onClose && (
           <Button variant="ghost" size="icon" onClick={onClose}>
-            <Icons.close className="h-4 w-4" />
+            <Icons.x className="h-4 w-4" />
           </Button>
         )}
       </div>
