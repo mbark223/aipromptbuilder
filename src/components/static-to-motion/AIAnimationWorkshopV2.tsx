@@ -220,11 +220,11 @@ export function AIAnimationWorkshopV2({
   // Update model inputs whenever prompt sections change
   useEffect(() => {
     const completePrompt = buildCompletePrompt();
-    onModelInputsChange({
-      ...modelInputs,
+    onModelInputsChange(prev => ({
+      ...prev,
       prompt: completePrompt
-    });
-  }, [promptSections, buildCompletePrompt, modelInputs, onModelInputsChange]);
+    }));
+  }, [promptSections, buildCompletePrompt, onModelInputsChange]);
 
   // Handle example click
   const handleExampleClick = (sectionId: string, example: string) => {
