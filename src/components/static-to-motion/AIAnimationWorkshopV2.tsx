@@ -220,10 +220,11 @@ export function AIAnimationWorkshopV2({
   // Update model inputs whenever prompt sections change
   useEffect(() => {
     const completePrompt = buildCompletePrompt();
-    onModelInputsChange(prev => ({
-      ...prev,
+    onModelInputsChange({
+      ...modelInputs,
       prompt: completePrompt
-    }));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [promptSections, buildCompletePrompt, onModelInputsChange]);
 
   // Handle example click
