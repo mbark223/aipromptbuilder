@@ -146,7 +146,7 @@ export function VideoPreview({
       <div className="relative bg-black rounded-lg overflow-hidden">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Icons.loader className="h-8 w-8 animate-spin text-white" />
+            <Icons.loader2 className="h-8 w-8 animate-spin text-white" />
           </div>
         )}
         
