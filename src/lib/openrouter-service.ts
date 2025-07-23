@@ -1,8 +1,9 @@
 import { AnimationModel } from '@/types';
+import { ReplicateInput } from './replicate';
 
 interface OpenRouterGenerationOptions {
   model: AnimationModel;
-  inputs: Record<string, string | number | boolean | null>;
+  inputs: ReplicateInput | Record<string, string | number | boolean | null>;
   apiKey?: string;
 }
 
@@ -131,23 +132,26 @@ export class OpenRouterService {
 
   private transformInputsForModel(
     model: AnimationModel, 
-    inputs: Record<string, string | number | boolean | null>
+    inputs: ReplicateInput | Record<string, string | number | boolean | null>
   ): Record<string, string | number | boolean | null> {
     // Transform inputs based on model requirements
     const transformed: Record<string, string | number | boolean | null> = {};
 
+    // Convert ReplicateInput to plain object
+    const inputObj = inputs as any;
+    
     // Handle image inputs - some models need base64
-    if (inputs.image && model.id === 'stability-ai-stable-video-diffusion') {
+    if (inputObj.image && model.id === 'stability-ai-stable-video-diffusion') {
       // For Stable Video Diffusion, convert image URL to base64 if needed
-      transformed.image = inputs.image; // In production, this would handle base64 conversion
-    } else {
-      transformed.image = inputs.image;
+      transformed.image = inputObj.image; // In production, this would handle base64 conversion
+    } else if (inputObj.image) {
+      transformed.image = inputObj.image;
     }
 
     // Map common fields
-    Object.entries(inputs).forEach(([key, value]) => {
+    Object.entries(inputObj).forEach(([key, value]) => {
       if (key !== 'image' || !transformed.image) {
-        transformed[key] = value;
+        transformed[key] = value as string | number | boolean | null;
       }
     });
 
