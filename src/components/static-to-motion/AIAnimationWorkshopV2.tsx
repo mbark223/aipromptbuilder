@@ -331,7 +331,7 @@ export function AIAnimationWorkshopV2({
                           ) : input.type === 'select' && input.options ? (
                             <select
                               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                              value={modelInputs[input.name] as string || input.defaultValue || ''}
+                              value={modelInputs[input.name] as string || (typeof input.defaultValue === 'string' ? input.defaultValue : '') || ''}
                               onChange={(e) => onModelInputsChange({
                                 ...modelInputs,
                                 [input.name]: e.target.value
