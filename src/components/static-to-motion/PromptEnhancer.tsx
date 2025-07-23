@@ -55,7 +55,8 @@ export function PromptEnhancer({
             capabilities: modelInfo.capabilities
           } : undefined,
           animationElements,
-          format
+          format,
+          useVeo3Format: modelInfo?.name?.toLowerCase().includes('veo')
         }),
       });
 

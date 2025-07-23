@@ -21,6 +21,7 @@ interface EnhancePromptRequest {
   format?: {
     aspectRatio: string;
   };
+  useVeo3Format?: boolean;
 }
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -58,7 +59,73 @@ async function enhanceWithOpenAI(prompt: string, context: string): Promise<strin
   return data.choices[0].message.content.trim();
 }
 
-async function enhanceWithAnthropic(prompt: string, context: string): Promise<string> {
+async function enhanceWithAnthropic(prompt: string, context: string, useVeo3Format: boolean = false): Promise<string> {
+  let systemPrompt: string;
+  let userContent: string;
+
+  if (useVeo3Format) {
+    systemPrompt = `You are an expert Veo 3 prompt builder. Your task is to transform a base raw prompt into a flawless, detailed prompt for Veo 3 in the required JSON format. Follow these instructions carefully:
+
+1. Transform the base prompt into a detailed, comprehensive prompt for Veo 3. Expand on the ideas presented, adding rich details and specific elements that will result in a high-quality video output.
+
+2. Include the following elements in your expanded prompt:
+a. Sequence details:
+- Composition: Describe the overall visual style and camera techniques
+- Camera motion: Specify how the camera moves throughout the scene
+- Frame rate: Default to 24fps unless the scenario suggests otherwise
+- Film grain: Describe the desired texture of the image
+
+b. For each distinct scene or setting change, create a new scene object with:
+- Location: Describe the setting in detail
+- Time of day: Specify the lighting conditions
+- Environment: Add details about the surroundings
+
+c. Visual details for each scene:
+- Action: Describe what's happening in the scene
+- Props: List important objects or elements in the scene
+
+d. Audio elements:
+- Ambient sounds: Describe background noises or music
+- Dialogue: If applicable, include specific lines of dialogue
+(Remember to add "(no subtitles!)" after dialogue to prevent unwanted text on screen)
+
+e. Transitions between scenes:
+- Description: How one scene changes to the next
+- Duration: How long the transition should take
+- Style: The visual effect of the transition
+
+3. Structure your output in the following JSON format:
+{
+"sequence": {
+"shot": {},
+"subject": {},
+"cinematography": {},
+"audio": {},
+"color_palette": ""
+},
+"scenes": [
+{
+"scene": {},
+"visual_details": {},
+"audio": {
+"dialogue": {}
+}
+}
+],
+"transitions": [
+{}
+]
+}
+
+4. Your final output should be the complete JSON structure, filled with rich, detailed content based on the base prompt. Do not include any explanation or additional text outside of the JSON structure.`;
+    
+    userContent = `<base_prompt>\n${prompt}\n</base_prompt>`;
+  } else {
+    systemPrompt = `You are an expert at creating prompts for AI video generation models. Your task is to enhance user prompts to be more descriptive, specific, and optimized for video generation. Focus on visual details, movement, lighting, and cinematic qualities. Keep the enhanced prompt concise but comprehensive.`;
+    
+    userContent = `Please enhance this video generation prompt. ${context}\n\nOriginal prompt sections:\n${prompt}\n\nProvide only the enhanced prompt, no explanations.`;
+  }
+
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -71,10 +138,11 @@ async function enhanceWithAnthropic(prompt: string, context: string): Promise<st
       messages: [
         {
           role: 'user',
-          content: `You are an expert at creating prompts for AI video generation models. Please enhance this video generation prompt to be more descriptive, specific, and optimized for video generation. Focus on visual details, movement, lighting, and cinematic qualities. ${context}\n\nOriginal prompt sections:\n${prompt}\n\nProvide only the enhanced prompt, no explanations.`
+          content: userContent
         }
       ],
-      max_tokens: 500,
+      system: systemPrompt,
+      max_tokens: useVeo3Format ? 2000 : 500,
       temperature: 0.7,
     }),
   });
@@ -90,7 +158,7 @@ async function enhanceWithAnthropic(prompt: string, context: string): Promise<st
 export async function POST(request: NextRequest) {
   try {
     const body: EnhancePromptRequest = await request.json();
-    const { promptSections, modelInfo, animationElements, format } = body;
+    const { promptSections, modelInfo, animationElements, format, useVeo3Format = false } = body;
 
     // Build the current prompt from sections
     const currentPrompt = Object.entries(promptSections)
@@ -129,14 +197,22 @@ export async function POST(request: NextRequest) {
       context += `Output format: ${format.aspectRatio} aspect ratio. `;
     }
 
+    // Check if this is for Veo 3 model
+    const isVeo3 = modelInfo?.name?.toLowerCase().includes('veo') || useVeo3Format;
+
     // Try to enhance with available AI service
     let enhancedPrompt: string;
     let suggestions: string[] = [];
+    let isJsonFormat = false;
 
-    if (OPENAI_API_KEY) {
+    if (ANTHROPIC_API_KEY && isVeo3) {
+      // Use Claude with Veo 3 specific prompt
+      enhancedPrompt = await enhanceWithAnthropic(currentPrompt, context, true);
+      isJsonFormat = true;
+    } else if (OPENAI_API_KEY) {
       enhancedPrompt = await enhanceWithOpenAI(currentPrompt, context);
     } else if (ANTHROPIC_API_KEY) {
-      enhancedPrompt = await enhanceWithAnthropic(currentPrompt, context);
+      enhancedPrompt = await enhanceWithAnthropic(currentPrompt, context, false);
     } else {
       // Fallback to rule-based enhancement
       enhancedPrompt = enhancePromptWithRules(promptSections, context);
@@ -152,6 +228,8 @@ export async function POST(request: NextRequest) {
       suggestions,
       qualityScore,
       enhancedBy: OPENAI_API_KEY ? 'openai' : ANTHROPIC_API_KEY ? 'anthropic' : 'rules',
+      isJsonFormat,
+      modelName: modelInfo?.name,
     });
   } catch (error) {
     console.error('Enhance prompt error:', error);

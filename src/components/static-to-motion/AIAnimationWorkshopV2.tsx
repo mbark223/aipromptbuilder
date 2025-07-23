@@ -329,16 +329,26 @@ export function AIAnimationWorkshopV2({
                 animationElements={animationElements}
                 format={selectedFormats[0]}
                 onAcceptEnhanced={(enhancedPrompt) => {
-                  // Parse the enhanced prompt back into sections
-                  // This is a simple approach - you might want to improve this
-                  const sections = enhancedPrompt.split(', ');
-                  if (sections.length > 0) {
+                  // For Veo models, store the enhanced prompt directly
+                  if (selectedModel.name.toLowerCase().includes('veo')) {
+                    // Store as a single enhanced prompt
                     setPromptSections({
-                      subject: sections[0] || '',
-                      style: sections[1] || '',
-                      camera: sections[2] || '',
-                      details: sections.slice(3).join(', ') || ''
+                      subject: enhancedPrompt,
+                      style: '',
+                      camera: '',
+                      details: ''
                     });
+                  } else {
+                    // Parse the enhanced prompt back into sections for other models
+                    const sections = enhancedPrompt.split(', ');
+                    if (sections.length > 0) {
+                      setPromptSections({
+                        subject: sections[0] || '',
+                        style: sections[1] || '',
+                        camera: sections[2] || '',
+                        details: sections.slice(3).join(', ') || ''
+                      });
+                    }
                   }
                 }}
               />
