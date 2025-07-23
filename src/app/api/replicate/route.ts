@@ -69,6 +69,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Log the request for debugging
+    console.log('Replicate API request:', {
+      endpoint,
+      modelId,
+      model,
+      hasToken: !!REPLICATE_API_TOKEN,
+      tokenLength: REPLICATE_API_TOKEN.length,
+      input: JSON.stringify(input).substring(0, 200) // First 200 chars
+    });
+
     // Create prediction
     const createResponse = await fetch(endpoint, {
       method: 'POST',
@@ -80,9 +90,27 @@ export async function POST(request: NextRequest) {
     });
 
     if (!createResponse.ok) {
-      const error = await createResponse.text();
+      const errorText = await createResponse.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { message: errorText };
+      }
+      
+      console.error('Replicate API error:', {
+        status: createResponse.status,
+        error: errorData,
+        endpoint,
+        model,
+        modelId
+      });
+      
       return NextResponse.json(
-        { error: `Failed to create prediction: ${error}` },
+        { 
+          error: `Failed to create prediction: ${JSON.stringify(errorData)}`,
+          details: errorData
+        },
         { status: createResponse.status }
       );
     }
