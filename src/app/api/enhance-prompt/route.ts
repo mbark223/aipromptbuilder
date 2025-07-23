@@ -66,7 +66,15 @@ async function enhanceWithAnthropic(prompt: string, context: string, useVeo3Form
   if (useVeo3Format) {
     systemPrompt = `You are an expert Veo 3 prompt builder. Your task is to transform a base raw prompt into a flawless, detailed prompt for Veo 3 in the required JSON format. Follow these instructions carefully:
 
-1. Transform the base prompt into a detailed, comprehensive prompt for Veo 3. Expand on the ideas presented, adding rich details and specific elements that will result in a high-quality video output.
+1. Transform the base prompt into a detailed, comprehensive prompt for Veo 3. 
+
+IMPORTANT: Check if the prompt indicates the user wants to animate a static image with minimal changes (words like "replica", "exact", "maintain", "preserve"). If so:
+- Focus on subtle, natural movements while preserving the exact appearance
+- Use minimal camera movement (static or barely perceptible motion)
+- Emphasize faithful recreation of the source image with gentle animation
+- Avoid adding new elements or changing the composition
+
+Otherwise, expand on the ideas presented, adding rich details and specific elements that will result in a high-quality video output.
 
 2. Include the following elements in your expanded prompt:
 a. Sequence details:
@@ -121,7 +129,15 @@ e. Transitions between scenes:
     
     userContent = `<base_prompt>\n${prompt}\n</base_prompt>`;
   } else {
-    systemPrompt = `You are an expert at creating prompts for AI video generation models. Your task is to enhance user prompts to be more descriptive, specific, and optimized for video generation. Focus on visual details, movement, lighting, and cinematic qualities. Keep the enhanced prompt concise but comprehensive.`;
+    systemPrompt = `You are an expert at creating prompts for AI video generation models. Your task is to enhance user prompts to be more descriptive, specific, and optimized for video generation. 
+
+IMPORTANT: If the user mentions "replica", "exact", "maintain", "preserve", "static with motion", or similar terms, they want to animate their static image with MINIMAL changes. In these cases:
+- Emphasize preserving the exact appearance of the source image
+- Focus on subtle, natural movements (breathing, blinking, gentle swaying)
+- Avoid dramatic camera movements or scene changes
+- Keep all visual elements faithful to the original
+
+Focus on visual details, movement, lighting, and cinematic qualities. Keep the enhanced prompt concise but comprehensive.`;
     
     userContent = `Please enhance this video generation prompt. ${context}\n\nOriginal prompt sections:\n${prompt}\n\nProvide only the enhanced prompt, no explanations.`;
   }

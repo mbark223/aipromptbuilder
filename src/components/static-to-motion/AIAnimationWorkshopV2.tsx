@@ -48,9 +48,12 @@ const PROMPT_SECTIONS: PromptSection[] = [
     helper: 'Be specific about who or what is in the scene and their actions',
     required: true,
     examples: [
-      'A golden retriever running through a meadow',
-      'Ocean waves crashing against rocky cliffs',
-      'City skyline with moving clouds and traffic'
+      'Exact replica of the static image with subtle breathing motion',
+      'Static scene with gentle wind movement in hair and clothing',
+      'Product floating with slight rotation, maintaining exact appearance',
+      'Logo with subtle glow pulsing, preserving all design elements',
+      'Text with gentle shimmer effect, keeping typography intact',
+      'Portrait with natural eye blinks and micro-expressions'
     ]
   },
   {
@@ -60,9 +63,12 @@ const PROMPT_SECTIONS: PromptSection[] = [
     helper: 'Specify the aesthetic, mood, and visual treatment',
     required: true,
     examples: [
-      'Cinematic and dramatic with warm sunset lighting',
-      'Minimalist and clean with soft pastel colors',
-      'Dark and moody with film noir atmosphere'
+      'Maintain exact visual style of original image with minimal motion',
+      'Preserve all colors and lighting, add subtle ambient movement',
+      'Keep original composition, enhance with gentle particle effects',
+      'Retain static image aesthetics, add slight depth parallax',
+      'Match source image style precisely, animate small details only',
+      'Photorealistic preservation with micro-movements'
     ]
   },
   {
@@ -71,9 +77,12 @@ const PROMPT_SECTIONS: PromptSection[] = [
     placeholder: 'Describe how the camera should move',
     helper: 'Specify camera angles, movements, and perspectives',
     examples: [
-      'Slow zoom out revealing the full landscape',
-      'Smooth tracking shot following the subject',
-      'Static wide shot with subtle handheld movement'
+      'Static camera, no movement, locked shot',
+      'Extremely subtle push in, barely perceptible',
+      'Fixed frame with 2.5D parallax depth effect',
+      'Locked camera with slight digital stabilization',
+      'No camera movement, focus on subject animation only',
+      'Static shot with minimal depth-of-field breathing'
     ]
   },
   {
@@ -82,9 +91,12 @@ const PROMPT_SECTIONS: PromptSection[] = [
     placeholder: 'Add any specific details or requirements',
     helper: 'Include lighting, time of day, weather, or special effects',
     examples: [
-      'Golden hour lighting with lens flares',
-      'Foggy morning with soft diffused light',
-      'Night scene with neon reflections on wet pavement'
+      'Preserve exact lighting from source image',
+      'Add subtle dust particles floating in existing light',
+      'Gentle smoke or fog wisps without changing scene',
+      'Slight fabric movement from ambient air',
+      'Water surface with minimal ripples',
+      'Hair strands with natural physics movement'
     ]
   }
 ];
@@ -262,6 +274,58 @@ export function AIAnimationWorkshopV2({
               </div>
 
               <Separator />
+
+              {/* Quick Presets */}
+              <div className="flex items-center justify-between mb-4">
+                <Label className="text-sm font-medium">Quick Presets</Label>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setPromptSections({
+                        subject: 'Exact replica of the static image with subtle breathing motion',
+                        style: 'Maintain exact visual style of original image with minimal motion',
+                        camera: 'Static camera, no movement, locked shot',
+                        details: 'Preserve exact lighting from source image'
+                      });
+                    }}
+                  >
+                    <Icons.sparkles className="mr-2 h-3 w-3" />
+                    Subtle Motion
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setPromptSections({
+                        subject: 'Product floating with slight rotation, maintaining exact appearance',
+                        style: 'Preserve all colors and lighting, add subtle ambient movement',
+                        camera: 'Fixed frame with 2.5D parallax depth effect',
+                        details: 'Add subtle dust particles floating in existing light'
+                      });
+                    }}
+                  >
+                    <Icons.box className="mr-2 h-3 w-3" />
+                    Product Float
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setPromptSections({
+                        subject: 'Portrait with natural eye blinks and micro-expressions',
+                        style: 'Photorealistic preservation with micro-movements',
+                        camera: 'Static shot with minimal depth-of-field breathing',
+                        details: 'Hair strands with natural physics movement'
+                      });
+                    }}
+                  >
+                    <Icons.user className="mr-2 h-3 w-3" />
+                    Portrait Life
+                  </Button>
+                </div>
+              </div>
 
               {/* Prompt Sections */}
               <div className="space-y-6">
