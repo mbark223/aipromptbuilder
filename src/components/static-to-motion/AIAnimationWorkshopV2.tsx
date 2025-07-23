@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,8 @@ import { AssetGrid } from './AssetGrid';
 import { FormatSelector } from './FormatSelector';
 import { StaticAsset, AnimationModel, Format } from '@/types';
 import { AnimationElements, AnimationElement } from './AnimationElements';
+import { PromptEnhancer } from './PromptEnhancer';
+import { PromptQualityIndicator } from './PromptQualityIndicator';
 
 interface AIAnimationWorkshopV2Props {
   assets: StaticAsset[];
@@ -164,23 +166,47 @@ export function AIAnimationWorkshopV2({
   const buildCompletePrompt = useCallback(() => {
     const parts = [];
     
+    // Add subject/action as the main focus
     if (promptSections.subject) {
-      parts.push(promptSections.subject);
+      parts.push(promptSections.subject.trim());
     }
     
+    // Add style with proper formatting
     if (promptSections.style) {
-      parts.push(promptSections.style);
+      const styleText = promptSections.style.trim();
+      // Don't add redundant prefixes if user already included them
+      if (styleText.toLowerCase().startsWith('style:') || styleText.toLowerCase().startsWith('aesthetic:')) {
+        parts.push(styleText);
+      } else {
+        parts.push(`${styleText} style`);
+      }
     }
     
+    // Add camera movement
     if (promptSections.camera) {
-      parts.push(promptSections.camera);
+      const cameraText = promptSections.camera.trim();
+      // Check if it already has camera-related keywords
+      if (cameraText.match(/camera|shot|angle|view|perspective/i)) {
+        parts.push(cameraText);
+      } else {
+        parts.push(`${cameraText} camera movement`);
+      }
     }
     
+    // Add additional details
     if (promptSections.details) {
-      parts.push(promptSections.details);
+      parts.push(promptSections.details.trim());
     }
     
-    return parts.join('. ');
+    // Join with commas for better flow, clean up punctuation
+    return parts
+      .filter(part => part.length > 0)
+      .join(', ')
+      .replace(/,\s*,/g, ',')
+      .replace(/\.\s*,/g, ',')
+      .replace(/,\s*\./g, '.')
+      .replace(/\s+/g, ' ')
+      .trim();
   }, [promptSections]);
 
   // Update model inputs when prompt changes
@@ -189,14 +215,16 @@ export function AIAnimationWorkshopV2({
       ...prev,
       [sectionId]: value
     }));
-    
-    // Update the prompt in model inputs
+  };
+
+  // Update model inputs whenever prompt sections change
+  useEffect(() => {
     const completePrompt = buildCompletePrompt();
     onModelInputsChange({
       ...modelInputs,
       prompt: completePrompt
     });
-  };
+  }, [promptSections, buildCompletePrompt, modelInputs, onModelInputsChange]);
 
   // Handle example click
   const handleExampleClick = (sectionId: string, example: string) => {
@@ -293,6 +321,29 @@ export function AIAnimationWorkshopV2({
 
               <Separator />
 
+              {/* AI Enhancement */}
+              <PromptEnhancer
+                promptSections={promptSections}
+                modelInfo={selectedModel}
+                animationElements={animationElements}
+                format={selectedFormats[0]}
+                onAcceptEnhanced={(enhancedPrompt) => {
+                  // Parse the enhanced prompt back into sections
+                  // This is a simple approach - you might want to improve this
+                  const sections = enhancedPrompt.split(', ');
+                  if (sections.length > 0) {
+                    setPromptSections({
+                      subject: sections[0] || '',
+                      style: sections[1] || '',
+                      camera: sections[2] || '',
+                      details: sections.slice(3).join(', ') || ''
+                    });
+                  }
+                }}
+              />
+
+              <Separator />
+
               {/* Complete Prompt Preview */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -313,9 +364,16 @@ export function AIAnimationWorkshopV2({
                     {buildCompletePrompt() || 'Your prompt will appear here as you fill in the sections above...'}
                   </p>
                 </div>
-                <p className="text-xs text-muted-foreground text-right">
-                  {buildCompletePrompt().length} characters
-                </p>
+                <div className="flex items-center justify-between">
+                  <PromptQualityIndicator 
+                    prompt={buildCompletePrompt()} 
+                    promptSections={promptSections}
+                    showDetails={true}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {buildCompletePrompt().length} characters
+                  </p>
+                </div>
               </div>
 
               {/* Additional Model Inputs */}
