@@ -44,7 +44,7 @@ export default function PromptToVideoPage() {
           url: '',
           name: `prompt-${index + 1}`,
           size: 0,
-          format: 'mp4' as any,
+          format: 'mp4' as 'jpg' | 'png' | 'webp' | 'svg',
         },
         processedVersions: [],
         metadata: {
@@ -86,7 +86,7 @@ export default function PromptToVideoPage() {
         </p>
       </div>
 
-      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)}>
+      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'create' | 'configure' | 'queue')}>
         <TabsList className="grid w-full grid-cols-3 max-w-xl">
           <TabsTrigger value="create">Create Prompts</TabsTrigger>
           <TabsTrigger value="configure" disabled={prompts.length === 0}>

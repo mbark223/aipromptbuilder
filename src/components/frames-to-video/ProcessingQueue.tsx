@@ -23,6 +23,7 @@ export function ProcessingQueue({ queue, onUpdateQueue }: ProcessingQueueProps) 
     if (pendingItem && !processingItem) {
       processItem(pendingItem);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queue, processingItem]);
 
   const processItem = async (item: Veo2QueueItem) => {

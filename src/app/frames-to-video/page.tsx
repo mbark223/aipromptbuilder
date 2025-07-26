@@ -61,7 +61,7 @@ export default function FramesToVideoPage() {
         </p>
       </div>
 
-      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as any)}>
+      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'upload' | 'configure' | 'process' | 'preview')}>
         <TabsList className="grid w-full grid-cols-4 max-w-2xl">
           <TabsTrigger value="upload">Upload Frames</TabsTrigger>
           <TabsTrigger value="configure" disabled={!selectedAsset}>

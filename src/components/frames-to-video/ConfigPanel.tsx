@@ -86,7 +86,7 @@ export function ConfigPanel({ config, onConfigChange, onStartProcessing, frameAs
           <Label htmlFor="interpolation-type">Interpolation Type</Label>
           <Select 
             value={config.interpolationType} 
-            onValueChange={(value) => onConfigChange({ ...config, interpolationType: value as any })}
+            onValueChange={(value) => onConfigChange({ ...config, interpolationType: value as 'linear' | 'smooth' | 'morphing' })}
           >
             <SelectTrigger id="interpolation-type" className="mt-2">
               <SelectValue />
@@ -103,7 +103,7 @@ export function ConfigPanel({ config, onConfigChange, onStartProcessing, frameAs
           <Label htmlFor="transition-style">Transition Style</Label>
           <Select 
             value={config.transitionStyle} 
-            onValueChange={(value) => onConfigChange({ ...config, transitionStyle: value as any })}
+            onValueChange={(value) => onConfigChange({ ...config, transitionStyle: value as 'fade' | 'blend' | 'warp' })}
           >
             <SelectTrigger id="transition-style" className="mt-2">
               <SelectValue />

@@ -3,7 +3,6 @@
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { AnimationModel, Format } from '@/types';
 import { ModelSelector } from '@/components/static-to-motion/ModelSelector';

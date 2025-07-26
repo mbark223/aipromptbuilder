@@ -3,7 +3,6 @@
 import { useCallback, useState, useRef, DragEvent } from 'react';
 import { Icons } from '@/components/icons';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { StaticAsset } from '@/types';
