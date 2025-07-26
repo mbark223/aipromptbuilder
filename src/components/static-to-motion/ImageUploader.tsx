@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { StaticAsset, ANIMATION_TEMPLATES } from '@/types';
+import { StaticAsset } from '@/types';
 
 interface ImageUploaderProps {
   onFilesUploaded: (assets: StaticAsset[]) => void;
@@ -44,7 +44,6 @@ export function ImageUploader({
               }
             },
             processedVersions: [],
-            animationProfile: ANIMATION_TEMPLATES[0], // Default animation
             metadata: {
               uploaded: new Date(),
               author: 'current-user', // This would come from auth

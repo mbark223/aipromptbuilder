@@ -4,26 +4,25 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
-import { AnimationTemplates } from '@/components/static-to-motion/AnimationTemplates';
 import { GenericAnimationWorkshop } from '@/components/static-to-motion/GenericAnimationWorkshop';
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
-import { AIAnimationWorkshopV2 } from '@/components/static-to-motion/AIAnimationWorkshopV2';
+import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
 import { ANIMATION_TEMPLATES } from '@/types';
 
-// Default model (Veo-3-Fast)
+// Default model (Veo-3)
 const DEFAULT_MODEL: AnimationModel = {
-  id: 'google-veo-3-fast',
-  name: 'Veo-3-Fast',
+  id: 'google-veo-3',
+  name: 'Veo-3',
   provider: 'Google',
-  description: 'Faster/cheaper option with native audio support',
-  capabilities: ['Text-to-Video', 'Native Audio', 'Fast Generation'],
-  speed: 'fast',
-  quality: 'high',
+  description: 'Premium quality video generation with native audio',
+  capabilities: ['Text-to-Video', 'Native Audio', 'Premium Quality'],
+  speed: 'moderate',
+  quality: 'very-high',
   costPerGeneration: 0,
-  replicateId: 'google/veo-3-fast',
-  pricing: 'Faster/Cheaper',
+  replicateId: 'google/veo-3',
+  pricing: 'Premium Quality',
   inputs: [
     {
       name: 'prompt',
@@ -129,14 +128,6 @@ export default function StaticToMotionPage() {
             <h2 className="text-xl font-semibold mb-4">Upload Static Images</h2>
             <ImageUploader onFilesUploaded={handleFilesUploaded} />
           </Card>
-
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Animation Templates</h2>
-            <AnimationTemplates
-              selectedAnimation={selectedAnimation}
-              onSelectAnimation={setSelectedAnimation}
-            />
-          </Card>
         </TabsContent>
 
         <TabsContent value="type-selection" className="space-y-6">
@@ -156,7 +147,7 @@ export default function StaticToMotionPage() {
 
         <TabsContent value="workshop" className="space-y-6">
           {animationType === 'ai' ? (
-            <AIAnimationWorkshopV2
+            <AIAnimationWorkshopSimple
               assets={assets}
               selectedAssets={selectedAssets}
               onSelectAssets={setSelectedAssets}

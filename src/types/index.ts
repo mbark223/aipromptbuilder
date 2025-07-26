@@ -112,7 +112,7 @@ export interface StaticAsset {
     };
   };
   processedVersions: ProcessedAsset[];
-  animationProfile: AnimationProfile;
+  animationProfile?: AnimationProfile;
   metadata: {
     uploaded: Date;
     author: string;
