@@ -8,10 +8,10 @@ import { GenericAnimationWorkshop } from '@/components/static-to-motion/GenericA
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
-import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
+import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel, ANIMATION_TEMPLATES } from '@/types';
 
-// Default animation for generic workflow
-const DEFAULT_ANIMATION: AnimationProfile = {
+// Default animation for generic workflow - use first template
+const DEFAULT_ANIMATION: AnimationProfile = ANIMATION_TEMPLATES[0] || {
   id: 'simple-motion',
   name: 'Simple Motion',
   type: 'subtle',
