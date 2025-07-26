@@ -8,7 +8,6 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
 import { Separator } from '@/components/ui/separator';
-import { enhancePrompt } from '@/lib/promptGenerator';
 import { useToast } from '@/hooks/use-toast';
 
 interface PromptInputProps {
@@ -81,13 +80,17 @@ export function PromptInput({ onPromptsGenerated }: PromptInputProps) {
     const prompts: string[] = [basePrompt];
 
     try {
-      // Generate variations using AI enhancement
-      for (let i = 0; i < variations - 1; i++) {
-        const variation = await enhancePrompt(basePrompt, {
-          platform: 'generic',
-          style: `variation_${i + 1}`,
-          aspectRatio: '16:9',
-        });
+      // Generate variations by adding different style modifiers
+      const styleVariations = [
+        'cinematic, dramatic lighting',
+        'vibrant colors, dynamic motion',
+        'moody atmosphere, high contrast',
+        'soft lighting, smooth transitions',
+        'energetic, fast-paced action'
+      ];
+
+      for (let i = 0; i < Math.min(variations - 1, styleVariations.length); i++) {
+        const variation = `${basePrompt}, ${styleVariations[i]}`;
         prompts.push(variation);
       }
 

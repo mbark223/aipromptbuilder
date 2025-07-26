@@ -10,7 +10,6 @@ import { ModelInputFields } from '@/components/static-to-motion/ModelInputFields
 import { FormatSelector } from '@/components/static-to-motion/FormatSelector';
 
 interface ModelConfigurationProps {
-  models: AnimationModel[];
   selectedModel: AnimationModel;
   onSelectModel: (model: AnimationModel) => void;
   selectedFormats: Format[];
@@ -20,7 +19,6 @@ interface ModelConfigurationProps {
 }
 
 export function ModelConfiguration({
-  models,
   selectedModel,
   onSelectModel,
   selectedFormats,
@@ -33,7 +31,6 @@ export function ModelConfiguration({
       <div>
         <Label className="text-base font-semibold mb-3 block">Select Video Model</Label>
         <ModelSelector
-          models={models}
           selectedModel={selectedModel}
           onSelectModel={onSelectModel}
         />
@@ -46,8 +43,8 @@ export function ModelConfiguration({
         <Card className="p-4">
           <ModelInputFields
             model={selectedModel}
-            inputs={modelInputs}
-            onInputsChange={onModelInputsChange}
+            values={modelInputs}
+            onChange={onModelInputsChange}
           />
         </Card>
       </div>

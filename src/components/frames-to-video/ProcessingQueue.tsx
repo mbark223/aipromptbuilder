@@ -110,10 +110,14 @@ export function ProcessingQueue({ queue, onUpdateQueue }: ProcessingQueueProps) 
                   <h3 className="font-medium">Frame Interpolation</h3>
                   <div className="flex items-center gap-2">
                     <Badge variant={
-                      item.status === 'completed' ? 'success' :
-                      item.status === 'processing' ? 'default' :
+                      item.status === 'completed' ? 'default' :
+                      item.status === 'processing' ? 'secondary' :
                       item.status === 'failed' ? 'destructive' :
-                      'secondary'
+                      'outline'
+                    } className={
+                      item.status === 'completed' ? 'bg-green-500/10 text-green-600 border-green-500/20' :
+                      item.status === 'processing' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' :
+                      ''
                     }>
                       {item.status}
                     </Badge>
@@ -178,19 +182,14 @@ export function ProcessingQueue({ queue, onUpdateQueue }: ProcessingQueueProps) 
 
               {item.status === 'completed' && item.outputUrl && (
                 <VideoPreview
-                  url={item.outputUrl}
+                  videoUrl={item.outputUrl}
                   format={{ 
                     aspectRatio: item.frameAsset.frame1.originalFile.dimensions?.aspectRatio || '16:9',
                     width: item.frameAsset.frame1.originalFile.dimensions?.width || 1920,
                     height: item.frameAsset.frame1.originalFile.dimensions?.height || 1080,
                     name: 'Interpolated Video'
                   }}
-                  metadata={{
-                    duration: item.config.duration,
-                    fps: item.config.fps,
-                    interpolationType: item.config.interpolationType,
-                    transitionStyle: item.config.transitionStyle
-                  }}
+                  duration={item.config.duration}
                 />
               )}
             </div>

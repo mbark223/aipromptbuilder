@@ -130,7 +130,6 @@ export default function PromptToVideoPage() {
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Model & Format Configuration</h2>
             <ModelConfiguration
-              models={textToVideoModels}
               selectedModel={selectedModel}
               onSelectModel={setSelectedModel}
               selectedFormats={selectedFormats}
