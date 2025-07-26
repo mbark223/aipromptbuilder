@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Icons } from '@/components/icons';
 import { AnimationModel, Format } from '@/types';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface VideoGenerationPanelProps {
   prompts: string[];
@@ -66,7 +65,7 @@ export function VideoGenerationPanel({
 
         <div>
           <h4 className="font-medium mb-3">Prompts to Generate</h4>
-          <ScrollArea className="h-[300px] rounded-lg border p-4">
+          <div className="h-[300px] overflow-y-auto rounded-lg border p-4">
             <div className="space-y-3">
               {prompts.map((prompt, index) => (
                 <Card key={index} className="p-3">
@@ -93,7 +92,7 @@ export function VideoGenerationPanel({
                 </Card>
               ))}
             </div>
-          </ScrollArea>
+          </div>
         </div>
 
         <div className="bg-primary/10 rounded-lg p-4">
