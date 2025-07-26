@@ -176,10 +176,20 @@ export default function StaticToMotionPage() {
                 onBack={() => setActiveView('type-selection')}
               />
             ) : animationType === 'generic' ? (
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Generic Animation Workshop</h2>
-                <p className="text-muted-foreground">This feature is being fixed. Please use AI-powered animations for now.</p>
-              </Card>
+              <GenericAnimationWorkshop
+                assets={assets}
+                selectedAssets={selectedAssets}
+                onSelectAssets={setSelectedAssets}
+                selectedFormats={selectedFormats}
+                onSelectFormats={setSelectedFormats}
+                selectedAnimation={selectedAnimation}
+                onSelectAnimation={setSelectedAnimation}
+                selectedModel={selectedModel}
+                onSelectModel={setSelectedModel}
+                modelInputs={modelInputs}
+                onModelInputsChange={setModelInputs}
+                onStartProcessing={handleStartProcessing}
+              />
             ) : null}
           </ErrorBoundary>
         </TabsContent>
