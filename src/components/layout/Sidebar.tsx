@@ -5,11 +5,9 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: '🏠' },
-  { name: 'Prompts', href: '/prompts', icon: '✏️' },
-  { name: 'Templates', href: '/templates', icon: '📋' },
-  { name: 'Static-to-Motion', href: '/static-to-motion', icon: '🎬' },
-  { name: 'Export', href: '/export', icon: '📤' },
+  { name: 'Static → Motion', href: '/static-to-motion', icon: '🎬' },
+  { name: 'Frames → Video', href: '/frames-to-video', icon: '🎞️' },
+  { name: 'Prompt → Video', href: '/prompt-to-video', icon: '✨' },
 ];
 
 export function Sidebar() {

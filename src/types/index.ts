@@ -2024,3 +2024,29 @@ export const ANIMATION_TEMPLATES: AnimationProfile[] = [
     }
   }
 ];
+
+// Veo2/Frames to Video Types
+export interface Veo2InterpolationConfig {
+  duration: number; // seconds
+  fps: number;
+  interpolationType: 'linear' | 'smooth' | 'morphing';
+  transitionStyle: 'fade' | 'blend' | 'warp';
+}
+
+export interface Veo2FrameAsset {
+  id: string;
+  frame1: StaticAsset;
+  frame2: StaticAsset;
+  interpolationSettings: Veo2InterpolationConfig;
+}
+
+export interface Veo2QueueItem {
+  id: string;
+  frameAsset: Veo2FrameAsset;
+  config: Veo2InterpolationConfig;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  progress: number;
+  outputUrl?: string;
+  error?: string;
+  completedAt?: Date;
+}
