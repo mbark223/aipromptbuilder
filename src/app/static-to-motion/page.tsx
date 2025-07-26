@@ -9,7 +9,20 @@ import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTy
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
-import { ANIMATION_TEMPLATES } from '@/types';
+
+// Default animation for generic workflow
+const DEFAULT_ANIMATION: AnimationProfile = {
+  id: 'simple-motion',
+  name: 'Simple Motion',
+  type: 'subtle',
+  movements: [],
+  duration: 3,
+  loop: false,
+  transitions: {
+    in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+    out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+  }
+};
 
 // Default model (Veo-3)
 const DEFAULT_MODEL: AnimationModel = {
@@ -52,7 +65,7 @@ export default function StaticToMotionPage() {
   const [assets, setAssets] = useState<StaticAsset[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
   const [selectedFormats, setSelectedFormats] = useState<Format[]>([]);
-  const [selectedAnimation, setSelectedAnimation] = useState<AnimationProfile>(ANIMATION_TEMPLATES[0]);
+  const [selectedAnimation, setSelectedAnimation] = useState<AnimationProfile>(DEFAULT_ANIMATION);
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(DEFAULT_MODEL);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
@@ -88,7 +101,7 @@ export default function StaticToMotionPage() {
       assetId: asset.id,
       asset,
       formats: selectedFormats,
-      animation: selectedAnimation,
+      animation: animationType === 'ai' ? undefined : selectedAnimation,
       animationType: animationType || 'generic' as const,
       model: animationType === 'ai' ? selectedModel : undefined,
       prompt: animationType === 'ai' ? modelInputs.prompt as string : undefined,

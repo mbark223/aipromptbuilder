@@ -344,7 +344,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                         </span>
                       </Badge>
                       <span className="text-sm text-muted-foreground">
-                        {item.animation.name} • {item.formats.length} formats
+                        {item.animationType === 'ai' ? 'AI Animation' : item.animation?.name || 'Animation'} • {item.formats.length} formats
                       </span>
                     </div>
                   </div>

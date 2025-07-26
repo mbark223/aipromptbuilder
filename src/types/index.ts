@@ -290,7 +290,7 @@ export interface QueueItem {
   assetId: string;
   asset: StaticAsset;
   formats: Format[];
-  animation: AnimationProfile;
+  animation?: AnimationProfile;
   animationType: 'ai' | 'generic' | 'preserve';
   model?: AnimationModel;
   prompt?: string;
