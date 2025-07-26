@@ -431,7 +431,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                         }}
                       >
                         <Icons.download className="mr-2 h-3 w-3" />
-                        {typeof output.format === 'string' ? output.format : (output.format?.name || 'Download')}
+                        {output.format || 'Download'}
                       </Button>
                     ))}
                   </div>
