@@ -178,7 +178,7 @@ export function FramesUploader({ onFramesUploaded }: FramesUploaderProps) {
           
           {uploadingFrame === frameNumber ? (
             <div className="space-y-3">
-              <Icons.loader className="h-8 w-8 mx-auto animate-spin text-primary" />
+              <Icons.loader2 className="h-8 w-8 mx-auto animate-spin text-primary" />
               <Progress value={uploadProgress} className="w-32" />
             </div>
           ) : frame ? (
