@@ -12,10 +12,10 @@ import { OPENROUTER_VIDEO_MODELS } from '@/lib/openrouter-models';
 
 // Default formats for video generation
 const DEFAULT_FORMATS: Format[] = [
-  { aspectRatio: '16:9', width: 1920, height: 1080, name: '16:9 (1920x1080)' },
-  { aspectRatio: '9:16', width: 1080, height: 1920, name: '9:16 (1080x1920)' },
-  { aspectRatio: '1:1', width: 1080, height: 1080, name: '1:1 (1080x1080)' },
-  { aspectRatio: '4:5', width: 864, height: 1080, name: '4:5 (864x1080)' },
+  { aspectRatio: '16:9', width: 1920, height: 1080, name: '16:9 (1920x1080)', custom: false },
+  { aspectRatio: '9:16', width: 1080, height: 1920, name: '9:16 (1080x1920)', custom: false },
+  { aspectRatio: '1:1', width: 1080, height: 1080, name: '1:1 (1080x1080)', custom: false },
+  { aspectRatio: '4:5', width: 864, height: 1080, name: '4:5 (864x1080)', custom: false },
 ];
 
 export default function PromptToVideoPage() {
