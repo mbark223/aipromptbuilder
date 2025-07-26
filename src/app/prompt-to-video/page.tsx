@@ -45,8 +45,25 @@ export default function PromptToVideoPage() {
           name: `prompt-${index + 1}`,
           size: 0,
           format: 'mp4' as 'jpg' | 'png' | 'webp' | 'svg',
+          dimensions: {
+            width: 1920,
+            height: 1080,
+            aspectRatio: '16:9'
+          }
         },
         processedVersions: [],
+        animationProfile: {
+          id: 'prompt-animation',
+          name: 'Prompt to Video',
+          type: 'ai',
+          movements: [],
+          duration: 4,
+          loop: false,
+          transitions: {
+            in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+            out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+          }
+        },
         metadata: {
           uploaded: new Date(),
           author: 'current-user',
