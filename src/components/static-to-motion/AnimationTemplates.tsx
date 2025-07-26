@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { AnimationProfile, Movement } from '@/types';
-import { ANIMATION_TEMPLATES } from '@/constants/animations';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -53,12 +52,78 @@ export function AnimationTemplates({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<'all' | 'subtle' | 'moderate' | 'dynamic'>('all');
 
-  const filteredTemplates = useMemo(() => {
-    if (!ANIMATION_TEMPLATES || !Array.isArray(ANIMATION_TEMPLATES)) {
-      return [];
+  // For now, use a small set of built-in templates
+  const BUILT_IN_TEMPLATES: AnimationProfile[] = [
+    {
+      id: 'subtle-breathing',
+      name: 'Subtle Breathing',
+      type: 'subtle',
+      movements: [
+        {
+          element: 'full',
+          type: 'pulse',
+          intensity: 2,
+          timing: 'ease'
+        }
+      ],
+      duration: 3,
+      loop: true,
+      transitions: {
+        in: { type: 'fade', duration: 0.3, easing: 'ease-out' },
+        out: { type: 'fade', duration: 0.3, easing: 'ease-in' }
+      }
+    },
+    {
+      id: 'ken-burns',
+      name: 'Ken Burns',
+      type: 'moderate',
+      movements: [
+        {
+          element: 'full',
+          type: 'zoom',
+          intensity: 3,
+          direction: 'in',
+          timing: 'ease'
+        },
+        {
+          element: 'full',
+          type: 'pan',
+          intensity: 2,
+          direction: 'left',
+          timing: 'ease'
+        }
+      ],
+      duration: 6,
+      loop: false,
+      transitions: {
+        in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+        out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+      }
+    },
+    {
+      id: 'dynamic-zoom',
+      name: 'Dynamic Zoom',
+      type: 'dynamic',
+      movements: [
+        {
+          element: 'full',
+          type: 'zoom',
+          intensity: 6,
+          direction: 'in',
+          timing: 'ease-out'
+        }
+      ],
+      duration: 2,
+      loop: true,
+      transitions: {
+        in: { type: 'zoom', duration: 0.2, easing: 'ease-out' },
+        out: { type: 'fade', duration: 0.2, easing: 'ease-in' }
+      }
     }
-    return ANIMATION_TEMPLATES.filter(template => {
-      if (!template || !template.name || !template.type) return false;
+  ];
+
+  const filteredTemplates = useMemo(() => {
+    return BUILT_IN_TEMPLATES.filter(template => {
       const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = selectedType === 'all' || template.type === selectedType;
       return matchesSearch && matchesType;
@@ -66,19 +131,11 @@ export function AnimationTemplates({
   }, [searchQuery, selectedType]);
 
   const templateCounts = useMemo(() => {
-    if (!ANIMATION_TEMPLATES || !Array.isArray(ANIMATION_TEMPLATES)) {
-      return {
-        all: 0,
-        subtle: 0,
-        moderate: 0,
-        dynamic: 0
-      };
-    }
     return {
-      all: ANIMATION_TEMPLATES.length,
-      subtle: ANIMATION_TEMPLATES.filter(t => t?.type === 'subtle').length,
-      moderate: ANIMATION_TEMPLATES.filter(t => t?.type === 'moderate').length,
-      dynamic: ANIMATION_TEMPLATES.filter(t => t?.type === 'dynamic').length
+      all: BUILT_IN_TEMPLATES.length,
+      subtle: BUILT_IN_TEMPLATES.filter(t => t.type === 'subtle').length,
+      moderate: BUILT_IN_TEMPLATES.filter(t => t.type === 'moderate').length,
+      dynamic: BUILT_IN_TEMPLATES.filter(t => t.type === 'dynamic').length
     };
   }, []);
 
@@ -109,9 +166,7 @@ export function AnimationTemplates({
             No animations found matching &quot;{searchQuery}&quot;
           </div>
         ) : (
-          filteredTemplates.map((template) => {
-            if (!template || !template.id) return null;
-            return (
+          filteredTemplates.map((template) => (
         <Card
           key={template.id}
           className={`
@@ -171,8 +226,7 @@ export function AnimationTemplates({
             </div>
           </div>
         </Card>
-            );
-          })
+          ))
         )}
       </div>
     </div>
