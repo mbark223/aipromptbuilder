@@ -309,8 +309,8 @@ export interface ProcessingResult {
   totalTime: number;
 }
 
-// Animation Templates
-export const ANIMATION_TEMPLATES: AnimationProfile[] = [
+// Animation Templates (moved to @/constants/animations)
+/* export const ANIMATION_TEMPLATES: AnimationProfile[] = [
   {
     id: 'subtle-breathing',
     name: 'Subtle Breathing',
@@ -2023,7 +2023,7 @@ export const ANIMATION_TEMPLATES: AnimationProfile[] = [
       out: { type: 'zoom', duration: 0.2, easing: 'ease-in' }
     }
   }
-];
+]; */
 
 // Veo2/Frames to Video Types
 export interface Veo2InterpolationConfig {

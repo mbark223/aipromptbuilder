@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { AnimationProfile, ANIMATION_TEMPLATES, Movement } from '@/types';
+import { AnimationProfile, Movement } from '@/types';
+import { ANIMATION_TEMPLATES } from '@/constants/animations';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -53,7 +54,11 @@ export function AnimationTemplates({
   const [selectedType, setSelectedType] = useState<'all' | 'subtle' | 'moderate' | 'dynamic'>('all');
 
   const filteredTemplates = useMemo(() => {
+    if (!ANIMATION_TEMPLATES || !Array.isArray(ANIMATION_TEMPLATES)) {
+      return [];
+    }
     return ANIMATION_TEMPLATES.filter(template => {
+      if (!template || !template.name || !template.type) return false;
       const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = selectedType === 'all' || template.type === selectedType;
       return matchesSearch && matchesType;
@@ -61,11 +66,19 @@ export function AnimationTemplates({
   }, [searchQuery, selectedType]);
 
   const templateCounts = useMemo(() => {
+    if (!ANIMATION_TEMPLATES || !Array.isArray(ANIMATION_TEMPLATES)) {
+      return {
+        all: 0,
+        subtle: 0,
+        moderate: 0,
+        dynamic: 0
+      };
+    }
     return {
       all: ANIMATION_TEMPLATES.length,
-      subtle: ANIMATION_TEMPLATES.filter(t => t.type === 'subtle').length,
-      moderate: ANIMATION_TEMPLATES.filter(t => t.type === 'moderate').length,
-      dynamic: ANIMATION_TEMPLATES.filter(t => t.type === 'dynamic').length
+      subtle: ANIMATION_TEMPLATES.filter(t => t?.type === 'subtle').length,
+      moderate: ANIMATION_TEMPLATES.filter(t => t?.type === 'moderate').length,
+      dynamic: ANIMATION_TEMPLATES.filter(t => t?.type === 'dynamic').length
     };
   }, []);
 
@@ -96,12 +109,14 @@ export function AnimationTemplates({
             No animations found matching &quot;{searchQuery}&quot;
           </div>
         ) : (
-          filteredTemplates.map((template) => (
+          filteredTemplates.map((template) => {
+            if (!template || !template.id) return null;
+            return (
         <Card
           key={template.id}
           className={`
             p-4 cursor-pointer transition-all duration-200
-            ${selectedAnimation.id === template.id 
+            ${selectedAnimation && selectedAnimation.id === template.id 
               ? 'border-primary ring-2 ring-primary/20' 
               : 'hover:border-primary/50'
             }
@@ -112,27 +127,34 @@ export function AnimationTemplates({
             <div className="flex items-start justify-between">
               <h3 className="font-semibold">{template.name}</h3>
               <Badge 
-                variant={template.type === 'subtle' ? 'secondary' : 
-                        template.type === 'moderate' ? 'default' : 'destructive' as 'secondary' | 'default' | 'destructive'}
+                variant={
+                  template.type === 'subtle' ? 'secondary' : 
+                  template.type === 'moderate' ? 'default' : 
+                  'destructive'
+                }
               >
                 {template.type}
               </Badge>
             </div>
 
             <div className="space-y-2">
-              {template.movements.map((movement, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  {getAnimationIcon(movement)}
-                  <span className="capitalize">
-                    {movement.element !== 'full' && movement.element !== 'background' && movement.element !== 'foreground' 
-                      ? `${movement.element} ` 
-                      : ''
-                    }
-                    {movement.type} {movement.direction ? `(${movement.direction})` : ''}
-                  </span>
-                  <span className="text-xs">• {movement.intensity}/10</span>
-                </div>
-              ))}
+              {template.movements && template.movements.length > 0 ? (
+                template.movements.map((movement, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    {getAnimationIcon(movement)}
+                    <span className="capitalize">
+                      {movement.element !== 'full' && movement.element !== 'background' && movement.element !== 'foreground' 
+                        ? `${movement.element} ` 
+                        : ''
+                      }
+                      {movement.type} {movement.direction ? `(${movement.direction})` : ''}
+                    </span>
+                    <span className="text-xs">• {movement.intensity}/10</span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-muted-foreground">No movements defined</div>
+              )}
             </div>
 
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -149,7 +171,8 @@ export function AnimationTemplates({
             </div>
           </div>
         </Card>
-          ))
+            );
+          })
         )}
       </div>
     </div>

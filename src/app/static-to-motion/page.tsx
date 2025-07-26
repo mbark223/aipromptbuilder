@@ -8,19 +8,20 @@ import { GenericAnimationWorkshop } from '@/components/static-to-motion/GenericA
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
-import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel, ANIMATION_TEMPLATES } from '@/types';
+import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
-// Default animation for generic workflow - use first template
-const DEFAULT_ANIMATION: AnimationProfile = ANIMATION_TEMPLATES[0] || {
+// Default animation for generic workflow
+const DEFAULT_ANIMATION: AnimationProfile = {
   id: 'simple-motion',
   name: 'Simple Motion',
-  type: 'subtle',
+  type: 'subtle' as const,
   movements: [],
   duration: 3,
   loop: false,
   transitions: {
-    in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
-    out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+    in: { type: 'fade' as const, duration: 0.5, easing: 'ease-out' },
+    out: { type: 'fade' as const, duration: 0.5, easing: 'ease-in' }
   }
 };
 
@@ -159,36 +160,38 @@ export default function StaticToMotionPage() {
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
-          {animationType === 'ai' ? (
-            <AIAnimationWorkshopSimple
-              assets={assets}
-              selectedAssets={selectedAssets}
-              onSelectAssets={setSelectedAssets}
-              selectedFormats={selectedFormats}
-              onSelectFormats={setSelectedFormats}
-              selectedModel={selectedModel}
-              onSelectModel={setSelectedModel}
-              modelInputs={modelInputs}
-              onModelInputsChange={setModelInputs}
-              onStartProcessing={handleStartProcessing}
-              onBack={() => setActiveView('type-selection')}
-            />
-          ) : (
-            <GenericAnimationWorkshop
-              assets={assets}
-              selectedAssets={selectedAssets}
-              onSelectAssets={setSelectedAssets}
-              selectedFormats={selectedFormats}
-              onSelectFormats={setSelectedFormats}
-              selectedAnimation={selectedAnimation}
-              onSelectAnimation={setSelectedAnimation}
-              selectedModel={selectedModel}
-              onSelectModel={setSelectedModel}
-              modelInputs={modelInputs}
-              onModelInputsChange={setModelInputs}
-              onStartProcessing={handleStartProcessing}
-            />
-          )}
+          <ErrorBoundary>
+            {animationType === 'ai' ? (
+              <AIAnimationWorkshopSimple
+                assets={assets}
+                selectedAssets={selectedAssets}
+                onSelectAssets={setSelectedAssets}
+                selectedFormats={selectedFormats}
+                onSelectFormats={setSelectedFormats}
+                selectedModel={selectedModel}
+                onSelectModel={setSelectedModel}
+                modelInputs={modelInputs}
+                onModelInputsChange={setModelInputs}
+                onStartProcessing={handleStartProcessing}
+                onBack={() => setActiveView('type-selection')}
+              />
+            ) : animationType === 'generic' ? (
+              <GenericAnimationWorkshop
+                assets={assets}
+                selectedAssets={selectedAssets}
+                onSelectAssets={setSelectedAssets}
+                selectedFormats={selectedFormats}
+                onSelectFormats={setSelectedFormats}
+                selectedAnimation={selectedAnimation}
+                onSelectAnimation={setSelectedAnimation}
+                selectedModel={selectedModel}
+                onSelectModel={setSelectedModel}
+                modelInputs={modelInputs}
+                onModelInputsChange={setModelInputs}
+                onStartProcessing={handleStartProcessing}
+              />
+            ) : null}
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="queue">
