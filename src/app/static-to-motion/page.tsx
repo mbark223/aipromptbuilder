@@ -160,10 +160,28 @@ export default function StaticToMotionPage() {
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Workshop</h2>
-            <p className="text-muted-foreground">Animation workshop is temporarily disabled while we fix an issue.</p>
-          </Card>
+          <ErrorBoundary>
+            {animationType === 'ai' ? (
+              <AIAnimationWorkshopSimple
+                assets={assets}
+                selectedAssets={selectedAssets}
+                onSelectAssets={setSelectedAssets}
+                selectedFormats={selectedFormats}
+                onSelectFormats={setSelectedFormats}
+                selectedModel={selectedModel}
+                onSelectModel={setSelectedModel}
+                modelInputs={modelInputs}
+                onModelInputsChange={setModelInputs}
+                onStartProcessing={handleStartProcessing}
+                onBack={() => setActiveView('type-selection')}
+              />
+            ) : animationType === 'generic' ? (
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Generic Animation Workshop</h2>
+                <p className="text-muted-foreground">This feature is being fixed. Please use AI-powered animations for now.</p>
+              </Card>
+            ) : null}
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="queue">
