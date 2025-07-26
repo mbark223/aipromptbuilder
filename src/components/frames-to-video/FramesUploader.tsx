@@ -45,6 +45,19 @@ export function FramesUploader({ onFramesUploaded }: FramesUploaderProps) {
               }
             },
             processedVersions: [],
+            animationProfile: {
+              id: 'frame-interpolation',
+              name: 'Frame Interpolation',
+              type: 'preserve',
+              movements: [],
+              duration: 0,
+              loop: false,
+              transitions: {
+                in: { type: 'none', duration: 0, easing: 'linear' },
+                out: { type: 'none', duration: 0, easing: 'linear' }
+              },
+              preserveImage: true
+            },
             metadata: {
               uploaded: new Date(),
               author: 'current-user',
