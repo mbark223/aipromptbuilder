@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FormatSelector } from './FormatSelector';
-import { AnimationTemplates } from './AnimationTemplates';
+import { AnimationTemplatesSimple } from './AnimationTemplatesSimple';
 import { AssetGrid } from './AssetGrid';
 import { PreviewPanelV2 as PreviewPanel } from './PreviewPanelV2';
 import { ElementSelectorV2 as ElementSelector, type CustomElement } from './ElementSelectorV2';
@@ -78,7 +78,7 @@ export function GenericAnimationWorkshop({
             </TabsContent>
             
             <TabsContent value="animation" className="space-y-4">
-              <AnimationTemplates
+              <AnimationTemplatesSimple
                 selectedAnimation={selectedAnimation}
                 onSelectAnimation={onSelectAnimation}
               />
