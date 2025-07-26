@@ -74,10 +74,15 @@ export default function PromptToVideoPage() {
       animation: {
         id: 'prompt-animation',
         name: 'Prompt to Video',
-        type: 'generated',
-        parameters: {},
+        type: 'ai',
+        movements: [],
         duration: 4,
         fps: 30,
+        loop: false,
+        transitions: {
+          in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+          out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+        }
       },
       animationType: 'ai',
       model: selectedModel,
