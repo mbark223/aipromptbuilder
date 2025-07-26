@@ -13,6 +13,76 @@ interface AnimationTemplatesProps {
   onSelectAnimation: (animation: AnimationProfile) => void;
 }
 
+// Built-in animation templates
+const BUILT_IN_TEMPLATES: AnimationProfile[] = [
+  {
+    id: 'subtle-breathing',
+    name: 'Subtle Breathing',
+    type: 'subtle' as const,
+    movements: [
+      {
+        element: 'full' as const,
+        type: 'pulse' as const,
+        intensity: 2,
+        timing: 'ease' as const
+      }
+    ],
+    duration: 3,
+    loop: true,
+    transitions: {
+      in: { type: 'fade' as const, duration: 0.3, easing: 'ease-out' },
+      out: { type: 'fade' as const, duration: 0.3, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'ken-burns',
+    name: 'Ken Burns',
+    type: 'moderate' as const,
+    movements: [
+      {
+        element: 'full' as const,
+        type: 'zoom' as const,
+        intensity: 3,
+        direction: 'in' as const,
+        timing: 'ease' as const
+      },
+      {
+        element: 'full' as const,
+        type: 'pan' as const,
+        intensity: 2,
+        direction: 'left' as const,
+        timing: 'ease' as const
+      }
+    ],
+    duration: 6,
+    loop: false,
+    transitions: {
+      in: { type: 'fade' as const, duration: 0.5, easing: 'ease-out' },
+      out: { type: 'fade' as const, duration: 0.5, easing: 'ease-in' }
+    }
+  },
+  {
+    id: 'dynamic-zoom',
+    name: 'Dynamic Zoom',
+    type: 'dynamic' as const,
+    movements: [
+      {
+        element: 'full' as const,
+        type: 'zoom' as const,
+        intensity: 6,
+        direction: 'in' as const,
+        timing: 'ease-out' as const
+      }
+    ],
+    duration: 2,
+    loop: true,
+    transitions: {
+      in: { type: 'zoom' as const, duration: 0.2, easing: 'ease-out' },
+      out: { type: 'fade' as const, duration: 0.2, easing: 'ease-in' }
+    }
+  }
+];
+
 const getAnimationIcon = (movement: Movement) => {
   // First check for element-specific icons
   switch (movement.element) {
@@ -52,76 +122,6 @@ export function AnimationTemplates({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<'all' | 'subtle' | 'moderate' | 'dynamic'>('all');
 
-  // For now, use a small set of built-in templates
-  const BUILT_IN_TEMPLATES: AnimationProfile[] = [
-    {
-      id: 'subtle-breathing',
-      name: 'Subtle Breathing',
-      type: 'subtle',
-      movements: [
-        {
-          element: 'full',
-          type: 'pulse',
-          intensity: 2,
-          timing: 'ease'
-        }
-      ],
-      duration: 3,
-      loop: true,
-      transitions: {
-        in: { type: 'fade', duration: 0.3, easing: 'ease-out' },
-        out: { type: 'fade', duration: 0.3, easing: 'ease-in' }
-      }
-    },
-    {
-      id: 'ken-burns',
-      name: 'Ken Burns',
-      type: 'moderate',
-      movements: [
-        {
-          element: 'full',
-          type: 'zoom',
-          intensity: 3,
-          direction: 'in',
-          timing: 'ease'
-        },
-        {
-          element: 'full',
-          type: 'pan',
-          intensity: 2,
-          direction: 'left',
-          timing: 'ease'
-        }
-      ],
-      duration: 6,
-      loop: false,
-      transitions: {
-        in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
-        out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
-      }
-    },
-    {
-      id: 'dynamic-zoom',
-      name: 'Dynamic Zoom',
-      type: 'dynamic',
-      movements: [
-        {
-          element: 'full',
-          type: 'zoom',
-          intensity: 6,
-          direction: 'in',
-          timing: 'ease-out'
-        }
-      ],
-      duration: 2,
-      loop: true,
-      transitions: {
-        in: { type: 'zoom', duration: 0.2, easing: 'ease-out' },
-        out: { type: 'fade', duration: 0.2, easing: 'ease-in' }
-      }
-    }
-  ];
-
   const filteredTemplates = useMemo(() => {
     return BUILT_IN_TEMPLATES.filter(template => {
       const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -153,10 +153,10 @@ export function AnimationTemplates({
 
       <Tabs value={selectedType} onValueChange={(v) => setSelectedType(v as 'all' | 'subtle' | 'moderate' | 'dynamic')}>
         <TabsList className="grid grid-cols-4 w-full">
-          <TabsTrigger value="all">All ({templateCounts.all})</TabsTrigger>
-          <TabsTrigger value="subtle">Subtle ({templateCounts.subtle})</TabsTrigger>
-          <TabsTrigger value="moderate">Moderate ({templateCounts.moderate})</TabsTrigger>
-          <TabsTrigger value="dynamic">Dynamic ({templateCounts.dynamic})</TabsTrigger>
+          <TabsTrigger value="all">All ({String(templateCounts.all)})</TabsTrigger>
+          <TabsTrigger value="subtle">Subtle ({String(templateCounts.subtle)})</TabsTrigger>
+          <TabsTrigger value="moderate">Moderate ({String(templateCounts.moderate)})</TabsTrigger>
+          <TabsTrigger value="dynamic">Dynamic ({String(templateCounts.dynamic)})</TabsTrigger>
         </TabsList>
       </Tabs>
 
