@@ -72,7 +72,8 @@ export function AIAnimationWorkshopSimple({
       ...modelInputs,
       prompt: prompt
     });
-  }, [prompt, modelInputs, onModelInputsChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prompt, onModelInputsChange]);
 
   // Check if ready to process
   const isReadyToProcess = selectedAssets.length > 0 && 

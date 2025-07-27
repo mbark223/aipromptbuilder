@@ -7,7 +7,6 @@ import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
 import { StaticAsset, Format, AnimationModel } from '@/types';
-import { Button } from '@/components/ui/button';
 
 // Default model (Veo-3)
 const DEFAULT_MODEL: AnimationModel = {
@@ -134,18 +133,19 @@ export default function StaticToMotionPage() {
 
         <TabsContent value="workshop" className="space-y-6">
           {animationType === 'ai' ? (
-            <div className="space-y-4">
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">AI Animation Workshop</h2>
-                <p className="text-muted-foreground">Debug mode - checking for React error #185</p>
-                <div className="mt-4">
-                  <p>Assets: {assets.length}</p>
-                  <p>Selected Assets: {selectedAssets.length}</p>
-                  <p>Selected Model: {selectedModel.name}</p>
-                </div>
-              </Card>
-              <Button onClick={() => setActiveView('type-selection')}>Back</Button>
-            </div>
+            <AIAnimationWorkshopSimple
+              assets={assets}
+              selectedAssets={selectedAssets}
+              onSelectAssets={setSelectedAssets}
+              selectedFormats={selectedFormats}
+              onSelectFormats={setSelectedFormats}
+              selectedModel={selectedModel}
+              onSelectModel={setSelectedModel}
+              modelInputs={modelInputs}
+              onModelInputsChange={setModelInputs}
+              onStartProcessing={handleStartProcessing}
+              onBack={() => setActiveView('type-selection')}
+            />
           ) : animationType === 'generic' ? (
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Generic Animation Workshop</h2>
