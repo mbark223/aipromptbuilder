@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     const { modelId, imageUrl, prompt, options = {} } = body;
 
     // Validate model ID
-    if (!modelId || !IMAGE_TO_VIDEO_MODELS[modelId]) {
+    if (!modelId || !(modelId in IMAGE_TO_VIDEO_MODELS)) {
       return NextResponse.json(
         { error: "Invalid model ID", availableModels: Object.keys(IMAGE_TO_VIDEO_MODELS) },
         { status: 400 }
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const model = IMAGE_TO_VIDEO_MODELS[modelId];
+    const model = IMAGE_TO_VIDEO_MODELS[modelId as keyof typeof IMAGE_TO_VIDEO_MODELS];
     
     // Prepare input based on model schema
     const input: Record<string, unknown> = {};
