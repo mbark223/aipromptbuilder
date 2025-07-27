@@ -315,8 +315,6 @@ export default function Home() {
               <div className="bg-white rounded-lg border border-gray-200 p-6">
                 <VideoGenerator
                   content={content}
-                  platformId={currentCombination?.platformId}
-                  formatId={currentCombination?.formatId}
                 />
               </div>
             )}

@@ -8,15 +8,11 @@ import { AdContent } from '@/types/platforms';
 
 interface VideoGeneratorProps {
   content: AdContent;
-  platformId?: string;
-  formatId?: string;
   className?: string;
 }
 
 export function VideoGenerator({
   content,
-  platformId,
-  formatId,
   className
 }: VideoGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -112,15 +108,6 @@ export function VideoGenerator({
 
   const selectedModelData = models.find(m => m.id === selectedModel);
 
-  // Get model category
-  const getModelCategory = (modelId: string) => {
-    for (const [category, modelIds] of Object.entries(VIDEO_MODEL_CATEGORIES)) {
-      if (modelIds.includes(modelId as any)) {
-        return category;
-      }
-    }
-    return 'standard';
-  };
 
   const downloadVideo = async () => {
     if (!generatedVideoUrl) return;
@@ -170,7 +157,7 @@ export function VideoGenerator({
             {Object.entries(VIDEO_MODEL_CATEGORIES).map(([category, modelIds]) => (
               <optgroup key={category} label={category.charAt(0).toUpperCase() + category.slice(1)}>
                 {models
-                  .filter(model => modelIds.includes(model.id as any))
+                  .filter(model => modelIds.includes(model.id as never))
                   .map(model => (
                     <option key={model.id} value={model.id}>
                       {model.name}
@@ -203,7 +190,7 @@ export function VideoGenerator({
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500"
                       disabled={isGenerating}
                     >
-                      {schema.enum.map((value: any) => (
+                      {schema.enum.map((value: string | number) => (
                         <option key={value} value={value}>{value}</option>
                       ))}
                     </select>

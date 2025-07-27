@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
     const model = IMAGE_TO_VIDEO_MODELS[modelId];
     
     // Prepare input based on model schema
-    let input: any = {};
+    const input: Record<string, unknown> = {};
     
     // Map common fields based on model requirements
     switch (modelId) {
