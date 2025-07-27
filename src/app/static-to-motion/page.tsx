@@ -140,7 +140,9 @@ export default function StaticToMotionPage() {
         <TabsContent value="upload" className="space-y-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Upload Static Images</h2>
-            <ImageUploader onFilesUploaded={handleFilesUploaded} />
+            <div className="p-6 text-center">
+              <p className="text-muted-foreground">ImageUploader temporarily disabled for debugging</p>
+            </div>
           </Card>
         </TabsContent>
 
@@ -151,46 +153,23 @@ export default function StaticToMotionPage() {
               Select how you&apos;d like to animate your uploaded {assets.length === 1 ? 'image' : 'images'}
             </p>
           </div>
-          <AnimationTypeSelector 
-            onSelectType={(type) => {
-              setAnimationType(type);
-              setActiveView('workshop');
-            }}
-          />
+          <div className="p-6 text-center">
+            <p className="text-muted-foreground">AnimationTypeSelector temporarily disabled for debugging</p>
+          </div>
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
-          <ErrorBoundary>
-            {animationType === 'ai' ? (
-              <AIAnimationWorkshopSimple
-                assets={assets}
-                selectedAssets={selectedAssets}
-                onSelectAssets={setSelectedAssets}
-                selectedFormats={selectedFormats}
-                onSelectFormats={setSelectedFormats}
-                selectedModel={selectedModel}
-                onSelectModel={setSelectedModel}
-                modelInputs={modelInputs}
-                onModelInputsChange={setModelInputs}
-                onStartProcessing={handleStartProcessing}
-                onBack={() => setActiveView('type-selection')}
-              />
-            ) : animationType === 'generic' ? (
-              <div className="p-6 text-center">
-                <h2 className="text-xl font-semibold mb-2">Generic Animation Workshop</h2>
-                <p className="text-muted-foreground">Temporarily disabled for debugging</p>
-              </div>
-            ) : null}
-          </ErrorBoundary>
+          <div className="p-6 text-center">
+            <h2 className="text-xl font-semibold mb-2">Workshop</h2>
+            <p className="text-muted-foreground">All workshops temporarily disabled for debugging</p>
+          </div>
         </TabsContent>
 
         <TabsContent value="queue">
-          <ProcessingQueue
-            queue={processingQueue}
-            onUpdateQueue={setProcessingQueue}
-            model={selectedModel}
-            modelInputs={modelInputs}
-          />
+          <div className="p-6 text-center">
+            <h2 className="text-xl font-semibold mb-2">Processing Queue</h2>
+            <p className="text-muted-foreground">ProcessingQueue temporarily disabled for debugging</p>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
