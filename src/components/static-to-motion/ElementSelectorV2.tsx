@@ -385,7 +385,7 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
               </Badge>
               {element.animation && (
                 <Badge variant="outline" className="text-xs">
-                  {String(ANIMATION_TYPES.find(t => t.value === element.animation?.type)?.icon || '')}
+                  {ANIMATION_TYPES.find(t => t.value === element.animation?.type)?.label || 'Animation'}
                 </Badge>
               )}
             </div>
@@ -433,10 +433,10 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
                     {element.animation && (
                       <div className="flex items-center gap-1">
                         <span className="text-sm">
-                          {String(ANIMATION_TYPES.find(t => t.value === element.animation?.type)?.icon || '')}
+                          {ANIMATION_TYPES.find(t => t.value === element.animation?.type)?.icon || ''}
                         </span>
                         <span className="text-sm text-muted-foreground">
-                          {String(ANIMATION_TYPES.find(t => t.value === element.animation?.type)?.label || '')}
+                          {ANIMATION_TYPES.find(t => t.value === element.animation?.type)?.label || ''}
                         </span>
                       </div>
                     )}
@@ -489,8 +489,8 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
                 })}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{String(anim.icon)}</span>
-                      <span className="font-medium">{String(anim.label)}</span>
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">{anim.description}</span>
                   </Button>
@@ -519,8 +519,8 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
                     })}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{String(anim.icon)}</span>
-                      <span className="font-medium">{String(anim.label)}</span>
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">{anim.description}</span>
                   </Button>
@@ -549,8 +549,8 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
                     })}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{String(anim.icon)}</span>
-                      <span className="font-medium">{String(anim.label)}</span>
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">{anim.description}</span>
                   </Button>
@@ -579,8 +579,8 @@ export function ElementSelectorV2({ imageUrl, onElementsChange }: ElementSelecto
                     })}
                   >
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-lg">{String(anim.icon)}</span>
-                      <span className="font-medium">{String(anim.label)}</span>
+                      <span className="text-lg">{anim.icon}</span>
+                      <span className="font-medium">{anim.label}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">{anim.description}</span>
                   </Button>
