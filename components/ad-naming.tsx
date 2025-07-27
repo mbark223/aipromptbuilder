@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Calendar, Tag, User, Palette, Ruler, Building, Edit3, Plus, X, Save } from 'lucide-react';
-import { useUserPreferences } from '@/lib/user-preferences-custom';
+import { useUserPreferences } from '@/lib/user-preferences-debug';
 
 interface NamingElement {
   id: string;
@@ -41,7 +41,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   
   // Initialize naming elements with custom options from user preferences
   useEffect(() => {
-    if (!hasInitialized) {
+    if (!preferencesLoading && !hasInitialized) {
       const defaultElements = [
         {
           id: 'partner',
@@ -157,10 +157,60 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       setNamingElements(mergedElements);
       setHasInitialized(true);
     }
-  }, [hasInitialized]);
+  }, [hasInitialized, preferencesLoading]);
+
+  // Update naming elements when custom options change
+  useEffect(() => {
+    if (hasInitialized && !preferencesLoading) {
+      setNamingElements(prev => {
+        console.log('Updating naming elements with new custom options');
+        return prev.map(element => {
+          const customData = customOptions[element.id];
+          const defaultOpts = getDefaultOptions(element.id);
+          let finalOptions = [...defaultOpts];
+          
+          if (customData) {
+            // Remove any removed default options
+            if (customData.removed && customData.removed.length > 0) {
+              finalOptions = finalOptions.filter(opt => !customData.removed.includes(opt));
+            }
+            // Add custom options
+            if (customData.added && customData.added.length > 0) {
+              finalOptions = [...finalOptions, ...customData.added];
+            }
+          }
+          
+          // Add current value if not in options
+          if (namingValues[element.id] && !finalOptions.includes(namingValues[element.id])) {
+            finalOptions.push(namingValues[element.id]);
+          }
+          
+          return {
+            ...element,
+            options: [...new Set(finalOptions)]
+          };
+        });
+      });
+    }
+  }, [customOptions, hasInitialized, preferencesLoading, namingValues]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});
+
+  // Helper function to get default options
+  const getDefaultOptions = (elementId: string): string[] => {
+    const defaults: Record<string, string[]> = {
+      partner: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter'],
+      jurisdiction: ['US', 'ON', 'NV', 'MI', 'PA', 'NJ', 'WV', 'IA', 'IN', 'IL', 'CO', 'TN', 'VA', 'AZ', 'CT', 'NY', 'UK', 'CA'],
+      offer: ['Bet/Get', 'DYW', 'BonusMatch', 'bonus', 'discount', 'freebets', 'cashback', 'welcome', 'deposit', 'noodeposit', 'loyalty'],
+      theme: ['sale', 'launch', 'brand', 'product', 'seasonal', 'promo', 'awareness', 'reels'],
+      theme2: ['88Drums', 'Cleopatra', 'holiday', 'sports', 'gaming', 'finance', 'health', 'tech', 'lifestyle', 'entertainment'],
+      format: ['feed', 'story', 'banner', 'video', 'carousel', 'collection', 'reels'],
+      size: ['square', 'landscape', 'portrait', 'banner', 'leaderboard', 'medium', 'vertical'],
+      design: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa']
+    };
+    return defaults[elementId] || [];
+  };
 
   // Auto-populate today's date only after preferences load and only if no date exists
   useEffect(() => {
