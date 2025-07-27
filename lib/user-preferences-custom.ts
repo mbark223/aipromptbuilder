@@ -50,7 +50,7 @@ export function useUserPreferences() {
         // Handle both old and new format
         if (data.customOptions) {
           const converted: Record<string, CustomOptionsData> = {};
-          Object.entries(data.customOptions).forEach(([k, v]: [string, any]) => {
+          Object.entries(data.customOptions).forEach(([k, v]) => {
             if (Array.isArray(v)) {
               // Old format - array of custom options
               converted[k] = { added: v, removed: [] };
