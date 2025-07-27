@@ -41,7 +41,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   
   // Initialize naming elements with custom options from user preferences
   useEffect(() => {
-    if (!hasInitialized && customOptions) {
+    if (!hasInitialized) {
       const defaultElements = [
         {
           id: 'partner',
@@ -112,21 +112,36 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
         }
       ];
       
-      // Merge custom options with default options
-      const mergedElements = defaultElements.map(element => {
-        if (customOptions[element.id]) {
-          return {
-            ...element,
-            options: [...new Set([...element.options, ...customOptions[element.id]])]
-          };
+      // First, check if there are saved values that aren't in the default options
+      const additionalOptions: Record<string, string[]> = {};
+      
+      // Add any saved values to the options
+      Object.entries(namingValues).forEach(([key, value]) => {
+        if (value && key !== 'date') {
+          const element = defaultElements.find(el => el.id === key);
+          if (element && !element.options.includes(value)) {
+            additionalOptions[key] = [value];
+          }
         }
-        return element;
       });
       
+      // Merge custom options with default options and saved values
+      const mergedElements = defaultElements.map(element => {
+        const customOpts = customOptions[element.id] || [];
+        const savedOpts = additionalOptions[element.id] || [];
+        const allOptions = [...new Set([...element.options, ...customOpts, ...savedOpts])];
+        
+        return {
+          ...element,
+          options: allOptions
+        };
+      });
+      
+      console.log('Initialized naming elements with options:', mergedElements);
       setNamingElements(mergedElements);
       setHasInitialized(true);
     }
-  }, [customOptions, hasInitialized, setNamingValues]);
+  }, [hasInitialized, namingValues, customOptions]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});
@@ -184,16 +199,29 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           : element
       );
       
-      // Save custom options to user preferences
+      // Save ALL non-default options as custom options
       const newCustomOptions: Record<string, string[]> = {};
+      const defaultElements = [
+        { id: 'partner', options: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter'] },
+        { id: 'jurisdiction', options: ['US', 'ON', 'NV', 'MI', 'PA', 'NJ', 'WV', 'IA', 'IN', 'IL', 'CO', 'TN', 'VA', 'AZ', 'CT', 'NY', 'UK', 'CA'] },
+        { id: 'offer', options: ['Bet/Get', 'DYW', 'BonusMatch', 'bonus', 'discount', 'freebets', 'cashback', 'welcome', 'deposit', 'noodeposit', 'loyalty'] },
+        { id: 'theme', options: ['sale', 'launch', 'brand', 'product', 'seasonal', 'promo', 'awareness', 'reels'] },
+        { id: 'theme2', options: ['88Drums', 'Cleopatra', 'holiday', 'sports', 'gaming', 'finance', 'health', 'tech', 'lifestyle', 'entertainment'] },
+        { id: 'format', options: ['feed', 'story', 'banner', 'video', 'carousel', 'collection', 'reels'] },
+        { id: 'size', options: ['square', 'landscape', 'portrait', 'banner', 'leaderboard', 'medium', 'vertical'] },
+        { id: 'design', options: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa'] }
+      ];
+      
       updated.forEach(element => {
-        const defaultElement = namingElements.find(e => e.id === element.id);
-        const defaultOptions = defaultElement?.options || [];
-        const customOpts = element.options.filter(opt => !defaultOptions.includes(opt));
-        if (customOpts.length > 0) {
-          newCustomOptions[element.id] = customOpts;
+        const defaultElement = defaultElements.find(e => e.id === element.id);
+        if (defaultElement) {
+          const customOpts = element.options.filter(opt => !defaultElement.options.includes(opt));
+          if (customOpts.length > 0) {
+            newCustomOptions[element.id] = customOpts;
+          }
         }
       });
+      console.log('Saving custom options:', newCustomOptions);
       setCustomOptions(newCustomOptions);
       
       return updated;
