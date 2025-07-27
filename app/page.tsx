@@ -21,6 +21,7 @@ import {
   useAutoSave
 } from '@/lib/persistence';
 import { ProjectManager } from '@/components/project-manager';
+import { AuthButton } from '@/components/auth-button';
 
 export default function Home() {
   // One-time cleanup of legacy Meta platform data
@@ -167,8 +168,9 @@ export default function Home() {
                 Select multiple platforms and formats to test your creative across different placements.
               </p>
             </div>
-            {/* Project Manager in top right */}
-            <div className="absolute top-0 right-0">
+            {/* Auth and Project Manager in top right */}
+            <div className="absolute top-0 right-0 flex items-center space-x-4">
+              <AuthButton />
               <ProjectManager />
             </div>
           </div>

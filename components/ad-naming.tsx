@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Calendar, Tag, User, Palette, Ruler, Building, Edit3, Plus, X, Save } from 'lucide-react';
-import { usePersistentNamingValues } from '@/lib/persistence';
+import { useUserPreferences } from '@/lib/user-preferences';
+import { useSession } from 'next-auth/react';
 
 interface NamingElement {
   id: string;
@@ -18,15 +19,31 @@ interface AdNamingProps {
 }
 
 export function AdNaming({ onNameChange, className }: AdNamingProps) {
-  const [namingValues, setNamingValues] = usePersistentNamingValues();
+  const { data: session } = useSession();
+  const { 
+    namingValues, 
+    customOptions,
+    setNamingValues: updateNamingValues,
+    setCustomOptions,
+    isAuthenticated 
+  } = useUserPreferences();
+  
+  const setNamingValues = (values: any) => {
+    if (typeof values === 'function') {
+      updateNamingValues(values(namingValues));
+    } else {
+      updateNamingValues(values);
+    }
+  };
 
   // Define initial naming elements - now editable
   const [namingElements, setNamingElements] = useState<NamingElement[]>([]);
+  const [hasInitialized, setHasInitialized] = useState(false);
   
-  // Initialize naming elements if empty (first time load)
+  // Initialize naming elements with custom options from user preferences
   useEffect(() => {
-    if (namingElements.length === 0) {
-      setNamingElements([
+    if (!hasInitialized && customOptions) {
+      const defaultElements = [
         {
           id: 'partner',
           label: 'Partner',
@@ -35,8 +52,22 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           placeholder: 'Select partner'
         },
         {
+          id: 'jurisdiction',
+          label: 'Jurisdiction',
+          icon: <Building className="w-4 h-4" />,
+          options: ['US', 'ON', 'NV', 'MI', 'PA', 'NJ', 'WV', 'IA', 'IN', 'IL', 'CO', 'TN', 'VA', 'AZ', 'CT', 'NY', 'UK', 'CA'],
+          placeholder: 'Select jurisdiction'
+        },
+        {
+          id: 'offer',
+          label: 'Offer',
+          icon: <Tag className="w-4 h-4" />,
+          options: ['Bet/Get', 'DYW', 'BonusMatch', 'bonus', 'discount', 'freebets', 'cashback', 'welcome', 'deposit', 'noodeposit', 'loyalty'],
+          placeholder: 'Select offer type'
+        },
+        {
           id: 'theme',
-          label: 'Theme',
+          label: 'Theme 1',
           icon: <Palette className="w-4 h-4" />,
           options: ['sale', 'launch', 'brand', 'product', 'seasonal', 'promo', 'awareness', 'reels'],
           placeholder: 'Select theme'
@@ -63,25 +94,11 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           placeholder: 'Select size'
         },
         {
-          id: 'designer',
-          label: 'Designer',
+          id: 'design',
+          label: 'Design',
           icon: <User className="w-4 h-4" />,
           options: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa'],
-          placeholder: 'Select designer'
-        },
-        {
-          id: 'offer',
-          label: 'Offer',
-          icon: <Tag className="w-4 h-4" />,
-          options: ['Bet/Get', 'DYW', 'BonusMatch', 'bonus', 'discount', 'freebets', 'cashback', 'welcome', 'deposit', 'noodeposit', 'loyalty'],
-          placeholder: 'Select offer type'
-        },
-        {
-          id: 'jurisdiction',
-          label: 'Jurisdiction',
-          icon: <Building className="w-4 h-4" />,
-          options: ['US', 'ON', 'NV', 'MI', 'PA', 'NJ', 'WV', 'IA', 'IN', 'IL', 'CO', 'TN', 'VA', 'AZ', 'CT', 'NY', 'UK', 'CA'],
-          placeholder: 'Select jurisdiction'
+          placeholder: 'Select design'
         },
         {
           id: 'date',
@@ -94,9 +111,23 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           ],
           placeholder: 'Select date'
         }
-      ]);
+      ];
+      
+      // Merge custom options with default options
+      const mergedElements = defaultElements.map(element => {
+        if (customOptions[element.id]) {
+          return {
+            ...element,
+            options: [...new Set([...element.options, ...customOptions[element.id]])]
+          };
+        }
+        return element;
+      });
+      
+      setNamingElements(mergedElements);
+      setHasInitialized(true);
     }
-  }, [namingElements.length, setNamingElements]);
+  }, [customOptions, hasInitialized]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});
@@ -122,11 +153,29 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   const addOption = (elementId: string, newOption: string) => {
     if (!newOption.trim()) return;
     
-    setNamingElements(prev => prev.map(element => 
-      element.id === elementId 
-        ? { ...element, options: [...element.options, newOption.toLowerCase().trim()] }
-        : element
-    ));
+    const cleanOption = newOption.toLowerCase().trim();
+    
+    setNamingElements(prev => {
+      const updated = prev.map(element => 
+        element.id === elementId 
+          ? { ...element, options: [...element.options, cleanOption] }
+          : element
+      );
+      
+      // Save custom options to user preferences
+      const newCustomOptions: Record<string, string[]> = {};
+      updated.forEach(element => {
+        const defaultElement = namingElements.find(e => e.id === element.id);
+        const defaultOptions = defaultElement?.options || [];
+        const customOpts = element.options.filter(opt => !defaultOptions.includes(opt));
+        if (customOpts.length > 0) {
+          newCustomOptions[element.id] = customOpts;
+        }
+      });
+      setCustomOptions(newCustomOptions);
+      
+      return updated;
+    });
     
     setNewOptionInput(prev => ({ ...prev, [elementId]: '' }));
   };
@@ -284,12 +333,17 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
 
         {/* Preview */}
         <div className="mt-6 p-4 bg-gray-50 rounded-lg border">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Generated Filename Preview:</h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-700">Generated Filename Preview:</h3>
+            {isAuthenticated && (
+              <span className="text-xs text-green-600">✓ Preferences saved to account</span>
+            )}
+          </div>
           <div className="font-mono text-sm bg-white p-2 rounded border break-all overflow-x-auto max-w-full">
             {generatePreview()}
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            Format: partner_theme_theme2_format_size_designer_offer_jurisdiction_date
+            Format: partner_jurisdiction_offer_theme1_theme2_format_size_design_date
           </p>
         </div>
 
