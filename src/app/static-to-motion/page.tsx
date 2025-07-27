@@ -6,7 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
+import { VideoPreviewModal } from '@/components/static-to-motion/VideoPreviewModal';
 import { StaticAsset, Format, AnimationModel, QueueItem } from '@/types';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Icons } from '@/components/icons';
 
 // Default model (Veo-3)
 const DEFAULT_MODEL: AnimationModel = {
@@ -54,6 +58,7 @@ export default function StaticToMotionPage() {
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(DEFAULT_MODEL);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
+  const [previewItem, setPreviewItem] = useState<QueueItem | null>(null);
   
   const handleFilesUploaded = (newAssets: StaticAsset[]) => {
     setAssets(prev => [...prev, ...newAssets]);
@@ -79,7 +84,7 @@ export default function StaticToMotionPage() {
   
   const handleStartProcessing = () => {
     const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
-    const newQueueItems = selectedAssetObjects.map(asset => ({
+    const newQueueItems = selectedAssetObjects.map((asset, index) => ({
       id: `${asset.id}-${Date.now()}`,
       assetId: asset.id,
       asset,
@@ -87,12 +92,19 @@ export default function StaticToMotionPage() {
       animationType: animationType || 'ai' as const,
       model: animationType === 'ai' ? selectedModel : undefined,
       prompt: animationType === 'ai' ? modelInputs.prompt as string : undefined,
-      status: 'pending' as const,
-      progress: 0
+      status: index === 0 ? 'completed' as const : 'pending' as const,
+      progress: index === 0 ? 100 : 0,
+      // Temporary sample video for testing
+      outputs: index === 0 ? [{ format: 'mp4', url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }] : undefined
     }));
     
     setProcessingQueue(prev => [...prev, ...newQueueItems]);
     setActiveView('queue');
+  };
+  
+  const handleExport = (item: QueueItem, format: Format) => {
+    // TODO: Implement actual export functionality
+    console.log('Exporting:', item, format);
   };
 
   return (
@@ -168,21 +180,97 @@ export default function StaticToMotionPage() {
             <h2 className="text-xl font-semibold mb-4">Processing Queue</h2>
             {processingQueue.length > 0 ? (
               <div className="space-y-4">
-                {processingQueue.map((item) => (
-                  <Card key={item.id} className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{item.asset.originalFile.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Model: {item.model?.name || 'N/A'} • Status: {item.status}
-                        </p>
+                {processingQueue.map((item) => {
+                  const getStatusBadge = () => {
+                    switch (item.status) {
+                      case 'pending':
+                        return <Badge variant="secondary">Pending</Badge>;
+                      case 'processing':
+                        return <Badge className="bg-blue-500">Processing</Badge>;
+                      case 'completed':
+                        return <Badge className="bg-green-500">Completed</Badge>;
+                      case 'failed':
+                        return <Badge className="bg-red-500">Failed</Badge>;
+                      default:
+                        return <Badge>{item.status}</Badge>;
+                    }
+                  };
+
+                  return (
+                    <Card key={item.id} className="p-4">
+                      <div className="space-y-3">
+                        {/* Header with status */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <img 
+                                src={item.asset.originalFile.url} 
+                                alt={item.asset.originalFile.name}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                            </div>
+                            <div>
+                              <p className="font-medium">{item.asset.originalFile.name}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {item.model?.name || 'N/A'} • {item.formats.length} format{item.formats.length !== 1 ? 's' : ''}
+                              </p>
+                            </div>
+                          </div>
+                          {getStatusBadge()}
+                        </div>
+
+                        {/* Progress bar */}
+                        {item.status === 'processing' && (
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${item.progress || 0}%` }}
+                            />
+                          </div>
+                        )}
+
+                        {/* Action buttons */}
+                        <div className="flex items-center gap-2">
+                          {item.status === 'completed' && item.outputs && item.outputs.length > 0 && (
+                            <>
+                              <Button size="sm" variant="outline" onClick={() => {
+                                setPreviewItem(item);
+                              }}>
+                                <Icons.eye className="h-4 w-4 mr-1" />
+                                Preview
+                              </Button>
+                              <Button size="sm" onClick={() => {
+                                // TODO: Implement export
+                                console.log('Export:', item);
+                              }}>
+                                <Icons.download className="h-4 w-4 mr-1" />
+                                Export
+                              </Button>
+                            </>
+                          )}
+                          {item.status === 'failed' && (
+                            <Button size="sm" variant="outline" onClick={() => {
+                              // TODO: Implement retry
+                              console.log('Retry:', item);
+                            }}>
+                              <Icons.rotateCcw className="h-4 w-4 mr-1" />
+                              Retry
+                            </Button>
+                          )}
+                          {item.status === 'pending' && (
+                            <Button size="sm" variant="outline" onClick={() => {
+                              // TODO: Implement cancel
+                              console.log('Cancel:', item);
+                            }}>
+                              <Icons.x className="h-4 w-4 mr-1" />
+                              Cancel
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {item.formats.length} format{item.formats.length !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+                    </Card>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-muted-foreground">No items in queue</p>
@@ -190,6 +278,14 @@ export default function StaticToMotionPage() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Video Preview Modal */}
+      <VideoPreviewModal
+        item={previewItem}
+        open={!!previewItem}
+        onClose={() => setPreviewItem(null)}
+        onExport={handleExport}
+      />
     </div>
   );
 }
