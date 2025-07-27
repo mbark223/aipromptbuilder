@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Calendar, Tag, User, Palette, Ruler, Building, Edit3, Plus, X, Save } from 'lucide-react';
 import { useUserPreferences } from '@/lib/user-preferences';
-import { useSession } from 'next-auth/react';
 
 interface NamingElement {
   id: string;
@@ -19,7 +18,6 @@ interface AdNamingProps {
 }
 
 export function AdNaming({ onNameChange, className }: AdNamingProps) {
-  const { data: session } = useSession();
   const { 
     namingValues, 
     customOptions,
@@ -28,7 +26,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
     isAuthenticated 
   } = useUserPreferences();
   
-  const setNamingValues = (values: any) => {
+  const setNamingValues = (values: Record<string, string> | ((prev: Record<string, string>) => Record<string, string>)) => {
     if (typeof values === 'function') {
       updateNamingValues(values(namingValues));
     } else {
@@ -127,7 +125,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       setNamingElements(mergedElements);
       setHasInitialized(true);
     }
-  }, [customOptions, hasInitialized]);
+  }, [customOptions, hasInitialized, setNamingValues]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});
