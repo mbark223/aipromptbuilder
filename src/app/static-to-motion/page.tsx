@@ -5,18 +5,85 @@ import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
-import { StaticAsset } from '@/types';
+import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
+import { StaticAsset, Format, AnimationModel } from '@/types';
+
+// Default model (Veo-3)
+const DEFAULT_MODEL: AnimationModel = {
+  id: 'google-veo-3',
+  name: 'Veo-3',
+  provider: 'Google',
+  description: 'Premium quality video generation with native audio',
+  capabilities: ['Text-to-Video', 'Native Audio', 'Premium Quality'],
+  speed: 'moderate',
+  quality: 'very-high',
+  costPerGeneration: 0,
+  replicateId: 'google/veo-3',
+  pricing: 'Premium Quality',
+  inputs: [
+    {
+      name: 'prompt',
+      type: 'text',
+      label: 'Prompt',
+      required: true,
+      placeholder: 'Describe the video you want to generate...'
+    },
+    {
+      name: 'negative_prompt',
+      type: 'text',
+      label: 'Negative Prompt',
+      required: false,
+      placeholder: 'What to avoid in the generation...'
+    },
+    {
+      name: 'seed',
+      type: 'number',
+      label: 'Seed',
+      required: false,
+      placeholder: 'Random seed for reproducibility'
+    }
+  ]
+};
 
 export default function StaticToMotionPage() {
   const [activeView, setActiveView] = useState<'upload' | 'type-selection' | 'workshop' | 'queue'>('upload');
   const [assets, setAssets] = useState<StaticAsset[]>([]);
   const [animationType, setAnimationType] = useState<'ai' | 'generic' | null>(null);
+  const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
+  const [selectedFormats, setSelectedFormats] = useState<Format[]>([]);
+  const [selectedModel, setSelectedModel] = useState<AnimationModel>(DEFAULT_MODEL);
+  const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   
   const handleFilesUploaded = (newAssets: StaticAsset[]) => {
     setAssets(prev => [...prev, ...newAssets]);
     if (newAssets.length > 0) {
+      setSelectedAssets([newAssets[0].id]);
+      
+      // Set the original format as default
+      const firstAsset = newAssets[0];
+      if (firstAsset.originalFile.dimensions) {
+        const originalFormat: Format = {
+          aspectRatio: firstAsset.originalFile.dimensions.aspectRatio || '16:9',
+          width: firstAsset.originalFile.dimensions.width || 1920,
+          height: firstAsset.originalFile.dimensions.height || 1080,
+          name: 'Original',
+          custom: true
+        };
+        setSelectedFormats([originalFormat]);
+      }
+      
       setActiveView('type-selection');
     }
+  };
+  
+  const handleStartProcessing = () => {
+    // TODO: Implement queue processing
+    console.log('Starting processing with:', {
+      selectedAssets,
+      selectedFormats,
+      selectedModel,
+      modelInputs
+    });
   };
 
   return (
@@ -65,10 +132,26 @@ export default function StaticToMotionPage() {
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Workshop</h2>
-            <p>Workshop content will go here</p>
-          </Card>
+          {animationType === 'ai' ? (
+            <AIAnimationWorkshopSimple
+              assets={assets}
+              selectedAssets={selectedAssets}
+              onSelectAssets={setSelectedAssets}
+              selectedFormats={selectedFormats}
+              onSelectFormats={setSelectedFormats}
+              selectedModel={selectedModel}
+              onSelectModel={setSelectedModel}
+              modelInputs={modelInputs}
+              onModelInputsChange={setModelInputs}
+              onStartProcessing={handleStartProcessing}
+              onBack={() => setActiveView('type-selection')}
+            />
+          ) : animationType === 'generic' ? (
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Generic Animation Workshop</h2>
+              <p className="text-muted-foreground">Template-based animations coming soon</p>
+            </Card>
+          ) : null}
         </TabsContent>
 
         <TabsContent value="queue">
