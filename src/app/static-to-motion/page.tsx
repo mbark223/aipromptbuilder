@@ -176,20 +176,10 @@ export default function StaticToMotionPage() {
                 onBack={() => setActiveView('type-selection')}
               />
             ) : animationType === 'generic' ? (
-              <GenericAnimationWorkshop
-                assets={assets}
-                selectedAssets={selectedAssets}
-                onSelectAssets={setSelectedAssets}
-                selectedFormats={selectedFormats}
-                onSelectFormats={setSelectedFormats}
-                selectedAnimation={selectedAnimation}
-                onSelectAnimation={setSelectedAnimation}
-                selectedModel={selectedModel}
-                onSelectModel={setSelectedModel}
-                modelInputs={modelInputs}
-                onModelInputsChange={setModelInputs}
-                onStartProcessing={handleStartProcessing}
-              />
+              <div className="p-6 text-center">
+                <h2 className="text-xl font-semibold mb-2">Generic Animation Workshop</h2>
+                <p className="text-muted-foreground">Temporarily disabled for debugging</p>
+              </div>
             ) : null}
           </ErrorBoundary>
         </TabsContent>
