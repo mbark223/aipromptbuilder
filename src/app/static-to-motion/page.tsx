@@ -102,8 +102,15 @@ export default function StaticToMotionPage() {
   
   // Process pending queue items
   useEffect(() => {
+    let isProcessing = false;
+    
     const processPendingItems = async () => {
+      if (isProcessing) return; // Prevent concurrent processing
+      
       const pendingItems = processingQueue.filter(item => item.status === 'pending');
+      if (pendingItems.length === 0) return;
+      
+      isProcessing = true;
       
       for (const item of pendingItems) {
         if (!item.model || !item.prompt) continue;
@@ -116,10 +123,12 @@ export default function StaticToMotionPage() {
           
           // Prepare the request payload
           const payload = {
-            model: item.model.replicateId,
+            modelId: item.model.replicateId,
             input: {
               prompt: item.prompt,
-              image: item.asset.originalFile.url,
+              // Only add image if the model supports image input
+              ...(item.model.capabilities.includes('Image-to-Video') ? { image: item.asset.originalFile.url } : {}),
+              // Add default values from model inputs
               ...(item.model.inputs?.reduce((acc, input) => {
                 if (input.defaultValue !== undefined) {
                   acc[input.name] = input.defaultValue;
@@ -137,20 +146,46 @@ export default function StaticToMotionPage() {
           });
           
           if (!response.ok) {
-            throw new Error('Failed to generate video');
+            const errorData = await response.json();
+            throw new Error(errorData.error || errorData.details?.detail || 'Failed to generate video');
           }
           
-          const data = await response.json();
+          const prediction = await response.json();
           
-          // Update with the output
-          setProcessingQueue(prev => prev.map(q => 
-            q.id === item.id ? { 
-              ...q, 
-              status: 'completed' as const, 
-              progress: 100,
-              outputs: [{ format: 'mp4', url: data.output || data.url || data }]
-            } : q
-          ));
+          // Poll for completion
+          let result = prediction;
+          while (result.status === 'starting' || result.status === 'processing') {
+            // Update progress
+            const progress = result.status === 'starting' ? 20 : 50;
+            setProcessingQueue(prev => prev.map(q => 
+              q.id === item.id ? { ...q, progress } : q
+            ));
+            
+            // Wait before polling again
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Check prediction status
+            const statusResponse = await fetch(`/api/replicate?id=${result.id}`);
+            if (!statusResponse.ok) {
+              throw new Error('Failed to check prediction status');
+            }
+            result = await statusResponse.json();
+          }
+          
+          if (result.status === 'succeeded' && result.output) {
+            // Update with the output
+            const outputUrl = Array.isArray(result.output) ? result.output[0] : result.output;
+            setProcessingQueue(prev => prev.map(q => 
+              q.id === item.id ? { 
+                ...q, 
+                status: 'completed' as const, 
+                progress: 100,
+                outputs: [{ format: 'mp4', url: outputUrl }]
+              } : q
+            ));
+          } else if (result.status === 'failed') {
+            throw new Error(result.error || 'Prediction failed');
+          }
           
         } catch (error) {
           console.error('Processing failed:', error);
@@ -163,6 +198,8 @@ export default function StaticToMotionPage() {
           ));
         }
       }
+      
+      isProcessing = false;
     };
     
     // Check for pending items every 2 seconds
