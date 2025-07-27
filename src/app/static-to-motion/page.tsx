@@ -176,7 +176,7 @@ export default function StaticToMotionPage() {
                 inputData[input.name] = parseFloat(userValue);
               } else if (input.type === 'select') {
                 // For select fields, check if the model expects numbers
-                if (input.name === 'duration' && item.model.id === 'seedance-1-pro') {
+                if (input.name === 'duration' && item.model?.id === 'seedance-1-pro') {
                   // ByteDance duration expects a number
                   inputData[input.name] = parseInt(userValue as string, 10);
                 } else {
@@ -198,7 +198,7 @@ export default function StaticToMotionPage() {
                 inputData[input.name] = parseInt(input.defaultValue as string, 10);
               } else if (input.type === 'select') {
                 // For select fields with default values
-                if (input.name === 'duration' && item.model.id === 'seedance-1-pro') {
+                if (input.name === 'duration' && item.model?.id === 'seedance-1-pro') {
                   // ByteDance duration expects a number
                   inputData[input.name] = parseInt(input.defaultValue as string, 10);
                 } else {
