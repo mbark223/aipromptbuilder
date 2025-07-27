@@ -174,9 +174,15 @@ export default function StaticToMotionPage() {
               // Use the user-provided value
               if (input.type === 'number' && typeof userValue === 'string') {
                 inputData[input.name] = parseFloat(userValue);
-              } else if (input.type === 'select' && input.name === 'duration' && typeof userValue === 'string') {
-                // For ByteDance duration field, convert to number
-                inputData[input.name] = parseInt(userValue, 10);
+              } else if (input.type === 'select') {
+                // For select fields, check if the model expects numbers
+                if (input.name === 'duration' && item.model.id === 'seedance-1-pro') {
+                  // ByteDance duration expects a number
+                  inputData[input.name] = parseInt(userValue as string, 10);
+                } else {
+                  // Most select fields expect strings
+                  inputData[input.name] = String(userValue);
+                }
               } else {
                 inputData[input.name] = userValue;
               }
@@ -190,10 +196,15 @@ export default function StaticToMotionPage() {
               // Fall back to default value
               if (input.type === 'number' && typeof input.defaultValue === 'string') {
                 inputData[input.name] = parseInt(input.defaultValue as string, 10);
-              } else if (input.type === 'select' && typeof input.defaultValue === 'string') {
-                // Some models expect integers for duration even in select fields
-                const numValue = parseInt(input.defaultValue as string, 10);
-                inputData[input.name] = isNaN(numValue) ? input.defaultValue : numValue;
+              } else if (input.type === 'select') {
+                // For select fields with default values
+                if (input.name === 'duration' && item.model.id === 'seedance-1-pro') {
+                  // ByteDance duration expects a number
+                  inputData[input.name] = parseInt(input.defaultValue as string, 10);
+                } else {
+                  // Most select fields expect strings
+                  inputData[input.name] = String(input.defaultValue);
+                }
               } else {
                 inputData[input.name] = input.defaultValue;
               }
