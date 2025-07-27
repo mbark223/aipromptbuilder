@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 
-// Default model - Using a model that's available on Replicate
+// Default model - Using a verified Replicate model with exact version
 const DEFAULT_MODEL: AnimationModel = {
   id: 'stable-video-diffusion',
   name: 'Stable Video Diffusion',
@@ -22,7 +22,7 @@ const DEFAULT_MODEL: AnimationModel = {
   speed: 'moderate',
   quality: 'high',
   costPerGeneration: 0,
-  replicateId: 'stability-ai/stable-video-diffusion',
+  replicateId: 'stability-ai/stable-video-diffusion:3f0457e4619daac51203dedb472816fd4af51f3149fa7a9e0b5ffcf1b8172438',
   pricing: 'Standard',
   inputs: [
     {

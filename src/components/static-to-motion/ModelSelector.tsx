@@ -17,30 +17,62 @@ interface ModelSelectorProps {
 
 const BASE_MODELS: AnimationModel[] = [
   {
-    id: 'google-veo-3-fast',
-    name: 'Veo-3-Fast',
-    provider: 'Google',
-    description: 'Faster/cheaper option with native audio support',
-    capabilities: ['Text-to-Video', 'Native Audio', 'Fast Generation'],
-    speed: 'fast',
+    id: 'stable-video-diffusion',
+    name: 'Stable Video Diffusion',
+    provider: 'Stability AI',
+    description: 'High-quality image-to-video generation',
+    capabilities: ['Image-to-Video', 'High Quality', 'Temporal Consistency'],
+    speed: 'moderate',
     quality: 'high',
     costPerGeneration: 0,
-    replicateId: 'google/veo-3-fast',
-    pricing: 'Faster/Cheaper',
+    replicateId: 'stability-ai/stable-video-diffusion:3f0457e4619daac51203dedb472816fd4af51f3149fa7a9e0b5ffcf1b8172438',
+    pricing: 'Standard',
     inputs: [
       {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
+        name: 'input_image',
+        type: 'image',
+        label: 'Input Image',
         required: true,
-        placeholder: 'Describe the video you want to generate...'
+        placeholder: 'Upload the image to animate'
       },
       {
-        name: 'negative_prompt',
-        type: 'text',
-        label: 'Negative Prompt',
+        name: 'sizing_strategy',
+        type: 'select',
+        label: 'Sizing Strategy',
         required: false,
-        placeholder: 'What to avoid in the generation...'
+        options: [
+          { value: 'maintain_aspect_ratio', label: 'Maintain Aspect Ratio' },
+          { value: 'crop_to_16_9', label: 'Crop to 16:9' },
+          { value: 'use_image_dimensions', label: 'Use Image Dimensions' }
+        ],
+        defaultValue: 'maintain_aspect_ratio'
+      },
+      {
+        name: 'frames_per_second',
+        type: 'number',
+        label: 'FPS',
+        required: false,
+        defaultValue: 6,
+        min: 1,
+        max: 30
+      },
+      {
+        name: 'motion_bucket_id',
+        type: 'number',
+        label: 'Motion Amount',
+        required: false,
+        defaultValue: 127,
+        min: 1,
+        max: 255
+      },
+      {
+        name: 'cond_aug',
+        type: 'number',
+        label: 'Conditioning Augmentation',
+        required: false,
+        defaultValue: 0.02,
+        min: 0,
+        max: 1
       },
       {
         name: 'seed',
@@ -52,16 +84,16 @@ const BASE_MODELS: AnimationModel[] = [
     ]
   },
   {
-    id: 'google-veo-3',
-    name: 'Veo-3',
-    provider: 'Google',
-    description: 'Premium quality video generation with native audio',
-    capabilities: ['Text-to-Video', 'Native Audio', 'Premium Quality'],
+    id: 'animate-diff',
+    name: 'AnimateDiff',
+    provider: 'ByteDance',
+    description: 'Text-to-video generation with motion styles',
+    capabilities: ['Text-to-Video', 'Motion Styles', 'High Quality'],
     speed: 'moderate',
-    quality: 'very-high',
+    quality: 'high',
     costPerGeneration: 0,
-    replicateId: 'google/veo-3',
-    pricing: 'Premium Quality',
+    replicateId: 'lucataco/animate-diff:1531004ee4c98894ab11f8a4ce6206099e732c1da15121987a8eef54828f0663',
+    pricing: 'Standard',
     inputs: [
       {
         name: 'prompt',
@@ -71,11 +103,30 @@ const BASE_MODELS: AnimationModel[] = [
         placeholder: 'Describe the video you want to generate...'
       },
       {
-        name: 'negative_prompt',
+        name: 'n_prompt',
         type: 'text',
         label: 'Negative Prompt',
         required: false,
-        placeholder: 'What to avoid in the generation...'
+        placeholder: 'What to avoid in the generation...',
+        defaultValue: 'badhandv5-neg, easynegative, ng_deepnegative_v1_75t, verybadimagenegative_v1.3, bad-artist, bad_prompt_version2-neg, teeth'
+      },
+      {
+        name: 'num_inference_steps',
+        type: 'number',
+        label: 'Inference Steps',
+        required: false,
+        defaultValue: 25,
+        min: 1,
+        max: 50
+      },
+      {
+        name: 'guidance_scale',
+        type: 'number',
+        label: 'Guidance Scale',
+        required: false,
+        defaultValue: 7.5,
+        min: 1,
+        max: 20
       },
       {
         name: 'seed',

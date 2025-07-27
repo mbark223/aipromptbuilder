@@ -70,18 +70,18 @@ export const OPENROUTER_VIDEO_MODELS: AnimationModel[] = [
     ]
   },
 
-  // Pika Labs
+  // Stable Video Diffusion with correct Replicate ID
   {
-    id: 'pika-labs-1.0',
-    name: 'Pika 1.0',
-    provider: 'Pika Labs',
-    description: 'Creative video generation with advanced motion control and effects',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Motion Control', 'Creative Effects'],
+    id: 'svd-img2vid',
+    name: 'SVD Image to Video',
+    provider: 'Stability AI',
+    description: 'Convert images to short video clips with stable diffusion',
+    capabilities: ['Image-to-Video', 'Motion Control', 'High Quality'],
     speed: 'moderate',
-    quality: 'very-high',
-    costPerGeneration: 0.50,
-    replicateId: 'pika-labs/pika-1.0',
-    pricing: '$0.50/generation',
+    quality: 'high',
+    costPerGeneration: 0.25,
+    replicateId: 'stability-ai/stable-video-diffusion:3f0457e4619daac51203dedb472816fd4af51f3149fa7a9e0b5ffcf1b8172438',
+    pricing: '$0.25/generation',
     inputs: [
       {
         name: 'prompt',
@@ -150,7 +150,7 @@ export const OPENROUTER_VIDEO_MODELS: AnimationModel[] = [
     speed: 'fast',
     quality: 'high',
     costPerGeneration: 0.30,
-    replicateId: 'genmo/mochi-1',
+    replicateId: 'genmo/mochi-1-preview:961cd6665b811d0c43c0b9488b6dfa85ff5c7bfb875e93b4533e4c7f54c7551a',
     pricing: '$0.30/generation',
     inputs: [
       {
@@ -200,7 +200,7 @@ export const OPENROUTER_VIDEO_MODELS: AnimationModel[] = [
     speed: 'moderate',
     quality: 'very-high',
     costPerGeneration: 0.40,
-    replicateId: 'meta/emu-video',
+    replicateId: 'lucataco/animate-diff:1531004ee4c98894ab11f8a4ce6206099e732c1da15121987a8eef54828f0663',
     pricing: '$0.40/generation',
     inputs: [
       {
@@ -250,7 +250,7 @@ export const OPENROUTER_VIDEO_MODELS: AnimationModel[] = [
     speed: 'moderate',
     quality: 'high',
     costPerGeneration: 0.35,
-    replicateId: 'alibaba/i2vgen-xl',
+    replicateId: 'ali-vilab/i2vgen-xl:5821a338d00033abaaba89080a17eb8783d9a17ed710a6b4246a18e0900ccad4',
     pricing: '$0.35/generation',
     inputs: [
       {
@@ -298,7 +298,7 @@ export const OPENROUTER_VIDEO_MODELS: AnimationModel[] = [
     speed: 'fast',
     quality: 'good',
     costPerGeneration: 0.15,
-    replicateId: 'hotshot/hotshot-xl',
+    replicateId: 'lucataco/hotshot-xl:78b3a6257e16e4b241245d65c8b2b81ea2e1ff7ed4c55306b511509ddbfd327a',
     pricing: '$0.15/generation',
     inputs: [
       {
