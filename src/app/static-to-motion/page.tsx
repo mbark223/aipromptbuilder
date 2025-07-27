@@ -140,9 +140,7 @@ export default function StaticToMotionPage() {
         <TabsContent value="upload" className="space-y-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Upload Static Images</h2>
-            <div className="p-6 text-center">
-              <p className="text-muted-foreground">ImageUploader temporarily disabled for debugging</p>
-            </div>
+            <ImageUploader onFilesUploaded={handleFilesUploaded} />
           </Card>
         </TabsContent>
 
