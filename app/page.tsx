@@ -7,6 +7,7 @@ import { AdPreview } from '@/components/ad-preview';
 import { ValidationPanel } from '@/components/validation-panel';
 import { ExportPanel } from '@/components/export-panel';
 import { AdNaming } from '@/components/ad-naming';
+import { VideoGenerator } from '@/components/video-generator';
 import { AdContent, SelectedPlatform } from '@/types/platforms';
 import { generateId } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -308,6 +309,17 @@ export default function Home() {
                 adName={adName}
               />
             </div>
+
+            {/* AI Video Generation */}
+            {content && (content.media || content.image) && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <VideoGenerator
+                  content={content}
+                  platformId={currentCombination?.platformId}
+                  formatId={currentCombination?.formatId}
+                />
+              </div>
+            )}
 
             {/* Quick Stats */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
