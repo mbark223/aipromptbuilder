@@ -23,7 +23,8 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
     customOptions,
     setNamingValues: updateNamingValues,
     setCustomOptions,
-    isAuthenticated 
+    isAuthenticated,
+    isLoading: preferencesLoading
   } = useUserPreferences();
   
   const setNamingValues = (values: Record<string, string> | ((prev: Record<string, string>) => Record<string, string>)) => {
@@ -130,12 +131,14 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});
 
-  // Auto-populate today's date
+  // Auto-populate today's date only after preferences load
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    const dateFormatted = today.replace(/-/g, ''); // Convert YYYY-MM-DD to YYYYMMDD
-    setNamingValues(prev => ({ ...prev, date: dateFormatted }));
-  }, []);
+    if (!preferencesLoading && !namingValues.date) {
+      const today = new Date().toISOString().split('T')[0];
+      const dateFormatted = today.replace(/-/g, ''); // Convert YYYY-MM-DD to YYYYMMDD
+      setNamingValues(prev => ({ ...prev, date: dateFormatted }));
+    }
+  }, [preferencesLoading, namingValues.date]);
 
   // Generate the ad name based on current values
   useEffect(() => {
@@ -187,6 +190,9 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   };
 
   const handleValueChange = (elementId: string, value: string) => {
+    // Don't update if preferences are still loading
+    if (preferencesLoading) return;
+    
     setNamingValues(prev => ({
       ...prev,
       [elementId]: elementId === 'date' ? value : value.toLowerCase().replace(/\s+/g, '_')
