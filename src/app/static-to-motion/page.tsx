@@ -153,42 +153,30 @@ export default function StaticToMotionPage() {
               Select how you&apos;d like to animate your uploaded {assets.length === 1 ? 'image' : 'images'}
             </p>
           </div>
-          <div className="p-6">
-            <p>AnimationTypeSelector temporarily disabled for further debugging</p>
-            <div className="space-y-2 mt-4">
-              <Button onClick={() => {
-                setAnimationType('ai');
-                setActiveView('workshop');
-              }}>
-                Select AI Animation
-              </Button>
-            </div>
-          </div>
+          <AnimationTypeSelector 
+            onSelectType={(type) => {
+              setAnimationType(type);
+              setActiveView('workshop');
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
           <ErrorBoundary>
             {animationType === 'ai' ? (
-              <div className="p-6">
-                <h2 className="text-xl font-semibold mb-2">AI Animation Workshop</h2>
-                <p className="text-muted-foreground mb-4">Debugging React error #185</p>
-                <div className="space-y-4">
-                  <Card className="p-4">
-                    <h3 className="font-medium mb-2">Assets Debug Info</h3>
-                    <pre className="text-xs bg-muted p-2 rounded overflow-auto">
-                      {JSON.stringify({
-                        assetsLength: assets.length,
-                        selectedAssetsLength: selectedAssets.length,
-                        assets: assets.map(a => ({
-                          id: a?.id,
-                          hasOriginalFile: !!a?.originalFile,
-                          fileName: a?.originalFile?.name
-                        }))
-                      }, null, 2)}
-                    </pre>
-                  </Card>
-                </div>
-              </div>
+              <AIAnimationWorkshopSimple
+                assets={assets}
+                selectedAssets={selectedAssets}
+                onSelectAssets={setSelectedAssets}
+                selectedFormats={selectedFormats}
+                onSelectFormats={setSelectedFormats}
+                selectedModel={selectedModel}
+                onSelectModel={setSelectedModel}
+                modelInputs={modelInputs}
+                onModelInputsChange={setModelInputs}
+                onStartProcessing={handleStartProcessing}
+                onBack={() => setActiveView('type-selection')}
+              />
             ) : animationType === 'generic' ? (
               <div className="p-6 text-center">
                 <h2 className="text-xl font-semibold mb-2">Generic Animation Workshop</h2>
