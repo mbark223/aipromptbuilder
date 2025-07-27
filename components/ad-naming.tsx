@@ -131,11 +131,12 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});
 
-  // Auto-populate today's date only after preferences load
+  // Auto-populate today's date only after preferences load and only if no date exists
   useEffect(() => {
     if (!preferencesLoading && !namingValues.date) {
       const today = new Date().toISOString().split('T')[0];
       const dateFormatted = today.replace(/-/g, ''); // Convert YYYY-MM-DD to YYYYMMDD
+      console.log('Auto-populating date:', dateFormatted);
       setNamingValues(prev => ({ ...prev, date: dateFormatted }));
     }
   }, [preferencesLoading]);
@@ -254,6 +255,9 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
               <label className="block text-sm font-medium text-gray-700 flex items-center space-x-2">
                 {element.icon}
                 <span>{element.label}</span>
+                {namingValues[element.id] && (
+                  <span className="text-xs text-green-600">(saved: {namingValues[element.id]})</span>
+                )}
               </label>
               
               {element.id === 'date' ? (
@@ -275,7 +279,9 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
                   <select
                     key={`${element.id}-${namingValues[element.id] || 'empty'}`}
                     value={namingValues[element.id] || ''}
+                    data-testid={`select-${element.id}`}
                     onChange={(e) => {
+                      console.log(`Changing ${element.id} from "${namingValues[element.id]}" to "${e.target.value}"`);
                       if (e.target.value === '__add_custom__') {
                         const customValue = prompt(`Enter custom ${element.label.toLowerCase()}:`);
                         if (customValue && customValue.trim()) {

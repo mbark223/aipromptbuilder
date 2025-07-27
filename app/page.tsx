@@ -7,6 +7,7 @@ import { AdPreview } from '@/components/ad-preview';
 import { ValidationPanel } from '@/components/validation-panel';
 import { ExportPanel } from '@/components/export-panel';
 import { AdNaming } from '@/components/ad-naming';
+import { AdNamingDebug } from '@/components/ad-naming-debug';
 import { AdContent, SelectedPlatform } from '@/types/platforms';
 import { generateId } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
@@ -293,6 +294,7 @@ export default function Home() {
 
             {/* Ad Naming */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <AdNamingDebug />
               <AdNaming
                 onNameChange={setAdName}
               />
