@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
 import { GenericAnimationWorkshop } from '@/components/static-to-motion/GenericAnimationWorkshop';
@@ -152,12 +153,17 @@ export default function StaticToMotionPage() {
               Select how you&apos;d like to animate your uploaded {assets.length === 1 ? 'image' : 'images'}
             </p>
           </div>
-          <AnimationTypeSelector 
-            onSelectType={(type) => {
-              setAnimationType(type);
-              setActiveView('workshop');
-            }}
-          />
+          <div className="p-6">
+            <p>AnimationTypeSelector temporarily disabled for further debugging</p>
+            <div className="space-y-2 mt-4">
+              <Button onClick={() => {
+                setAnimationType('ai');
+                setActiveView('workshop');
+              }}>
+                Select AI Animation
+              </Button>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
