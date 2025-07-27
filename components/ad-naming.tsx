@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Calendar, Tag, User, Palette, Ruler, Building, Edit3, Plus, X, Save } from 'lucide-react';
-import { useUserPreferences } from '@/lib/user-preferences';
+import { useUserPreferences } from '@/lib/user-preferences-client';
 
 interface NamingElement {
   id: string;
