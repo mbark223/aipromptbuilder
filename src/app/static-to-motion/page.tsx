@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
-import { StaticAsset, Format, AnimationModel } from '@/types';
+import { StaticAsset, Format, AnimationModel, QueueItem } from '@/types';
 
 // Default model (Veo-3)
 const DEFAULT_MODEL: AnimationModel = {
@@ -53,6 +53,7 @@ export default function StaticToMotionPage() {
   const [selectedFormats, setSelectedFormats] = useState<Format[]>([]);
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(DEFAULT_MODEL);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
+  const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   
   const handleFilesUploaded = (newAssets: StaticAsset[]) => {
     setAssets(prev => [...prev, ...newAssets]);
@@ -77,13 +78,21 @@ export default function StaticToMotionPage() {
   };
   
   const handleStartProcessing = () => {
-    // TODO: Implement queue processing
-    console.log('Starting processing with:', {
-      selectedAssets,
-      selectedFormats,
-      selectedModel,
-      modelInputs
-    });
+    const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
+    const newQueueItems = selectedAssetObjects.map(asset => ({
+      id: `${asset.id}-${Date.now()}`,
+      assetId: asset.id,
+      asset,
+      formats: selectedFormats,
+      animationType: animationType || 'ai' as const,
+      model: animationType === 'ai' ? selectedModel : undefined,
+      prompt: animationType === 'ai' ? modelInputs.prompt as string : undefined,
+      status: 'pending' as const,
+      progress: 0
+    }));
+    
+    setProcessingQueue(prev => [...prev, ...newQueueItems]);
+    setActiveView('queue');
   };
 
   return (
@@ -104,8 +113,8 @@ export default function StaticToMotionPage() {
           <TabsTrigger value="workshop" disabled={assets.length === 0 || !animationType}>
             Workshop
           </TabsTrigger>
-          <TabsTrigger value="queue" disabled={true}>
-            Queue
+          <TabsTrigger value="queue" disabled={processingQueue.length === 0}>
+            Queue {processingQueue.length > 0 && `(${processingQueue.length})`}
           </TabsTrigger>
         </TabsList>
 
@@ -157,7 +166,27 @@ export default function StaticToMotionPage() {
         <TabsContent value="queue">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Processing Queue</h2>
-            <p>Queue content will go here</p>
+            {processingQueue.length > 0 ? (
+              <div className="space-y-4">
+                {processingQueue.map((item) => (
+                  <Card key={item.id} className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{item.asset.originalFile.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Model: {item.model?.name || 'N/A'} • Status: {item.status}
+                        </p>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {item.formats.length} format{item.formats.length !== 1 ? 's' : ''}
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">No items in queue</p>
+            )}
           </Card>
         </TabsContent>
       </Tabs>

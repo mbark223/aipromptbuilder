@@ -30,6 +30,11 @@ interface AIAnimationWorkshopSimpleProps {
 // Quick preset prompts for common use cases
 const PRESET_PROMPTS = [
   {
+    label: 'Preserve Static',
+    icon: Icons.image,
+    prompt: 'Keep the main subject and composition exactly as it appears in the static image. Only add atmospheric elements like floating particles, light rays, smoke, or environmental effects around the existing scene without altering the original image content.'
+  },
+  {
     label: 'Subtle Motion',
     icon: Icons.sparkles,
     prompt: 'Add subtle, natural movement while preserving the exact appearance of the static image. Apply gentle breathing motion, slight fabric movement, or minimal environmental effects.'
