@@ -100,7 +100,7 @@ export function VideoGenerator({
       
     } catch (err) {
       console.error('Error generating video:', err);
-      setError(err.message || 'Failed to generate video');
+      setError(err instanceof Error ? err.message : 'Failed to generate video');
     } finally {
       setIsGenerating(false);
     }
