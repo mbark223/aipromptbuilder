@@ -22,6 +22,7 @@ export function VideoGenerator({
   const [error, setError] = useState<string | null>(null);
   const [models, setModels] = useState<VideoModel[]>([]);
   const [modelOptions, setModelOptions] = useState<VideoModelInput>({});
+  const [isLoadingModels, setIsLoadingModels] = useState(true);
 
   // Fetch available models
   useEffect(() => {
@@ -30,11 +31,16 @@ export function VideoGenerator({
 
   const fetchModels = async () => {
     try {
+      setIsLoadingModels(true);
       const response = await fetch('/api/video/generate');
       const data = await response.json();
-      setModels(data.models);
+      console.log('Fetched models:', data.models);
+      setModels(data.models || []);
     } catch (err) {
       console.error('Failed to fetch models:', err);
+      setError('Failed to load video models');
+    } finally {
+      setIsLoadingModels(false);
     }
   };
 
@@ -152,22 +158,31 @@ export function VideoGenerator({
               setModelOptions({});
             }}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500"
-            disabled={isGenerating}
+            disabled={isGenerating || isLoadingModels}
           >
-            {Object.entries(VIDEO_MODEL_CATEGORIES).map(([category, modelIds]) => (
-              <optgroup key={category} label={category.charAt(0).toUpperCase() + category.slice(1)}>
-                {models
-                  .filter(model => modelIds.includes(model.id as never))
-                  .map(model => (
-                    <option key={model.id} value={model.id}>
-                      {model.name}
-                    </option>
-                  ))}
-              </optgroup>
-            ))}
+            {isLoadingModels ? (
+              <option>Loading models...</option>
+            ) : models.length === 0 ? (
+              <option>No models available</option>
+            ) : (
+              Object.entries(VIDEO_MODEL_CATEGORIES).map(([category, modelIds]) => (
+                <optgroup key={category} label={category.charAt(0).toUpperCase() + category.slice(1)}>
+                  {models
+                    .filter(model => modelIds.includes(model.id as never))
+                    .map(model => (
+                      <option key={model.id} value={model.id}>
+                        {model.name}
+                      </option>
+                    ))}
+                </optgroup>
+              ))
+            )}
           </select>
           {selectedModelData && (
             <p className="mt-1 text-xs text-gray-500">{selectedModelData.description}</p>
+          )}
+          {!isLoadingModels && models.length > 0 && (
+            <p className="mt-1 text-xs text-gray-400">{models.length} models available</p>
           )}
         </div>
 
