@@ -53,19 +53,31 @@ export async function POST(request: NextRequest) {
       inputKeys: Object.keys(input || {})
     });
 
-    // Determine the correct endpoint based on whether we have a version ID or model ID
+    // Determine the correct endpoint and request body
     let endpoint: string;
     let requestBody: { version?: string; input: Record<string, unknown> };
 
-    if (model && model !== 'latest') {
-      // Using a specific version ID
+    // Check if modelId contains a version hash (64 character hex string after colon)
+    const versionMatch = modelId?.match(/^(.+):([a-f0-9]{64})$/);
+    
+    if (versionMatch) {
+      // Extract the version hash and use the predictions endpoint
+      const [, modelName, versionHash] = versionMatch;
+      console.log('Using version hash:', versionHash, 'for model:', modelName);
+      endpoint = 'https://api.replicate.com/v1/predictions';
+      requestBody = {
+        version: versionHash,
+        input,
+      };
+    } else if (model && model !== 'latest') {
+      // Using a specific version ID directly
       endpoint = 'https://api.replicate.com/v1/predictions';
       requestBody = {
         version: model,
         input,
       };
     } else if (modelId) {
-      // Using official model endpoint
+      // Using model endpoint for latest version
       const [owner, name] = modelId.split('/');
       endpoint = `https://api.replicate.com/v1/models/${owner}/${name}/predictions`;
       requestBody = { input };
@@ -81,8 +93,10 @@ export async function POST(request: NextRequest) {
       endpoint,
       modelId,
       model,
+      version: requestBody.version,
       hasToken: !!REPLICATE_API_TOKEN,
       tokenLength: REPLICATE_API_TOKEN.length,
+      inputKeys: Object.keys(input || {}),
       input: JSON.stringify(input).substring(0, 200) // First 200 chars
     });
 

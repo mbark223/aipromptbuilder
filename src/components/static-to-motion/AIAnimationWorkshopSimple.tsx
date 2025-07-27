@@ -56,7 +56,7 @@ const PRESET_PROMPTS = [
   },
   {
     label: 'Brand Safe Environment',
-    icon: Icons.shield,
+    icon: Icons.checkCircle2,
     prompt: 'ABSOLUTE RULE: Zero movement on any branded elements, text, logos, or product imagery - they must remain pixel-perfect as uploaded. Create ambient life in the background only: gentle wind effects, soft particle movement, subtle light play. This ensures 100% brand integrity while adding visual interest.'
   },
   {
