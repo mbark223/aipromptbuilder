@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Calendar, Tag, User, Palette, Ruler, Building, Edit3, Plus, X, Save } from 'lucide-react';
-import { useUserPreferences } from '@/lib/user-preferences-client';
+import { useUserPreferences } from '@/lib/user-preferences-custom';
 
 interface NamingElement {
   id: string;
@@ -127,13 +127,28 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       
       // Merge custom options with default options and saved values
       const mergedElements = defaultElements.map(element => {
-        const customOpts = customOptions[element.id] || [];
+        const customData = customOptions[element.id];
         const savedOpts = additionalOptions[element.id] || [];
-        const allOptions = [...new Set([...element.options, ...customOpts, ...savedOpts])];
+        
+        let finalOptions = [...element.options];
+        
+        if (customData) {
+          // Remove any removed default options
+          if (customData.removed && customData.removed.length > 0) {
+            finalOptions = finalOptions.filter(opt => !customData.removed.includes(opt));
+          }
+          // Add custom options
+          if (customData.added && customData.added.length > 0) {
+            finalOptions = [...finalOptions, ...customData.added];
+          }
+        }
+        
+        // Add any saved values that aren't in the list
+        finalOptions = [...new Set([...finalOptions, ...savedOpts])];
         
         return {
           ...element,
-          options: allOptions
+          options: finalOptions
         };
       });
       
@@ -199,28 +214,15 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
           : element
       );
       
-      // Save ALL non-default options as custom options
-      const newCustomOptions: Record<string, string[]> = {};
-      const defaultElements = [
-        { id: 'partner', options: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter'] },
-        { id: 'jurisdiction', options: ['US', 'ON', 'NV', 'MI', 'PA', 'NJ', 'WV', 'IA', 'IN', 'IL', 'CO', 'TN', 'VA', 'AZ', 'CT', 'NY', 'UK', 'CA'] },
-        { id: 'offer', options: ['Bet/Get', 'DYW', 'BonusMatch', 'bonus', 'discount', 'freebets', 'cashback', 'welcome', 'deposit', 'noodeposit', 'loyalty'] },
-        { id: 'theme', options: ['sale', 'launch', 'brand', 'product', 'seasonal', 'promo', 'awareness', 'reels'] },
-        { id: 'theme2', options: ['88Drums', 'Cleopatra', 'holiday', 'sports', 'gaming', 'finance', 'health', 'tech', 'lifestyle', 'entertainment'] },
-        { id: 'format', options: ['feed', 'story', 'banner', 'video', 'carousel', 'collection', 'reels'] },
-        { id: 'size', options: ['square', 'landscape', 'portrait', 'banner', 'leaderboard', 'medium', 'vertical'] },
-        { id: 'design', options: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa'] }
-      ];
-      
-      updated.forEach(element => {
-        const defaultElement = defaultElements.find(e => e.id === element.id);
-        if (defaultElement) {
-          const customOpts = element.options.filter(opt => !defaultElement.options.includes(opt));
-          if (customOpts.length > 0) {
-            newCustomOptions[element.id] = customOpts;
-          }
+      // Save custom options (preserving removed status)
+      const currentCustom = customOptions[elementId] || { added: [], removed: [] };
+      const newCustomOptions = {
+        ...customOptions,
+        [elementId]: {
+          ...currentCustom,
+          added: [...currentCustom.added, cleanOption]
         }
-      });
+      };
       console.log('Saving custom options:', newCustomOptions);
       setCustomOptions(newCustomOptions);
       
@@ -231,11 +233,58 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   };
 
   const removeOption = (elementId: string, optionToRemove: string) => {
-    setNamingElements(prev => prev.map(element => 
-      element.id === elementId 
-        ? { ...element, options: element.options.filter(option => option !== optionToRemove) }
-        : element
-    ));
+    setNamingElements(prev => {
+      const updated = prev.map(element => 
+        element.id === elementId 
+          ? { ...element, options: element.options.filter(option => option !== optionToRemove) }
+          : element
+      );
+      
+      // Update custom options to track removed items
+      const defaultElements: Record<string, string[]> = {
+        partner: ['google', 'facebook', 'tiktok', 'snapchat', 'instagram', 'youtube', 'twitter'],
+        jurisdiction: ['US', 'ON', 'NV', 'MI', 'PA', 'NJ', 'WV', 'IA', 'IN', 'IL', 'CO', 'TN', 'VA', 'AZ', 'CT', 'NY', 'UK', 'CA'],
+        offer: ['Bet/Get', 'DYW', 'BonusMatch', 'bonus', 'discount', 'freebets', 'cashback', 'welcome', 'deposit', 'noodeposit', 'loyalty'],
+        theme: ['sale', 'launch', 'brand', 'product', 'seasonal', 'promo', 'awareness', 'reels'],
+        theme2: ['88Drums', 'Cleopatra', 'holiday', 'sports', 'gaming', 'finance', 'health', 'tech', 'lifestyle', 'entertainment'],
+        format: ['feed', 'story', 'banner', 'video', 'carousel', 'collection', 'reels'],
+        size: ['square', 'landscape', 'portrait', 'banner', 'leaderboard', 'medium', 'vertical'],
+        design: ['john', 'sarah', 'mike', 'emma', 'alex', 'lisa']
+      };
+      
+      const currentCustom = customOptions[elementId] || { added: [], removed: [] };
+      const defaultOpts = defaultElements[elementId] || [];
+      
+      // Check if it's a default option being removed
+      if (defaultOpts.includes(optionToRemove)) {
+        // Add to removed list
+        const newCustomOptions = {
+          ...customOptions,
+          [elementId]: {
+            added: currentCustom.added,
+            removed: [...currentCustom.removed, optionToRemove]
+          }
+        };
+        setCustomOptions(newCustomOptions);
+      } else {
+        // It's a custom option - remove from added list
+        const newCustomOptions = {
+          ...customOptions,
+          [elementId]: {
+            added: currentCustom.added.filter(opt => opt !== optionToRemove),
+            removed: currentCustom.removed
+          }
+        };
+        setCustomOptions(newCustomOptions);
+      }
+      
+      return updated;
+    });
+    
+    // Clear the value if the removed option was selected
+    if (namingValues[elementId] === optionToRemove) {
+      handleValueChange(elementId, '');
+    }
   };
 
   const handleValueChange = (elementId: string, value: string) => {
@@ -283,9 +332,6 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
               <label className="block text-sm font-medium text-gray-700 flex items-center space-x-2">
                 {element.icon}
                 <span>{element.label}</span>
-                {namingValues[element.id] && (
-                  <span className="text-xs text-green-600">(saved: {namingValues[element.id]})</span>
-                )}
               </label>
               
               {element.id === 'date' ? (
