@@ -8,6 +8,7 @@ import { GenericAnimationWorkshop } from '@/components/static-to-motion/GenericA
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
+import { AssetGrid } from '@/components/static-to-motion/AssetGrid';
 import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 
@@ -162,19 +163,20 @@ export default function StaticToMotionPage() {
         <TabsContent value="workshop" className="space-y-6">
           <ErrorBoundary>
             {animationType === 'ai' ? (
-              <AIAnimationWorkshopSimple
-                assets={assets}
-                selectedAssets={selectedAssets}
-                onSelectAssets={setSelectedAssets}
-                selectedFormats={selectedFormats}
-                onSelectFormats={setSelectedFormats}
-                selectedModel={selectedModel}
-                onSelectModel={setSelectedModel}
-                modelInputs={modelInputs}
-                onModelInputsChange={setModelInputs}
-                onStartProcessing={handleStartProcessing}
-                onBack={() => setActiveView('type-selection')}
-              />
+              <div className="p-6">
+                <h2 className="text-xl font-semibold mb-2">AI Animation Workshop</h2>
+                <p className="text-muted-foreground mb-4">Debugging React error #185</p>
+                <div className="space-y-4">
+                  <Card className="p-4">
+                    <h3 className="font-medium mb-2">Test AssetGrid</h3>
+                    <AssetGrid
+                      assets={assets}
+                      selectedAssets={selectedAssets}
+                      onSelectAssets={setSelectedAssets}
+                    />
+                  </Card>
+                </div>
+              </div>
             ) : animationType === 'generic' ? (
               <div className="p-6 text-center">
                 <h2 className="text-xl font-semibold mb-2">Generic Animation Workshop</h2>
