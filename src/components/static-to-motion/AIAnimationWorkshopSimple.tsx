@@ -133,18 +133,21 @@ export function AIAnimationWorkshopSimple({
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Quick Presets</Label>
                 <div className="grid grid-cols-2 gap-2">
-                  {PRESET_PROMPTS.map((preset, idx) => (
-                    <Button
-                      key={idx}
-                      variant="outline"
-                      size="sm"
-                      className="justify-start h-auto py-2 px-3"
-                      onClick={() => handlePresetClick(preset.prompt)}
-                    >
-                      <preset.icon className="mr-2 h-4 w-4 flex-shrink-0" />
-                      <span className="text-xs text-left">{preset.label}</span>
-                    </Button>
-                  ))}
+                  {PRESET_PROMPTS.map((preset, idx) => {
+                    const Icon = preset.icon;
+                    return (
+                      <Button
+                        key={idx}
+                        variant="outline"
+                        size="sm"
+                        className="justify-start h-auto py-2 px-3"
+                        onClick={() => handlePresetClick(preset.prompt)}
+                      >
+                        <Icon className="mr-2 h-4 w-4 flex-shrink-0" />
+                        <span className="text-xs text-left">{preset.label}</span>
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
 
