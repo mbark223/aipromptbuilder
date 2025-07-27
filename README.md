@@ -35,17 +35,6 @@ A comprehensive tool for testing and validating social media advertisements acro
 - **Cross-Format Compatibility** - Upload video for Reels, export as images for other formats
 - **Responsive Design** - Works perfectly on desktop, tablet, and mobile
 
-### 🤖 **AI Video Generation (NEW!)**
-- **Image-to-Video Conversion** - Transform static ads into engaging video content
-- **Multiple AI Models** - Choose from 11+ state-of-the-art models including:
-  - **ByteDance Seedance** - Pro and Lite versions for high-quality video generation
-  - **Stable Video Diffusion** - Industry-standard image animation
-  - **WaveSpeed Wan 2.1** - Fast 480p and 720p video generation
-  - **Hailuo & Kling** - Premium models with excellent physics simulation
-  - **Research Models** - I2VGen-XL, PIA, and more experimental options
-- **Customizable Parameters** - Control duration, resolution, motion intensity, and more
-- **Motion Prompts** - Guide the AI with text descriptions of desired animations
-- **Direct Export** - Download generated videos in MP4 format
 
 ## 🚀 Getting Started
 
@@ -72,7 +61,6 @@ A comprehensive tool for testing and validating social media advertisements acro
    ```
    
    Edit `.env.local` and add your API keys:
-   - **Replicate API Token** (for AI video generation): Get from [https://replicate.com/account/api-tokens](https://replicate.com/account/api-tokens)
    - **Google OAuth** (optional): For user authentication
    - **Database URL**: Default SQLite configuration works out of the box
 
@@ -119,18 +107,6 @@ npm run start
 - High-resolution exports at platform-native dimensions
 - Batch export for multiple formats
 
-### 6. **Generate AI Videos** 🤖
-- Upload a static image ad
-- Select from 11+ AI models based on your needs:
-  - **Quick Generation**: Wan 2.1 (480p/720p) for fast results
-  - **High Quality**: Seedance Pro, Kling v2.1 for premium output
-  - **Specialized**: Video-01-Live for animations, LTX-Video for real-time
-- Customize video parameters:
-  - Duration (5s, 10s, or custom)
-  - Resolution (480p, 720p, 1080p)
-  - Motion intensity and style
-- Add motion prompts to guide the animation
-- Download generated videos directly
 
 ## 🔧 Technical Stack
 
@@ -141,8 +117,6 @@ npm run start
 - **Icons**: Lucide React
 - **Export**: jsPDF, JSZip for file generation
 - **Animations**: Framer Motion
-- **AI Video Generation**: Replicate API
-- **File Storage**: Vercel Blob Storage
 - **Authentication**: NextAuth.js (optional)
 - **Database**: Prisma with SQLite
 
