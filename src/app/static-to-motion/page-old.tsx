@@ -2,11 +2,30 @@
 
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
+import { GenericAnimationWorkshop } from '@/components/static-to-motion/GenericAnimationWorkshop';
 import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { AIAnimationWorkshopSimple } from '@/components/static-to-motion/AIAnimationWorkshopSimple';
-import { StaticAsset, Format, QueueItem, AnimationModel } from '@/types';
+import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
+import { AssetGrid } from '@/components/static-to-motion/AssetGrid';
+import { StaticAsset, AnimationProfile, Format, QueueItem, AnimationModel } from '@/types';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+
+// Default animation for generic workflow
+const DEFAULT_ANIMATION: AnimationProfile = {
+  id: 'simple-motion',
+  name: 'Simple Motion',
+  type: 'subtle' as const,
+  movements: [],
+  duration: 3,
+  loop: false,
+  transitions: {
+    in: { type: 'fade' as const, duration: 0.5, easing: 'ease-out' },
+    out: { type: 'fade' as const, duration: 0.5, easing: 'ease-in' }
+  }
+};
 
 // Default model (Veo-3)
 const DEFAULT_MODEL: AnimationModel = {
@@ -49,6 +68,7 @@ export default function StaticToMotionPage() {
   const [assets, setAssets] = useState<StaticAsset[]>([]);
   const [selectedAssets, setSelectedAssets] = useState<string[]>([]);
   const [selectedFormats, setSelectedFormats] = useState<Format[]>([]);
+  const [selectedAnimation, setSelectedAnimation] = useState<AnimationProfile>(DEFAULT_ANIMATION);
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(DEFAULT_MODEL);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
@@ -56,7 +76,7 @@ export default function StaticToMotionPage() {
   const [animationType, setAnimationType] = useState<'ai' | 'generic' | null>(null);
 
   const handleFilesUploaded = (newAssets: StaticAsset[]) => {
-    setAssets(prev => [...prev, ...newAssets]);
+    setAssets([...assets, ...newAssets]);
     if (newAssets.length > 0) {
       setSelectedAssets([newAssets[0].id]);
       
@@ -84,21 +104,17 @@ export default function StaticToMotionPage() {
       assetId: asset.id,
       asset,
       formats: selectedFormats,
-      animationType: animationType || 'ai' as const,
+      animation: animationType === 'ai' ? undefined : selectedAnimation,
+      animationType: animationType || 'generic' as const,
       model: animationType === 'ai' ? selectedModel : undefined,
       prompt: animationType === 'ai' ? modelInputs.prompt as string : undefined,
       status: 'pending' as const,
       progress: 0
     }));
     
-    setProcessingQueue(prev => [...prev, ...newQueueItems]);
+    setProcessingQueue([...processingQueue, ...newQueueItems]);
     setActiveView('queue');
   };
-
-  // Calculate counts safely
-  const assetsCount = assets.length;
-  const selectedCount = selectedAssets.length;
-  const queueCount = processingQueue.length;
 
   return (
     <div className="container mx-auto py-8 space-y-8">
@@ -112,14 +128,14 @@ export default function StaticToMotionPage() {
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'upload' | 'type-selection' | 'workshop' | 'queue')}>
         <TabsList className="grid w-full grid-cols-4 max-w-2xl">
           <TabsTrigger value="upload">Upload</TabsTrigger>
-          <TabsTrigger value="type-selection" disabled={assetsCount === 0}>
+          <TabsTrigger value="type-selection" disabled={assets.length === 0}>
             Animation Type
           </TabsTrigger>
-          <TabsTrigger value="workshop" disabled={assetsCount === 0 || !animationType}>
-            Workshop {selectedCount > 0 && `(${selectedCount})`}
+          <TabsTrigger value="workshop" disabled={assets.length === 0 || !animationType}>
+            Workshop ({String(selectedAssets.length)})
           </TabsTrigger>
-          <TabsTrigger value="queue" disabled={queueCount === 0}>
-            Queue {queueCount > 0 && `(${queueCount})`}
+          <TabsTrigger value="queue" disabled={processingQueue.length === 0}>
+            Queue ({String(processingQueue.length)})
           </TabsTrigger>
         </TabsList>
 
@@ -134,7 +150,7 @@ export default function StaticToMotionPage() {
           <div className="text-center mb-6">
             <h2 className="text-2xl font-semibold mb-2">Choose Animation Method</h2>
             <p className="text-muted-foreground">
-              Select how you&apos;d like to animate your uploaded {assetsCount === 1 ? 'image' : 'images'}
+              Select how you&apos;d like to animate your uploaded {assets.length === 1 ? 'image' : 'images'}
             </p>
           </div>
           <AnimationTypeSelector 
@@ -146,34 +162,34 @@ export default function StaticToMotionPage() {
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
-          {animationType === 'ai' ? (
-            <AIAnimationWorkshopSimple
-              assets={assets}
-              selectedAssets={selectedAssets}
-              onSelectAssets={setSelectedAssets}
-              selectedFormats={selectedFormats}
-              onSelectFormats={setSelectedFormats}
-              selectedModel={selectedModel}
-              onSelectModel={setSelectedModel}
-              modelInputs={modelInputs}
-              onModelInputsChange={setModelInputs}
-              onStartProcessing={handleStartProcessing}
-              onBack={() => setActiveView('type-selection')}
-            />
-          ) : animationType === 'generic' ? (
-            <div className="p-6 text-center">
-              <h2 className="text-xl font-semibold mb-2">Generic Animation Workshop</h2>
-              <p className="text-muted-foreground">Template-based animations coming soon</p>
-            </div>
-          ) : null}
+          <ErrorBoundary>
+            {animationType === 'ai' ? (
+              <AIAnimationWorkshopSimple
+                assets={assets}
+                selectedAssets={selectedAssets}
+                onSelectAssets={setSelectedAssets}
+                selectedFormats={selectedFormats}
+                onSelectFormats={setSelectedFormats}
+                selectedModel={selectedModel}
+                onSelectModel={setSelectedModel}
+                modelInputs={modelInputs}
+                onModelInputsChange={setModelInputs}
+                onStartProcessing={handleStartProcessing}
+                onBack={() => setActiveView('type-selection')}
+              />
+            ) : animationType === 'generic' ? (
+              <div className="p-6 text-center">
+                <h2 className="text-xl font-semibold mb-2">Generic Animation Workshop</h2>
+                <p className="text-muted-foreground">Temporarily disabled for debugging</p>
+              </div>
+            ) : null}
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="queue">
           <div className="p-6 text-center">
             <h2 className="text-xl font-semibold mb-2">Processing Queue</h2>
-            <p className="text-muted-foreground">
-              {queueCount > 0 ? `${queueCount} items in queue` : 'No items in queue'}
-            </p>
+            <p className="text-muted-foreground">ProcessingQueue temporarily disabled for debugging</p>
           </div>
         </TabsContent>
       </Tabs>
