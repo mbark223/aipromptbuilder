@@ -4,11 +4,13 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
+import { AnimationTypeSelector } from '@/components/static-to-motion/AnimationTypeSelector';
 import { StaticAsset } from '@/types';
 
 export default function StaticToMotionPage() {
   const [activeView, setActiveView] = useState<'upload' | 'type-selection' | 'workshop' | 'queue'>('upload');
   const [assets, setAssets] = useState<StaticAsset[]>([]);
+  const [animationType, setAnimationType] = useState<'ai' | 'generic' | null>(null);
   
   const handleFilesUploaded = (newAssets: StaticAsset[]) => {
     setAssets(prev => [...prev, ...newAssets]);
@@ -32,7 +34,7 @@ export default function StaticToMotionPage() {
           <TabsTrigger value="type-selection" disabled={assets.length === 0}>
             Animation Type
           </TabsTrigger>
-          <TabsTrigger value="workshop" disabled={true}>
+          <TabsTrigger value="workshop" disabled={assets.length === 0 || !animationType}>
             Workshop
           </TabsTrigger>
           <TabsTrigger value="queue" disabled={true}>
@@ -48,10 +50,18 @@ export default function StaticToMotionPage() {
         </TabsContent>
 
         <TabsContent value="type-selection" className="space-y-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Choose Animation Method</h2>
-            <p>AnimationTypeSelector will go here</p>
-          </Card>
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-semibold mb-2">Choose Animation Method</h2>
+            <p className="text-muted-foreground">
+              Select how you&apos;d like to animate your uploaded {assets.length === 1 ? 'image' : 'images'}
+            </p>
+          </div>
+          <AnimationTypeSelector 
+            onSelectType={(type) => {
+              setAnimationType(type);
+              setActiveView('workshop');
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
