@@ -143,7 +143,22 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
   // Debug: Log when naming values change
   useEffect(() => {
     console.log('Naming values updated:', namingValues);
-  }, [namingValues]);
+    // Check if saved values exist in options
+    Object.entries(namingValues).forEach(([key, value]) => {
+      const element = namingElements.find(el => el.id === key);
+      if (element && value && key !== 'date') {
+        if (!element.options.includes(value)) {
+          console.warn(`Saved value "${value}" for ${key} not found in options. Adding it.`);
+          // Add the saved value to options if it doesn't exist
+          setNamingElements(prev => prev.map(el => 
+            el.id === key 
+              ? { ...el, options: [...el.options, value] }
+              : el
+          ));
+        }
+      }
+    });
+  }, [namingValues, namingElements]);
 
   // Generate the ad name based on current values
   useEffect(() => {
@@ -258,6 +273,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
               ) : (
                 <div className="relative">
                   <select
+                    key={`${element.id}-${namingValues[element.id] || 'empty'}`}
                     value={namingValues[element.id] || ''}
                     onChange={(e) => {
                       if (e.target.value === '__add_custom__') {
