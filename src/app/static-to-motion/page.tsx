@@ -168,12 +168,18 @@ export default function StaticToMotionPage() {
                 <p className="text-muted-foreground mb-4">Debugging React error #185</p>
                 <div className="space-y-4">
                   <Card className="p-4">
-                    <h3 className="font-medium mb-2">Test AssetGrid</h3>
-                    <AssetGrid
-                      assets={assets}
-                      selectedAssets={selectedAssets}
-                      onSelectAssets={setSelectedAssets}
-                    />
+                    <h3 className="font-medium mb-2">Assets Debug Info</h3>
+                    <pre className="text-xs bg-muted p-2 rounded overflow-auto">
+                      {JSON.stringify({
+                        assetsLength: assets.length,
+                        selectedAssetsLength: selectedAssets.length,
+                        assets: assets.map(a => ({
+                          id: a?.id,
+                          hasOriginalFile: !!a?.originalFile,
+                          fileName: a?.originalFile?.name
+                        }))
+                      }, null, 2)}
+                    </pre>
                   </Card>
                 </div>
               </div>
