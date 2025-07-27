@@ -130,10 +130,10 @@ export default function StaticToMotionPage() {
             Animation Type
           </TabsTrigger>
           <TabsTrigger value="workshop" disabled={assets.length === 0 || !animationType}>
-            Workshop ({selectedAssets.length})
+            Workshop ({String(selectedAssets.length)})
           </TabsTrigger>
           <TabsTrigger value="queue" disabled={processingQueue.length === 0}>
-            Queue ({processingQueue.length})
+            Queue ({String(processingQueue.length)})
           </TabsTrigger>
         </TabsList>
 

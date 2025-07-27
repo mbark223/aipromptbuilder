@@ -145,15 +145,15 @@ export function GenericAnimationWorkshop({
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Selected Assets</span>
-              <Badge variant="secondary">{selectedAssets.length}</Badge>
+              <Badge variant="secondary">{String(selectedAssets.length)}</Badge>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Output Formats</span>
-              <Badge variant="secondary">{selectedFormats.length}</Badge>
+              <Badge variant="secondary">{String(selectedFormats.length)}</Badge>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Total Outputs</span>
-              <Badge>{selectedAssets.length * selectedFormats.length}</Badge>
+              <Badge>{String(selectedAssets.length * selectedFormats.length)}</Badge>
             </div>
           </div>
 
