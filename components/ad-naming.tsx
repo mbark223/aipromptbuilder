@@ -153,10 +153,11 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       });
       
       console.log('Initialized naming elements with options:', mergedElements);
+      console.log('Custom options state:', customOptions);
       setNamingElements(mergedElements);
       setHasInitialized(true);
     }
-  }, [hasInitialized, namingValues, customOptions]);
+  }, [hasInitialized]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [newOptionInput, setNewOptionInput] = useState<Record<string, string>>({});
@@ -216,14 +217,19 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       
       // Save custom options (preserving removed status)
       const currentCustom = customOptions[elementId] || { added: [], removed: [] };
+      // Only add if not already in the list
+      const newAdded = currentCustom.added.includes(cleanOption) 
+        ? currentCustom.added 
+        : [...currentCustom.added, cleanOption];
+        
       const newCustomOptions = {
         ...customOptions,
         [elementId]: {
-          ...currentCustom,
-          added: [...currentCustom.added, cleanOption]
+          added: newAdded,
+          removed: currentCustom.removed
         }
       };
-      console.log('Saving custom options:', newCustomOptions);
+      console.log('Saving custom options after add:', newCustomOptions);
       setCustomOptions(newCustomOptions);
       
       return updated;
@@ -257,14 +263,19 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       
       // Check if it's a default option being removed
       if (defaultOpts.includes(optionToRemove)) {
-        // Add to removed list
+        // Add to removed list if not already there
+        const newRemoved = currentCustom.removed.includes(optionToRemove) 
+          ? currentCustom.removed 
+          : [...currentCustom.removed, optionToRemove];
+          
         const newCustomOptions = {
           ...customOptions,
           [elementId]: {
             added: currentCustom.added,
-            removed: [...currentCustom.removed, optionToRemove]
+            removed: newRemoved
           }
         };
+        console.log('Removing default option:', optionToRemove, 'New custom options:', newCustomOptions);
         setCustomOptions(newCustomOptions);
       } else {
         // It's a custom option - remove from added list
@@ -275,6 +286,7 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
             removed: currentCustom.removed
           }
         };
+        console.log('Removing custom option:', optionToRemove, 'New custom options:', newCustomOptions);
         setCustomOptions(newCustomOptions);
       }
       
