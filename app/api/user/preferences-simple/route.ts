@@ -3,7 +3,12 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-jwt";
 
 // Simple in-memory storage for demo (in production, use a proper database)
-const userPreferences = new Map<string, any>();
+interface UserPreference {
+  namingValues: Record<string, string>;
+  customOptions: Record<string, string[]>;
+}
+
+const userPreferences = new Map<string, UserPreference>();
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -31,7 +36,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     userPreferences.set(session.user.email, body);
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
