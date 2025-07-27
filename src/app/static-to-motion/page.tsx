@@ -151,9 +151,12 @@ export default function StaticToMotionPage() {
               Select how you&apos;d like to animate your uploaded {assets.length === 1 ? 'image' : 'images'}
             </p>
           </div>
-          <div className="p-6 text-center">
-            <p className="text-muted-foreground">AnimationTypeSelector temporarily disabled for debugging</p>
-          </div>
+          <AnimationTypeSelector 
+            onSelectType={(type) => {
+              setAnimationType(type);
+              setActiveView('workshop');
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
