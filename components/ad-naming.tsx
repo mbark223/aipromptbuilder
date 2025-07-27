@@ -138,7 +138,12 @@ export function AdNaming({ onNameChange, className }: AdNamingProps) {
       const dateFormatted = today.replace(/-/g, ''); // Convert YYYY-MM-DD to YYYYMMDD
       setNamingValues(prev => ({ ...prev, date: dateFormatted }));
     }
-  }, [preferencesLoading, namingValues.date]);
+  }, [preferencesLoading]);
+
+  // Debug: Log when naming values change
+  useEffect(() => {
+    console.log('Naming values updated:', namingValues);
+  }, [namingValues]);
 
   // Generate the ad name based on current values
   useEffect(() => {

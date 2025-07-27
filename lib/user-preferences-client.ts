@@ -36,10 +36,25 @@ export function useUserPreferences() {
       }
     } else {
       console.log('No stored preferences found for:', key);
+      // If signed in but no preferences yet, check if there's guest data to migrate
+      if (session?.user?.email) {
+        const guestData = localStorage.getItem('ad_naming_guest');
+        if (guestData) {
+          try {
+            const data = JSON.parse(guestData);
+            console.log('Migrating guest preferences to user account');
+            setNamingValuesState(data.namingValues || {});
+            setCustomOptionsState(data.customOptions || {});
+            // Data will be saved when setNamingValues is called
+          } catch (e) {
+            console.error('Error migrating guest preferences:', e);
+          }
+        }
+      }
     }
     
     setIsLoading(false);
-  }, [getStorageKey, status]);
+  }, [getStorageKey, status, session]);
 
   // Save to localStorage whenever values change
   const saveToStorage = useCallback((values: Record<string, string>, options: Record<string, string[]>) => {
