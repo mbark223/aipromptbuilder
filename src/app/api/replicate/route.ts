@@ -45,6 +45,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { model, modelId, input } = body;
+    
+    console.log('Replicate API request received:', {
+      hasModel: !!model,
+      hasModelId: !!modelId,
+      modelId,
+      inputKeys: Object.keys(input || {})
+    });
 
     // Determine the correct endpoint based on whether we have a version ID or model ID
     let endpoint: string;

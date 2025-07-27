@@ -12,32 +12,64 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 
-// Default model (Veo-3)
+// Default model - Using a model that's available on Replicate
 const DEFAULT_MODEL: AnimationModel = {
-  id: 'google-veo-3',
-  name: 'Veo-3',
-  provider: 'Google',
-  description: 'Premium quality video generation with native audio',
-  capabilities: ['Text-to-Video', 'Native Audio', 'Premium Quality'],
+  id: 'stable-video-diffusion',
+  name: 'Stable Video Diffusion',
+  provider: 'Stability AI',
+  description: 'Image-to-video generation with stable diffusion',
+  capabilities: ['Image-to-Video', 'High Quality'],
   speed: 'moderate',
-  quality: 'very-high',
+  quality: 'high',
   costPerGeneration: 0,
-  replicateId: 'google/veo-3',
-  pricing: 'Premium Quality',
+  replicateId: 'stability-ai/stable-video-diffusion',
+  pricing: 'Standard',
   inputs: [
     {
-      name: 'prompt',
-      type: 'text',
-      label: 'Prompt',
+      name: 'input_image',
+      type: 'image',
+      label: 'Input Image',
       required: true,
-      placeholder: 'Describe the video you want to generate...'
+      placeholder: 'The image to animate'
     },
     {
-      name: 'negative_prompt',
-      type: 'text',
-      label: 'Negative Prompt',
+      name: 'sizing_strategy',
+      type: 'select',
+      label: 'Sizing Strategy',
       required: false,
-      placeholder: 'What to avoid in the generation...'
+      options: [
+        { value: 'maintain_aspect_ratio', label: 'Maintain Aspect Ratio' },
+        { value: 'crop_to_16_9', label: 'Crop to 16:9' },
+        { value: 'use_image_dimensions', label: 'Use Image Dimensions' }
+      ],
+      defaultValue: 'maintain_aspect_ratio'
+    },
+    {
+      name: 'frames_per_second',
+      type: 'number',
+      label: 'FPS',
+      required: false,
+      defaultValue: 6,
+      min: 1,
+      max: 30
+    },
+    {
+      name: 'motion_bucket_id',
+      type: 'number',
+      label: 'Motion Amount',
+      required: false,
+      defaultValue: 127,
+      min: 1,
+      max: 255
+    },
+    {
+      name: 'cond_aug',
+      type: 'number',
+      label: 'Conditioning Augmentation',
+      required: false,
+      defaultValue: 0.02,
+      min: 0,
+      max: 1
     },
     {
       name: 'seed',
@@ -122,21 +154,36 @@ export default function StaticToMotionPage() {
           ));
           
           // Prepare the request payload
+          const inputData: Record<string, string | number | boolean> = {};
+          
+          // Add values based on model inputs configuration
+          item.model.inputs?.forEach(input => {
+            if (input.type === 'image' && item.asset.originalFile.url) {
+              inputData[input.name] = item.asset.originalFile.url;
+            } else if (input.name === 'prompt' && item.prompt) {
+              inputData[input.name] = item.prompt;
+            } else if (input.defaultValue !== undefined) {
+              inputData[input.name] = input.defaultValue;
+            }
+          });
+          
+          // For models that don't have prompt in their inputs but support text-to-video
+          if (!inputData.prompt && item.prompt && item.model.capabilities.includes('Text-to-Video')) {
+            inputData.prompt = item.prompt;
+          }
+          
           const payload = {
             modelId: item.model.replicateId,
-            input: {
-              prompt: item.prompt,
-              // Only add image if the model supports image input
-              ...(item.model.capabilities.includes('Image-to-Video') ? { image: item.asset.originalFile.url } : {}),
-              // Add default values from model inputs
-              ...(item.model.inputs?.reduce((acc, input) => {
-                if (input.defaultValue !== undefined) {
-                  acc[input.name] = input.defaultValue;
-                }
-                return acc;
-              }, {} as Record<string, string | number | boolean>) || {})
-            }
+            input: inputData
           };
+          
+          // Log the payload for debugging
+          console.log('Sending to Replicate API:', {
+            modelId: payload.modelId,
+            inputKeys: Object.keys(payload.input),
+            prompt: typeof payload.input.prompt === 'string' ? payload.input.prompt.substring(0, 100) + '...' : payload.input.prompt,
+            hasImage: 'image' in payload.input || 'input_image' in payload.input
+          });
           
           // Make the API call to Replicate
           const response = await fetch('/api/replicate', {
@@ -147,7 +194,9 @@ export default function StaticToMotionPage() {
           
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || errorData.details?.detail || 'Failed to generate video');
+            console.error('Replicate API error:', errorData);
+            const errorMessage = errorData.error || errorData.details?.detail || errorData.detail || 'Failed to generate video';
+            throw new Error(errorMessage);
           }
           
           const prediction = await response.json();
