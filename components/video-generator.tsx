@@ -185,7 +185,7 @@ export function VideoGenerator({
                       {key.replace(/_/g, ' ').charAt(0).toUpperCase() + key.replace(/_/g, ' ').slice(1)}
                     </label>
                     <select
-                      value={modelOptions[key] || schema.default || ''}
+                      value={modelOptions[key as keyof VideoModelInput] || schema.default || ''}
                       onChange={(e) => setModelOptions({ ...modelOptions, [key]: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500"
                       disabled={isGenerating}
@@ -209,7 +209,7 @@ export function VideoGenerator({
                     </label>
                     <input
                       type="number"
-                      value={modelOptions[key] || schema.default || ''}
+                      value={modelOptions[key as keyof VideoModelInput] || schema.default || ''}
                       onChange={(e) => setModelOptions({ ...modelOptions, [key]: parseFloat(e.target.value) })}
                       min={schema.min}
                       max={schema.max}
