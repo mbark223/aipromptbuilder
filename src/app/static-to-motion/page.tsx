@@ -3,9 +3,19 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
+import { StaticAsset } from '@/types';
 
 export default function StaticToMotionPage() {
   const [activeView, setActiveView] = useState<'upload' | 'type-selection' | 'workshop' | 'queue'>('upload');
+  const [assets, setAssets] = useState<StaticAsset[]>([]);
+  
+  const handleFilesUploaded = (newAssets: StaticAsset[]) => {
+    setAssets(prev => [...prev, ...newAssets]);
+    if (newAssets.length > 0) {
+      setActiveView('type-selection');
+    }
+  };
 
   return (
     <div className="container mx-auto py-8 space-y-8">
@@ -19,7 +29,7 @@ export default function StaticToMotionPage() {
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'upload' | 'type-selection' | 'workshop' | 'queue')}>
         <TabsList className="grid w-full grid-cols-4 max-w-2xl">
           <TabsTrigger value="upload">Upload</TabsTrigger>
-          <TabsTrigger value="type-selection" disabled={true}>
+          <TabsTrigger value="type-selection" disabled={assets.length === 0}>
             Animation Type
           </TabsTrigger>
           <TabsTrigger value="workshop" disabled={true}>
@@ -33,7 +43,7 @@ export default function StaticToMotionPage() {
         <TabsContent value="upload" className="space-y-6">
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Upload Static Images</h2>
-            <p>ImageUploader will go here</p>
+            <ImageUploader onFilesUploaded={handleFilesUploaded} />
           </Card>
         </TabsContent>
 
