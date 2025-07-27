@@ -314,6 +314,91 @@ const BASE_MODELS: AnimationModel[] = [
         placeholder: 'Random seed for reproducibility'
       }
     ]
+  },
+  {
+    id: 'seedance-1-pro',
+    name: 'SeedDance-1-Pro',
+    provider: 'ByteDance',
+    description: 'Professional text-to-video and image-to-video generation with 5s/10s videos at 480p/1080p',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'HD Resolution', 'Long Duration'],
+    speed: 'moderate',
+    quality: 'very-high',
+    costPerGeneration: 0,
+    replicateId: 'bytedance/seedance-1-pro:fb4b92e4be45c1ea50c94e71ff51ffd88fd6327e2c55efb431a9d88afdfaeb86',
+    pricing: 'Standard',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Prompt',
+        required: true,
+        placeholder: 'Describe the video content...'
+      },
+      {
+        name: 'image',
+        type: 'image',
+        label: 'Input Image (Optional)',
+        required: false,
+        placeholder: 'Upload image for image-to-video generation'
+      },
+      {
+        name: 'duration',
+        type: 'select',
+        label: 'Video Duration',
+        required: false,
+        options: [
+          { value: '5', label: '5 seconds' },
+          { value: '10', label: '10 seconds' }
+        ],
+        defaultValue: '5'
+      },
+      {
+        name: 'resolution',
+        type: 'select',
+        label: 'Resolution',
+        required: false,
+        options: [
+          { value: '480p', label: '480p' },
+          { value: '1080p', label: '1080p' }
+        ],
+        defaultValue: '1080p'
+      },
+      {
+        name: 'aspect_ratio',
+        type: 'select',
+        label: 'Aspect Ratio',
+        required: false,
+        options: [
+          { value: '16:9', label: '16:9' },
+          { value: '9:16', label: '9:16' },
+          { value: '1:1', label: '1:1' }
+        ],
+        defaultValue: '16:9'
+      },
+      {
+        name: 'fps',
+        type: 'number',
+        label: 'Frame Rate',
+        required: false,
+        defaultValue: 24,
+        min: 1,
+        max: 30
+      },
+      {
+        name: 'camera_fixed',
+        type: 'boolean',
+        label: 'Fixed Camera',
+        required: false,
+        defaultValue: false
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
+      }
+    ]
   }
 ];
 

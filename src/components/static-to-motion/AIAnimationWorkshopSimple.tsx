@@ -27,32 +27,47 @@ interface AIAnimationWorkshopSimpleProps {
   onBack: () => void;
 }
 
-// Quick preset prompts for common use cases
+// Quick preset prompts for common use cases - designed to preserve branding
 const PRESET_PROMPTS = [
   {
     label: 'Preserve Static',
     icon: Icons.image,
-    prompt: 'Keep the main subject and composition exactly as it appears in the static image. Only add atmospheric elements like floating particles, light rays, smoke, or environmental effects around the existing scene without altering the original image content.'
+    prompt: 'CRITICAL: Keep ALL text, logos, brand elements, product packaging, labels, and typography EXACTLY as they appear - no distortion, movement, or alteration. Only animate background elements like atmospheric particles, light rays, ambient smoke, or subtle environmental effects. The branded content must remain 100% static and pristine.'
   },
   {
     label: 'Subtle Motion',
     icon: Icons.sparkles,
-    prompt: 'Add subtle, natural movement while preserving the exact appearance of the static image. Apply gentle breathing motion, slight fabric movement, or minimal environmental effects.'
+    prompt: 'PRESERVE: All branding, text, logos, and product imagery must remain completely static and unchanged. ADD: Subtle background animation only - gentle floating particles, soft light movements, minimal atmospheric effects. DO NOT animate any branded elements, text, or core visual identity components.'
   },
   {
     label: 'Product Float',
     icon: Icons.box,
-    prompt: 'Make the product float gently with slow rotation, maintaining its exact appearance. Add subtle lighting effects and dust particles in the background.'
+    prompt: 'IMPORTANT: Product labels, branding, text, and logos must remain perfectly static and legible. Create gentle floating motion ONLY for non-branded background elements - add subtle particle effects, soft shadows, atmospheric lighting. The product itself and all its branding must stay completely still.'
   },
   {
     label: 'Portrait Life',
     icon: Icons.user,
-    prompt: 'Bring the portrait to life with natural eye blinks, subtle facial expressions, and gentle hair movement. Keep the overall pose and composition unchanged.'
+    prompt: 'MAINTAIN: Any branded clothing, logos, text overlays, or product placement must remain completely static. ANIMATE: Only natural human elements like subtle eye movement, gentle breathing, slight hair flow. All branding elements must be preserved exactly as uploaded with zero distortion.'
   },
   {
     label: 'Dynamic Scene',
     icon: Icons.zap,
-    prompt: 'Create dynamic movement throughout the scene with camera motion, environmental effects, and subject animation while maintaining the visual style.'
+    prompt: 'LOCK: All text, logos, branding, and product details must remain 100% static and unchanged. ANIMATE: Background environment with dynamic effects - moving clouds, flowing water, swaying trees, dramatic lighting changes. Keep branded elements as anchor points while the world moves around them.'
+  },
+  {
+    label: 'Brand Safe Environment',
+    icon: Icons.shield,
+    prompt: 'ABSOLUTE RULE: Zero movement on any branded elements, text, logos, or product imagery - they must remain pixel-perfect as uploaded. Create ambient life in the background only: gentle wind effects, soft particle movement, subtle light play. This ensures 100% brand integrity while adding visual interest.'
+  },
+  {
+    label: 'Atmospheric Only',
+    icon: Icons.cloud,
+    prompt: 'DO NOT TOUCH: Any text, branding, products, or key visual elements - keep them completely static. ANIMATE ONLY: Atmospheric elements like fog, mist, dust particles, light beams, or smoke. Create depth and movement in empty spaces while preserving all important content exactly as uploaded.'
+  },
+  {
+    label: 'Background Motion',
+    icon: Icons.layers,
+    prompt: 'FREEZE: All foreground elements, especially text, logos, products, and branding. ANIMATE: Only far background elements - clouds drifting, trees swaying, water rippling, birds flying. Creates depth while maintaining absolute brand safety and readability.'
   }
 ];
 
@@ -166,7 +181,7 @@ export function AIAnimationWorkshopSimple({
                   id="prompt"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe how you want to animate the image. Be specific about movement, camera motion, effects, and what should remain static..."
+                  placeholder="Describe the motion while preserving branding. Specify what must remain static (logos, text, products) and what can animate (backgrounds, atmosphere, effects)..."
                   className="min-h-32 resize-none"
                 />
                 <div className="flex items-center justify-between text-xs text-muted-foreground">

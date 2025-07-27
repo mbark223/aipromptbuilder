@@ -294,6 +294,7 @@ export interface QueueItem {
   animationType: 'ai' | 'generic' | 'preserve';
   model?: AnimationModel;
   prompt?: string;
+  modelInputs?: Record<string, string | number | boolean | null>;
   elementAnimations?: ElementAnimation[]; // For preserve mode
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress: number;

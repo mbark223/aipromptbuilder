@@ -124,6 +124,7 @@ export default function StaticToMotionPage() {
       animationType: animationType || 'ai' as const,
       model: animationType === 'ai' ? selectedModel : undefined,
       prompt: animationType === 'ai' ? modelInputs.prompt as string : undefined,
+      modelInputs: animationType === 'ai' ? modelInputs : undefined,
       status: 'pending' as const,
       progress: 0
     }));
@@ -145,7 +146,15 @@ export default function StaticToMotionPage() {
       isProcessing = true;
       
       for (const item of pendingItems) {
-        if (!item.model || !item.prompt) continue;
+        if (!item.model) continue;
+        
+        // Check if model has required inputs
+        const hasRequiredInputs = item.model.inputs?.every(input => {
+          if (!input.required) return true;
+          if (input.type === 'image') return item.asset.originalFile.url;
+          if (input.name === 'prompt') return item.prompt || item.modelInputs?.prompt;
+          return item.modelInputs?.[input.name] !== undefined;
+        }) ?? true;
         
         try {
           // Update status to processing
@@ -158,12 +167,27 @@ export default function StaticToMotionPage() {
           
           // Add values based on model inputs configuration
           item.model.inputs?.forEach(input => {
-            if (input.type === 'image' && item.asset.originalFile.url) {
+            // First check if we have a value from modelInputs
+            const userValue = item.modelInputs?.[input.name];
+            
+            if (userValue !== undefined && userValue !== null && userValue !== '') {
+              // Use the user-provided value
+              if (input.type === 'number' && typeof userValue === 'string') {
+                inputData[input.name] = parseFloat(userValue);
+              } else if (input.type === 'select' && input.name === 'duration' && typeof userValue === 'string') {
+                // For ByteDance duration field, convert to number
+                inputData[input.name] = parseInt(userValue, 10);
+              } else {
+                inputData[input.name] = userValue;
+              }
+            } else if (input.type === 'image' && item.asset.originalFile.url) {
+              // Use the uploaded image for image inputs
               inputData[input.name] = item.asset.originalFile.url;
             } else if (input.name === 'prompt' && item.prompt) {
+              // Use the prompt from the queue item
               inputData[input.name] = item.prompt;
             } else if (input.defaultValue !== undefined) {
-              // Convert string values to numbers for number inputs
+              // Fall back to default value
               if (input.type === 'number' && typeof input.defaultValue === 'string') {
                 inputData[input.name] = parseInt(input.defaultValue as string, 10);
               } else if (input.type === 'select' && typeof input.defaultValue === 'string') {
