@@ -23,7 +23,7 @@ export function useUserPreferences() {
 
   const loadPreferences = async () => {
     try {
-      const response = await fetch('/api/user/preferences');
+      const response = await fetch('/api/user/preferences-simple');
       if (response.ok) {
         const data = await response.json();
         setNamingValues(data.namingValues || {});
@@ -40,7 +40,7 @@ export function useUserPreferences() {
     if (status === "authenticated") {
       // Save to database for authenticated users
       try {
-        await fetch('/api/user/preferences', {
+        await fetch('/api/user/preferences-simple', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

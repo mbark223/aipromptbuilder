@@ -1,6 +1,9 @@
 import NextAuth from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/auth-jwt";
 
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
