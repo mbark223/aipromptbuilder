@@ -84,58 +84,66 @@ export const OPENROUTER_VIDEO_MODELS: AnimationModel[] = [
     pricing: '$0.25/generation',
     inputs: [
       {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'image',
+        name: 'input_image',
         type: 'image',
-        label: 'Reference Image (Optional)',
-        required: false,
-        placeholder: 'Upload image for image-to-video'
+        label: 'Input Image',
+        required: true,
+        placeholder: 'Upload the image to animate'
       },
       {
-        name: 'motion_strength',
+        name: 'sizing_strategy',
         type: 'select',
-        label: 'Motion Strength',
+        label: 'Sizing Strategy',
         required: false,
         options: [
-          { value: 'auto', label: 'Auto' },
-          { value: 'low', label: 'Low' },
-          { value: 'medium', label: 'Medium' },
-          { value: 'high', label: 'High' }
+          { value: 'maintain_aspect_ratio', label: 'Maintain Aspect Ratio' },
+          { value: 'crop_to_16_9', label: 'Crop to 16:9' },
+          { value: 'use_image_dimensions', label: 'Use Image Dimensions' }
         ],
-        defaultValue: 'auto'
+        defaultValue: 'maintain_aspect_ratio'
       },
       {
-        name: 'camera_motion',
-        type: 'select',
-        label: 'Camera Motion',
+        name: 'frames_per_second',
+        type: 'number',
+        label: 'FPS',
         required: false,
-        options: [
-          { value: 'none', label: 'None' },
-          { value: 'pan_left', label: 'Pan Left' },
-          { value: 'pan_right', label: 'Pan Right' },
-          { value: 'zoom_in', label: 'Zoom In' },
-          { value: 'zoom_out', label: 'Zoom Out' },
-          { value: 'rotate', label: 'Rotate' }
-        ],
-        defaultValue: 'none'
+        defaultValue: 6,
+        min: 1,
+        max: 30
       },
       {
-        name: 'duration',
-        type: 'select',
-        label: 'Duration',
+        name: 'motion_bucket_id',
+        type: 'number',
+        label: 'Motion Amount',
         required: false,
-        options: [
-          { value: '3', label: '3 seconds' },
-          { value: '4', label: '4 seconds' },
-          { value: '5', label: '5 seconds' }
-        ],
-        defaultValue: '3'
+        defaultValue: 127,
+        min: 1,
+        max: 255
+      },
+      {
+        name: 'cond_aug',
+        type: 'number',
+        label: 'Conditioning Augmentation',
+        required: false,
+        defaultValue: 0.02,
+        min: 0,
+        max: 1
+      },
+      {
+        name: 'decoding_t',
+        type: 'number',
+        label: 'Decoding Timesteps',
+        required: false,
+        defaultValue: 14,
+        min: 1,
+        max: 50
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
       }
     ]
   },

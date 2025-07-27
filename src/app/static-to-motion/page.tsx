@@ -163,7 +163,16 @@ export default function StaticToMotionPage() {
             } else if (input.name === 'prompt' && item.prompt) {
               inputData[input.name] = item.prompt;
             } else if (input.defaultValue !== undefined) {
-              inputData[input.name] = input.defaultValue;
+              // Convert string values to numbers for number inputs
+              if (input.type === 'number' && typeof input.defaultValue === 'string') {
+                inputData[input.name] = parseInt(input.defaultValue as string, 10);
+              } else if (input.type === 'select' && typeof input.defaultValue === 'string') {
+                // Some models expect integers for duration even in select fields
+                const numValue = parseInt(input.defaultValue as string, 10);
+                inputData[input.name] = isNaN(numValue) ? input.defaultValue : numValue;
+              } else {
+                inputData[input.name] = input.defaultValue;
+              }
             }
           });
           

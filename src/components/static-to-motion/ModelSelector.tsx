@@ -75,6 +75,15 @@ const BASE_MODELS: AnimationModel[] = [
         max: 1
       },
       {
+        name: 'decoding_t',
+        type: 'number',
+        label: 'Decoding Timesteps',
+        required: false,
+        defaultValue: 14,
+        min: 1,
+        max: 50
+      },
+      {
         name: 'seed',
         type: 'number',
         label: 'Seed',
@@ -86,7 +95,7 @@ const BASE_MODELS: AnimationModel[] = [
   {
     id: 'animate-diff',
     name: 'AnimateDiff',
-    provider: 'ByteDance',
+    provider: 'LucaTaco',
     description: 'Text-to-video generation with motion styles',
     capabilities: ['Text-to-Video', 'Motion Styles', 'High Quality'],
     speed: 'moderate',
@@ -138,81 +147,48 @@ const BASE_MODELS: AnimationModel[] = [
     ]
   },
   {
-    id: 'bytedance-seedance-1-pro',
-    name: 'Seedance-1-Pro',
-    provider: 'ByteDance',
-    description: 'Professional video generation with image-to-video support',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Multiple Resolutions'],
+    id: 'i2vgen-xl',
+    name: 'I2VGen-XL',
+    provider: 'Ali-ViLab',
+    description: 'Advanced image-to-video with semantic understanding',
+    capabilities: ['Image-to-Video', 'Semantic Control', 'High Resolution'],
     speed: 'moderate',
     quality: 'high',
-    costPerGeneration: 0.40,
-    replicateId: 'bytedance/seedance-1-pro',
-    pricing: '$0.40/second',
+    costPerGeneration: 0,
+    replicateId: 'ali-vilab/i2vgen-xl:5821a338d00033abaaba89080a17eb8783d9a17ed710a6b4246a18e0900ccad4',
+    pricing: 'Standard',
     inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
       {
         name: 'image',
         type: 'image',
-        label: 'First Frame Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video'
-      },
-      {
-        name: 'duration',
-        type: 'select',
-        label: 'Duration',
+        label: 'Input Image',
         required: true,
-        options: [
-          { value: '5', label: '5 seconds' },
-          { value: '10', label: '10 seconds' }
-        ],
-        defaultValue: '5'
+        placeholder: 'Upload image to animate'
       },
       {
-        name: 'resolution',
-        type: 'select',
-        label: 'Resolution',
+        name: 'prompt',
+        type: 'text',
+        label: 'Motion Description',
         required: true,
-        options: [
-          { value: '480p', label: '480p' },
-          { value: '1080p', label: '1080p' }
-        ],
-        defaultValue: '1080p'
+        placeholder: 'Describe how the image should move...'
       },
       {
-        name: 'aspect_ratio',
-        type: 'select',
-        label: 'Aspect Ratio',
-        required: true,
-        options: [
-          { value: '16:9', label: '16:9' },
-          { value: '9:16', label: '9:16' },
-          { value: '1:1', label: '1:1' },
-          { value: '4:3', label: '4:3' }
-        ],
-        defaultValue: '16:9'
-      },
-      {
-        name: 'fps',
+        name: 'num_inference_steps',
         type: 'number',
-        label: 'FPS',
+        label: 'Inference Steps',
         required: false,
-        defaultValue: 24,
-        min: 12,
-        max: 60
+        defaultValue: 50,
+        min: 1,
+        max: 100
       },
       {
-        name: 'camera_fixed',
-        type: 'boolean',
-        label: 'Fixed Camera',
+        name: 'guidance_scale',
+        type: 'number',
+        label: 'Guidance Scale',
         required: false,
-        defaultValue: false
+        defaultValue: 9.0,
+        min: 1,
+        max: 20
       },
       {
         name: 'seed',
@@ -224,15 +200,15 @@ const BASE_MODELS: AnimationModel[] = [
     ]
   },
   {
-    id: 'minimax-hailuo-02',
-    name: 'Hailuo-02',
-    provider: 'MiniMax',
-    description: 'Excellent physics simulation for realistic motion',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Physics Simulation'],
-    speed: 'moderate',
+    id: 'genmo-mochi-1',
+    name: 'Mochi 1 Preview',
+    provider: 'Genmo',
+    description: 'Fast, creative video generation',
+    capabilities: ['Text-to-Video', 'Artistic Styles', 'Fast Generation'],
+    speed: 'fast',
     quality: 'high',
     costPerGeneration: 0,
-    replicateId: 'minimax/hailuo-02',
+    replicateId: 'genmo/mochi-1-preview:961cd6665b811d0c43c0b9488b6dfa85ff5c7bfb875e93b4533e4c7f54c7551a',
     pricing: 'Standard',
     inputs: [
       {
@@ -240,94 +216,25 @@ const BASE_MODELS: AnimationModel[] = [
         type: 'text',
         label: 'Prompt',
         required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'first_frame_image',
-        type: 'image',
-        label: 'First Frame Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video'
+        placeholder: 'Describe your video...'
       },
       {
         name: 'duration',
-        type: 'select',
-        label: 'Duration',
-        required: true,
-        options: [
-          { value: '6', label: '6 seconds' },
-          { value: '10', label: '10 seconds' }
-        ],
-        defaultValue: '6'
-      },
-      {
-        name: 'resolution',
-        type: 'select',
-        label: 'Resolution',
-        required: true,
-        options: [
-          { value: '768p', label: '768p' },
-          { value: '1080p', label: '1080p' }
-        ],
-        defaultValue: '1080p'
-      },
-      {
-        name: 'prompt_optimizer',
-        type: 'boolean',
-        label: 'Prompt Optimizer',
+        type: 'number',
+        label: 'Duration (seconds)',
         required: false,
-        defaultValue: true
-      }
-    ]
-  },
-  {
-    id: 'runway-gen-3',
-    name: 'Gen-3',
-    provider: 'Runway',
-    description: 'High-fidelity video generation with advanced creative control',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Creative Control', 'High Fidelity'],
-    speed: 'moderate',
-    quality: 'very-high',
-    costPerGeneration: 0.75,
-    replicateId: 'runway/gen-3',
-    pricing: '$0.75/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
+        defaultValue: 5.4,
+        min: 1,
+        max: 10
       },
       {
-        name: 'image',
-        type: 'image',
-        label: 'First Frame Image (Optional)',
+        name: 'cfg_scale',
+        type: 'number',
+        label: 'CFG Scale',
         required: false,
-        placeholder: 'Upload an image for image-to-video'
-      },
-      {
-        name: 'duration',
-        type: 'select',
-        label: 'Duration',
-        required: true,
-        options: [
-          { value: '5', label: '5 seconds' },
-          { value: '10', label: '10 seconds' }
-        ],
-        defaultValue: '5'
-      },
-      {
-        name: 'motion_amount',
-        type: 'select',
-        label: 'Motion Amount',
-        required: false,
-        options: [
-          { value: 'low', label: 'Low' },
-          { value: 'medium', label: 'Medium' },
-          { value: 'high', label: 'High' }
-        ],
-        defaultValue: 'medium'
+        defaultValue: 4.5,
+        min: 1,
+        max: 20
       },
       {
         name: 'seed',
@@ -339,403 +246,65 @@ const BASE_MODELS: AnimationModel[] = [
     ]
   },
   {
-    id: 'luma-dream-machine',
-    name: 'Luma Dream Machine',
-    provider: 'Luma AI',
-    description: 'Fast, high-quality video generation with consistent motion',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Fast Generation', 'Consistent Motion'],
+    id: 'hotshot-xl',
+    name: 'Hotshot-XL',
+    provider: 'LucaTaco',
+    description: 'GIF-style animations with character consistency',
+    capabilities: ['Text-to-Video', 'GIF Animation', 'Character Consistency'],
     speed: 'fast',
-    quality: 'high',
-    costPerGeneration: 0.50,
-    replicateId: 'luma/dream-machine',
-    pricing: '$0.50/generation',
+    quality: 'good',
+    costPerGeneration: 0,
+    replicateId: 'lucataco/hotshot-xl:78b3a6257e16e4b241245d65c8b2b81ea2e1ff7ed4c55306b511509ddbfd327a',
+    pricing: 'Standard',
     inputs: [
       {
         name: 'prompt',
         type: 'text',
         label: 'Prompt',
         required: true,
-        placeholder: 'Describe the video you want to generate...'
+        placeholder: 'Describe the animation...'
       },
       {
-        name: 'image',
-        type: 'image',
-        label: 'First Frame Image (Optional)',
+        name: 'negative_prompt',
+        type: 'text',
+        label: 'Negative Prompt',
         required: false,
-        placeholder: 'Upload an image for image-to-video'
+        placeholder: 'What to avoid...',
+        defaultValue: ''
       },
       {
-        name: 'duration',
-        type: 'select',
-        label: 'Duration',
-        required: true,
-        options: [
-          { value: '5', label: '5 seconds' }
-        ],
-        defaultValue: '5'
-      },
-      {
-        name: 'enhance_prompt',
+        name: 'mp4',
         type: 'boolean',
-        label: 'Enhance Prompt',
+        label: 'Output as MP4',
         required: false,
         defaultValue: true
       },
       {
-        name: 'seed',
+        name: 'steps',
         type: 'number',
-        label: 'Seed',
+        label: 'Sampling Steps',
         required: false,
-        placeholder: 'Random seed for reproducibility'
-      }
-    ]
-  },
-  {
-    id: 'black-forest-labs-flux-kontext-max',
-    name: 'Flux Kontext Max',
-    provider: 'Black Forest Labs',
-    description: 'Advanced image-to-video generation with precise context control',
-    capabilities: ['Image-to-Video', 'Context Control', 'High Quality', 'Motion Guidance'],
-    speed: 'moderate',
-    quality: 'very-high',
-    costPerGeneration: 0.60,
-    replicateId: 'black-forest-labs/flux-kontext-max',
-    pricing: '$0.60/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the motion and transformation you want...'
-      },
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image',
-        required: true,
-        placeholder: 'Upload the image to animate'
-      },
-      {
-        name: 'num_frames',
-        type: 'number',
-        label: 'Number of Frames',
-        required: false,
-        defaultValue: 25,
-        min: 10,
-        max: 50,
-        placeholder: 'Number of frames in the output video'
-      },
-      {
-        name: 'guidance_scale',
-        type: 'number',
-        label: 'Guidance Scale',
-        required: false,
-        defaultValue: 7.5,
+        defaultValue: 30,
         min: 1,
-        max: 20,
-        placeholder: 'How closely to follow the prompt (higher = more adherence)'
+        max: 100
       },
       {
-        name: 'motion_bucket_id',
+        name: 'width',
         type: 'number',
-        label: 'Motion Intensity',
+        label: 'Width',
         required: false,
-        defaultValue: 127,
-        min: 1,
-        max: 255,
-        placeholder: 'Controls the amount of motion (higher = more motion)'
+        defaultValue: 672,
+        min: 64,
+        max: 1024
       },
       {
-        name: 'fps',
+        name: 'height',
         type: 'number',
-        label: 'FPS',
+        label: 'Height',
         required: false,
-        defaultValue: 8,
-        min: 4,
-        max: 30,
-        placeholder: 'Frames per second'
-      },
-      {
-        name: 'seed',
-        type: 'number',
-        label: 'Seed',
-        required: false,
-        placeholder: 'Random seed for reproducibility'
-      }
-    ]
-  },
-  {
-    id: 'tencent-hunyuan-video',
-    name: 'Hunyuan Video',
-    provider: 'Tencent',
-    description: 'State-of-the-art text-to-video generation model',
-    capabilities: ['Text-to-Video', 'High Quality', 'Open Source'],
-    speed: 'moderate',
-    quality: 'very-high',
-    costPerGeneration: 0.45,
-    replicateId: 'tencent/hunyuan-video',
-    pricing: '$0.45/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'num_frames',
-        type: 'number',
-        label: 'Number of Frames',
-        required: false,
-        defaultValue: 97,
-        min: 49,
-        max: 193,
-        placeholder: 'Number of frames (49-193)'
-      },
-      {
-        name: 'guidance_scale',
-        type: 'number',
-        label: 'Guidance Scale',
-        required: false,
-        defaultValue: 7,
-        min: 1,
-        max: 20,
-        placeholder: 'How closely to follow the prompt'
-      },
-      {
-        name: 'seed',
-        type: 'number',
-        label: 'Seed',
-        required: false,
-        placeholder: 'Random seed for reproducibility'
-      }
-    ]
-  },
-  {
-    id: 'pixverse-v4.5',
-    name: 'PixVerse v4.5',
-    provider: 'PixVerse',
-    description: 'Enhanced motion generation for 5-8s videos',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Enhanced Motion'],
-    speed: 'fast',
-    quality: 'high',
-    costPerGeneration: 0.30,
-    replicateId: 'pixverse/pixverse-v4.5',
-    pricing: '$0.30/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video'
-      },
-      {
-        name: 'duration',
-        type: 'select',
-        label: 'Duration',
-        required: true,
-        options: [
-          { value: '5', label: '5 seconds' },
-          { value: '8', label: '8 seconds' }
-        ],
-        defaultValue: '5'
-      },
-      {
-        name: 'seed',
-        type: 'number',
-        label: 'Seed',
-        required: false,
-        placeholder: 'Random seed for reproducibility'
-      }
-    ]
-  },
-  {
-    id: 'kling-v2.1',
-    name: 'Kling v2.1',
-    provider: 'Kwai',
-    description: 'Make 5-10s videos with complex actions and motion',
-    capabilities: ['Text-to-Video', 'Image-to-Video', 'Complex Actions', 'Multiple Resolutions'],
-    speed: 'moderate',
-    quality: 'high',
-    costPerGeneration: 0.50,
-    replicateId: 'kwaivgi/kling-v2.1',
-    pricing: '$0.50/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image (Optional)',
-        required: false,
-        placeholder: 'Upload an image for image-to-video'
-      },
-      {
-        name: 'duration',
-        type: 'select',
-        label: 'Duration',
-        required: true,
-        options: [
-          { value: '5', label: '5 seconds' },
-          { value: '10', label: '10 seconds' }
-        ],
-        defaultValue: '5'
-      },
-      {
-        name: 'resolution',
-        type: 'select',
-        label: 'Resolution',
-        required: true,
-        options: [
-          { value: '720p', label: '720p' },
-          { value: '1080p', label: '1080p' }
-        ],
-        defaultValue: '720p'
-      },
-      {
-        name: 'seed',
-        type: 'number',
-        label: 'Seed',
-        required: false,
-        placeholder: 'Random seed for reproducibility'
-      }
-    ]
-  },
-  {
-    id: 'wan-2.1-t2v-480p',
-    name: 'Wan 2.1 Text-to-Video 480p',
-    provider: 'WaveSpeed AI',
-    description: 'Open-source video generation model at 480p resolution',
-    capabilities: ['Text-to-Video', 'Open Source', 'Fast Generation'],
-    speed: 'fast',
-    quality: 'good',
-    costPerGeneration: 0.20,
-    replicateId: 'wavespeedai/wan-2.1-t2v-480p',
-    pricing: '$0.20/generation',
-    inputs: [
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe the video you want to generate...'
-      },
-      {
-        name: 'num_frames',
-        type: 'number',
-        label: 'Number of Frames',
-        required: false,
-        defaultValue: 97,
-        min: 49,
-        max: 193,
-        placeholder: 'Number of frames to generate'
-      },
-      {
-        name: 'seed',
-        type: 'number',
-        label: 'Seed',
-        required: false,
-        placeholder: 'Random seed for reproducibility'
-      }
-    ]
-  },
-  {
-    id: 'wan-2.1-i2v-480p',
-    name: 'Wan 2.1 Image-to-Video 480p',
-    provider: 'WaveSpeed AI',
-    description: 'Animate images into videos at 480p resolution',
-    capabilities: ['Image-to-Video', 'Open Source', 'Fast Generation'],
-    speed: 'fast',
-    quality: 'good',
-    costPerGeneration: 0.20,
-    replicateId: 'wavespeedai/wan-2.1-i2v-480p',
-    pricing: '$0.20/generation',
-    inputs: [
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image',
-        required: true,
-        placeholder: 'Upload the image to animate'
-      },
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: true,
-        placeholder: 'Describe how to animate the image...'
-      },
-      {
-        name: 'num_frames',
-        type: 'number',
-        label: 'Number of Frames',
-        required: false,
-        defaultValue: 97,
-        min: 49,
-        max: 193,
-        placeholder: 'Number of frames to generate'
-      },
-      {
-        name: 'seed',
-        type: 'number',
-        label: 'Seed',
-        required: false,
-        placeholder: 'Random seed for reproducibility'
-      }
-    ]
-  },
-  {
-    id: 'luma-ray',
-    name: 'Luma Ray',
-    provider: 'Luma AI',
-    description: 'Fast, high quality image-to-video generation',
-    capabilities: ['Image-to-Video', 'Fast Generation', 'High Quality'],
-    speed: 'fast',
-    quality: 'high',
-    costPerGeneration: 0.35,
-    replicateId: 'luma/ray',
-    pricing: '$0.35/generation',
-    inputs: [
-      {
-        name: 'image',
-        type: 'image',
-        label: 'Input Image',
-        required: true,
-        placeholder: 'Upload the image to animate'
-      },
-      {
-        name: 'prompt',
-        type: 'text',
-        label: 'Prompt',
-        required: false,
-        placeholder: 'Optional: Describe the motion you want...'
-      },
-      {
-        name: 'aspect_ratio',
-        type: 'select',
-        label: 'Aspect Ratio',
-        required: false,
-        options: [
-          { value: '1:1', label: '1:1' },
-          { value: '16:9', label: '16:9' },
-          { value: '9:16', label: '9:16' }
-        ],
-        defaultValue: '16:9'
+        defaultValue: 384,
+        min: 64,
+        max: 1024
       },
       {
         name: 'seed',
