@@ -17,6 +17,17 @@ export function useUserPreferences() {
     return 'ad_naming_guest';
   }, [session]);
 
+  // Save to localStorage function (defined before use)
+  const saveToStorageInternal = useCallback((key: string, values: Record<string, string>, options: Record<string, string[]>) => {
+    const data = {
+      namingValues: values,
+      customOptions: options,
+      lastUpdated: new Date().toISOString()
+    };
+    localStorage.setItem(key, JSON.stringify(data));
+    console.log('Saved preferences for:', key, data);
+  }, []);
+
   // Load preferences from localStorage
   useEffect(() => {
     if (status === 'loading') return;
@@ -45,7 +56,8 @@ export function useUserPreferences() {
             console.log('Migrating guest preferences to user account');
             setNamingValuesState(data.namingValues || {});
             setCustomOptionsState(data.customOptions || {});
-            // Data will be saved when setNamingValues is called
+            // Save migrated data
+            saveToStorageInternal(key, data.namingValues || {}, data.customOptions || {});
           } catch (e) {
             console.error('Error migrating guest preferences:', e);
           }
@@ -54,19 +66,13 @@ export function useUserPreferences() {
     }
     
     setIsLoading(false);
-  }, [getStorageKey, status, session]);
+  }, [getStorageKey, status, session, saveToStorageInternal]);
 
   // Save to localStorage whenever values change
   const saveToStorage = useCallback((values: Record<string, string>, options: Record<string, string[]>) => {
     const key = getStorageKey();
-    const data = {
-      namingValues: values,
-      customOptions: options,
-      lastUpdated: new Date().toISOString()
-    };
-    localStorage.setItem(key, JSON.stringify(data));
-    console.log('Saved preferences for:', key, data);
-  }, [getStorageKey]);
+    saveToStorageInternal(key, values, options);
+  }, [getStorageKey, saveToStorageInternal]);
 
   const setNamingValues = useCallback((values: Record<string, string>) => {
     setNamingValuesState(values);
