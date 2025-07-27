@@ -49,7 +49,7 @@ export function AssetGrid({
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-      {assets.map((asset) => {
+      {assets.filter(asset => asset && asset.id && asset.originalFile).map((asset) => {
         const isSelected = selectedAssets.includes(asset.id);
         
         return (
@@ -73,26 +73,28 @@ export function AssetGrid({
 
             {/* Image preview */}
             <div className="aspect-square relative bg-muted">
-              <img
-                src={asset.originalFile.url}
-                alt={asset.originalFile.name}
-                className="w-full h-full object-cover"
-              />
+              {asset.originalFile?.url && (
+                <img
+                  src={asset.originalFile.url}
+                  alt={asset.originalFile.name || 'Asset'}
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
 
             {/* Asset info */}
             <div className="p-3 space-y-1">
               <p className="text-sm font-medium truncate">
-                {asset.originalFile.name}
+                {asset.originalFile?.name || 'Unnamed asset'}
               </p>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Badge variant="outline" className="px-1 py-0">
-                  {asset.originalFile.format.toUpperCase()}
+                  {asset.originalFile.format ? asset.originalFile.format.toUpperCase() : 'N/A'}
                 </Badge>
-                <span>{formatFileSize(asset.originalFile.size)}</span>
+                <span>{asset.originalFile.size !== undefined ? formatFileSize(asset.originalFile.size) : 'Unknown size'}</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                {asset.originalFile.dimensions.width} × {asset.originalFile.dimensions.height}
+                {asset.originalFile.dimensions ? `${asset.originalFile.dimensions.width} × ${asset.originalFile.dimensions.height}` : 'Unknown dimensions'}
               </p>
             </div>
           </Card>
