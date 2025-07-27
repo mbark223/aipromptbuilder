@@ -19,17 +19,23 @@ export function useUserPreferences() {
 
   // Load preferences from localStorage
   useEffect(() => {
+    if (status === 'loading') return;
+    
     const key = getStorageKey();
+    console.log('Loading preferences for:', key);
     const stored = localStorage.getItem(key);
     
     if (stored) {
       try {
         const data = JSON.parse(stored);
+        console.log('Found stored preferences:', data);
         setNamingValuesState(data.namingValues || {});
         setCustomOptionsState(data.customOptions || {});
       } catch (e) {
         console.error('Error loading preferences:', e);
       }
+    } else {
+      console.log('No stored preferences found for:', key);
     }
     
     setIsLoading(false);
@@ -38,11 +44,13 @@ export function useUserPreferences() {
   // Save to localStorage whenever values change
   const saveToStorage = useCallback((values: Record<string, string>, options: Record<string, string[]>) => {
     const key = getStorageKey();
-    localStorage.setItem(key, JSON.stringify({
+    const data = {
       namingValues: values,
       customOptions: options,
       lastUpdated: new Date().toISOString()
-    }));
+    };
+    localStorage.setItem(key, JSON.stringify(data));
+    console.log('Saved preferences for:', key, data);
   }, [getStorageKey]);
 
   const setNamingValues = useCallback((values: Record<string, string>) => {
