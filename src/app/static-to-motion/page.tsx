@@ -160,10 +160,28 @@ export default function StaticToMotionPage() {
         </TabsContent>
 
         <TabsContent value="workshop" className="space-y-6">
-          <div className="p-6 text-center">
-            <h2 className="text-xl font-semibold mb-2">Workshop</h2>
-            <p className="text-muted-foreground">All workshops temporarily disabled for debugging</p>
-          </div>
+          <ErrorBoundary>
+            {animationType === 'ai' ? (
+              <AIAnimationWorkshopSimple
+                assets={assets}
+                selectedAssets={selectedAssets}
+                onSelectAssets={setSelectedAssets}
+                selectedFormats={selectedFormats}
+                onSelectFormats={setSelectedFormats}
+                selectedModel={selectedModel}
+                onSelectModel={setSelectedModel}
+                modelInputs={modelInputs}
+                onModelInputsChange={setModelInputs}
+                onStartProcessing={handleStartProcessing}
+                onBack={() => setActiveView('type-selection')}
+              />
+            ) : animationType === 'generic' ? (
+              <div className="p-6 text-center">
+                <h2 className="text-xl font-semibold mb-2">Generic Animation Workshop</h2>
+                <p className="text-muted-foreground">Temporarily disabled for debugging</p>
+              </div>
+            ) : null}
+          </ErrorBoundary>
         </TabsContent>
 
         <TabsContent value="queue">
