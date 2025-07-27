@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ImageUploader } from '@/components/static-to-motion/ImageUploader';
@@ -84,7 +84,7 @@ export default function StaticToMotionPage() {
   
   const handleStartProcessing = () => {
     const selectedAssetObjects = assets.filter(a => selectedAssets.includes(a.id));
-    const newQueueItems = selectedAssetObjects.map((asset, index) => ({
+    const newQueueItems = selectedAssetObjects.map((asset) => ({
       id: `${asset.id}-${Date.now()}`,
       assetId: asset.id,
       asset,
@@ -92,19 +92,109 @@ export default function StaticToMotionPage() {
       animationType: animationType || 'ai' as const,
       model: animationType === 'ai' ? selectedModel : undefined,
       prompt: animationType === 'ai' ? modelInputs.prompt as string : undefined,
-      status: index === 0 ? 'completed' as const : 'pending' as const,
-      progress: index === 0 ? 100 : 0,
-      // Temporary sample video for testing
-      outputs: index === 0 ? [{ format: 'mp4', url: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }] : undefined
+      status: 'pending' as const,
+      progress: 0
     }));
     
     setProcessingQueue(prev => [...prev, ...newQueueItems]);
     setActiveView('queue');
   };
   
-  const handleExport = (item: QueueItem, format: Format) => {
-    // TODO: Implement actual export functionality
-    console.log('Exporting:', item, format);
+  // Process pending queue items
+  useEffect(() => {
+    const processPendingItems = async () => {
+      const pendingItems = processingQueue.filter(item => item.status === 'pending');
+      
+      for (const item of pendingItems) {
+        if (!item.model || !item.prompt) continue;
+        
+        try {
+          // Update status to processing
+          setProcessingQueue(prev => prev.map(q => 
+            q.id === item.id ? { ...q, status: 'processing' as const, progress: 10 } : q
+          ));
+          
+          // Prepare the request payload
+          const payload = {
+            model: item.model.replicateId,
+            input: {
+              prompt: item.prompt,
+              image: item.asset.originalFile.url,
+              ...(item.model.inputs?.reduce((acc, input) => {
+                if (input.defaultValue !== undefined) {
+                  acc[input.name] = input.defaultValue;
+                }
+                return acc;
+              }, {} as Record<string, string | number | boolean>) || {})
+            }
+          };
+          
+          // Make the API call to Replicate
+          const response = await fetch('/api/replicate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to generate video');
+          }
+          
+          const data = await response.json();
+          
+          // Update with the output
+          setProcessingQueue(prev => prev.map(q => 
+            q.id === item.id ? { 
+              ...q, 
+              status: 'completed' as const, 
+              progress: 100,
+              outputs: [{ format: 'mp4', url: data.output || data.url || data }]
+            } : q
+          ));
+          
+        } catch (error) {
+          console.error('Processing failed:', error);
+          setProcessingQueue(prev => prev.map(q => 
+            q.id === item.id ? { 
+              ...q, 
+              status: 'failed' as const, 
+              error: error instanceof Error ? error.message : 'Processing failed'
+            } : q
+          ));
+        }
+      }
+    };
+    
+    // Check for pending items every 2 seconds
+    const interval = setInterval(processPendingItems, 2000);
+    processPendingItems(); // Run immediately
+    
+    return () => clearInterval(interval);
+  }, [processingQueue]);
+
+  const handleExport = async (item: QueueItem, format: Format) => {
+    if (!item.outputs || item.outputs.length === 0) return;
+    
+    try {
+      // Get the video URL
+      const videoUrl = item.outputs[0].url;
+      
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement('a');
+      link.href = videoUrl;
+      link.download = `${item.asset.originalFile.name.split('.')[0]}_animated_${format.width}x${format.height}.mp4`;
+      link.target = '_blank';
+      
+      // Trigger the download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Show success message (you can add a toast notification here)
+      console.log('Export started for:', item.asset.originalFile.name);
+    } catch (error) {
+      console.error('Export failed:', error);
+    }
   };
 
   return (
@@ -228,6 +318,13 @@ export default function StaticToMotionPage() {
                             />
                           </div>
                         )}
+                        
+                        {/* Error message */}
+                        {item.status === 'failed' && item.error && (
+                          <div className="text-sm text-red-500 bg-red-50 p-2 rounded">
+                            {item.error}
+                          </div>
+                        )}
 
                         {/* Action buttons */}
                         <div className="flex items-center gap-2">
@@ -250,8 +347,10 @@ export default function StaticToMotionPage() {
                           )}
                           {item.status === 'failed' && (
                             <Button size="sm" variant="outline" onClick={() => {
-                              // TODO: Implement retry
-                              console.log('Retry:', item);
+                              // Reset status to pending for retry
+                              setProcessingQueue(prev => prev.map(q => 
+                                q.id === item.id ? { ...q, status: 'pending' as const, progress: 0, error: undefined } : q
+                              ));
                             }}>
                               <Icons.rotateCcw className="h-4 w-4 mr-1" />
                               Retry
@@ -259,8 +358,8 @@ export default function StaticToMotionPage() {
                           )}
                           {item.status === 'pending' && (
                             <Button size="sm" variant="outline" onClick={() => {
-                              // TODO: Implement cancel
-                              console.log('Cancel:', item);
+                              // Remove from queue
+                              setProcessingQueue(prev => prev.filter(q => q.id !== item.id));
                             }}>
                               <Icons.x className="h-4 w-4 mr-1" />
                               Cancel
