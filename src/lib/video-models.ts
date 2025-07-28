@@ -96,6 +96,72 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
       }
     ]
   },
+  {
+    id: 'veo-2-fast',
+    name: 'Veo 2 Fast',
+    provider: 'Google DeepMind',
+    description: 'Optimized for frame interpolation and quick image-to-video generation',
+    capabilities: ['Image-to-Video', 'Frame Interpolation', 'Fast Processing', 'Smooth Transitions'],
+    speed: 'fast',
+    quality: 'high',
+    costPerGeneration: 0.25,
+    replicateId: 'google/veo-2-fast',
+    pricing: '$0.25/generation',
+    inputs: [
+      {
+        name: 'image',
+        type: 'image',
+        label: 'First Frame',
+        required: true,
+        placeholder: 'Upload first frame'
+      },
+      {
+        name: 'image2',
+        type: 'image',
+        label: 'Second Frame (Optional)',
+        required: false,
+        placeholder: 'Upload second frame for interpolation'
+      },
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Motion Description (Optional)',
+        required: false,
+        placeholder: 'Describe the motion between frames...'
+      },
+      {
+        name: 'duration',
+        type: 'number',
+        label: 'Duration (seconds)',
+        required: false,
+        defaultValue: 3,
+        min: 1,
+        max: 10
+      },
+      {
+        name: 'fps',
+        type: 'number',
+        label: 'Frame Rate',
+        required: false,
+        defaultValue: 30,
+        min: 24,
+        max: 60
+      },
+      {
+        name: 'interpolation_type',
+        type: 'select',
+        label: 'Interpolation Type',
+        required: false,
+        options: [
+          { value: 'smooth', label: 'Smooth Motion' },
+          { value: 'linear', label: 'Linear Transition' },
+          { value: 'ease-in-out', label: 'Ease In/Out' },
+          { value: 'morph', label: 'Morphing Effect' }
+        ],
+        defaultValue: 'smooth'
+      }
+    ]
+  },
   
   // ByteDance SeedDance
   {
@@ -434,5 +500,12 @@ export function getTextToVideoModels() {
 export function getImageToVideoModels() {
   return VIDEO_GENERATION_MODELS.filter(model => 
     model.capabilities.includes('Image-to-Video')
+  );
+}
+
+export function getFrameInterpolationModels() {
+  return VIDEO_GENERATION_MODELS.filter(model => 
+    model.capabilities.includes('Frame Interpolation') || 
+    (model.capabilities.includes('Image-to-Video') && model.speed === 'fast')
   );
 }

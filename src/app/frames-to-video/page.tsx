@@ -7,11 +7,16 @@ import { FramesUploader } from '@/components/frames-to-video/FramesUploader';
 import { ConfigPanel } from '@/components/frames-to-video/ConfigPanel';
 import { ProcessingQueue } from '@/components/frames-to-video/ProcessingQueue';
 import { Preview } from '@/components/frames-to-video/Preview';
-import { StaticAsset, Veo2FrameAsset, Veo2InterpolationConfig, Veo2QueueItem } from '@/types';
+import { StaticAsset, Veo2FrameAsset, Veo2InterpolationConfig, Veo2QueueItem, AnimationModel, QueueItem, Format } from '@/types';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icons } from '@/components/icons';
+import { getFrameInterpolationModels } from '@/lib/video-models';
+import { ModelSelector } from '@/components/static-to-motion/ModelSelector';
+import { Label } from '@/components/ui/label';
 
 export default function FramesToVideoPage() {
+  const frameInterpolationModels = getFrameInterpolationModels();
+  const defaultModel = frameInterpolationModels.find(m => m.id === 'veo-2-fast') || frameInterpolationModels[0];
   const [frameAssets, setFrameAssets] = useState<Veo2FrameAsset[]>([]);
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   const [interpolationConfig, setInterpolationConfig] = useState<Veo2InterpolationConfig>({
@@ -20,8 +25,9 @@ export default function FramesToVideoPage() {
     interpolationType: 'smooth',
     transitionStyle: 'blend'
   });
-  const [processingQueue, setProcessingQueue] = useState<Veo2QueueItem[]>([]);
+  const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'upload' | 'configure' | 'process' | 'preview'>('upload');
+  const [selectedModel, setSelectedModel] = useState<AnimationModel>(defaultModel);
 
   const handleFramesUploaded = (frame1: StaticAsset, frame2: StaticAsset) => {
     const newFrameAsset: Veo2FrameAsset = {
@@ -63,14 +69,29 @@ export default function FramesToVideoPage() {
         </p>
       </div>
 
-      <Alert className="border-amber-500/50 bg-amber-500/10">
-        <Icons.info className="h-4 w-4 text-amber-600" />
+      <Alert className="border-green-500/50 bg-green-500/10">
+        <Icons.info className="h-4 w-4 text-green-600" />
         <AlertDescription>
-          <strong>Note:</strong> Frame interpolation is currently available with Veo-2 and other image-to-video models. 
-          Veo-3 focuses on text-to-video generation with native audio support. For frame interpolation, we recommend using 
-          Veo-2, Stable Video Diffusion, or WaveSpeed AI models in the Static → Motion section.
+          <strong>Veo-2 Fast is now available!</strong> This model is optimized specifically for frame interpolation, 
+          providing smooth transitions between your uploaded frames. It offers faster processing times while maintaining 
+          high quality output. Select your model below to get started.
         </AlertDescription>
       </Alert>
+
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div>
+            <Label className="text-base font-semibold mb-3 block">Select Video Model</Label>
+            <ModelSelector
+              selectedModel={selectedModel}
+              onSelectModel={setSelectedModel}
+            />
+          </div>
+          <div className="text-sm text-muted-foreground">
+            <strong>{selectedModel.name}</strong> - {selectedModel.description}
+          </div>
+        </div>
+      </Card>
 
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'upload' | 'configure' | 'process' | 'preview')}>
         <TabsList className="grid w-full grid-cols-4 max-w-2xl">
@@ -112,6 +133,8 @@ export default function FramesToVideoPage() {
           <ProcessingQueue
             queue={processingQueue}
             onUpdateQueue={setProcessingQueue}
+            model={selectedModel}
+            modelInputs={{}}
           />
         </TabsContent>
 
