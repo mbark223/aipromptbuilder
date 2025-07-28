@@ -8,6 +8,8 @@ import { ConfigPanel } from '@/components/frames-to-video/ConfigPanel';
 import { ProcessingQueue } from '@/components/frames-to-video/ProcessingQueue';
 import { Preview } from '@/components/frames-to-video/Preview';
 import { StaticAsset, Veo2FrameAsset, Veo2InterpolationConfig, Veo2QueueItem } from '@/types';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Icons } from '@/components/icons';
 
 export default function FramesToVideoPage() {
   const [frameAssets, setFrameAssets] = useState<Veo2FrameAsset[]>([]);
@@ -60,6 +62,15 @@ export default function FramesToVideoPage() {
           Create smooth videos by interpolating between two frames of the same size
         </p>
       </div>
+
+      <Alert className="border-amber-500/50 bg-amber-500/10">
+        <Icons.info className="h-4 w-4 text-amber-600" />
+        <AlertDescription>
+          <strong>Note:</strong> Frame interpolation is currently available with Veo-2 and other image-to-video models. 
+          Veo-3 focuses on text-to-video generation with native audio support. For frame interpolation, we recommend using 
+          Veo-2, Stable Video Diffusion, or WaveSpeed AI models in the Static → Motion section.
+        </AlertDescription>
+      </Alert>
 
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'upload' | 'configure' | 'process' | 'preview')}>
         <TabsList className="grid w-full grid-cols-4 max-w-2xl">
