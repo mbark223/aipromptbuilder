@@ -25,9 +25,9 @@ export default function Home() {
     if (aspectRatio && (aspectRatio === '1:1' || aspectRatio === '9:16' || aspectRatio === '16:9')) {
       // Set the format based on aspect ratio
       const formatMap: Record<string, Format> = {
-        '1:1': { id: 'square', name: 'Square', aspectRatio: '1:1', width: 1080, height: 1080 },
-        '9:16': { id: 'vertical', name: 'Vertical', aspectRatio: '9:16', width: 1080, height: 1920 },
-        '16:9': { id: 'horizontal', name: 'Horizontal', aspectRatio: '16:9', width: 1920, height: 1080 }
+        '1:1': { name: 'Square', aspectRatio: '1:1', width: 1080, height: 1080, custom: false },
+        '9:16': { name: 'Vertical', aspectRatio: '9:16', width: 1080, height: 1920, custom: false },
+        '16:9': { name: 'Horizontal', aspectRatio: '16:9', width: 1920, height: 1080, custom: false }
       };
       setSelectedFormat(formatMap[aspectRatio]);
     }
