@@ -127,7 +127,7 @@ Format your response as a JSON array of strings, with each string being a comple
           });
         } else {
           // Fallback if JSON parsing fails
-          const lines = output.split('\n').filter(line => line.trim().length > 0);
+          const lines = output.split('\n').filter((line: string) => line.trim().length > 0);
           const enhancedPrompts = lines.slice(0, variations);
           
           return NextResponse.json({
@@ -173,7 +173,6 @@ function analyzePrompt(prompt: string): {
   };
   suggestions: string[];
 } {
-  const promptLower = prompt.toLowerCase();
   
   const elements = {
     hasSubject: /person|man|woman|character|animal|object|robot|creature/i.test(prompt),
