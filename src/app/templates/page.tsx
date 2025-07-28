@@ -30,7 +30,7 @@ const SAMPLE_TEMPLATES = [
       style: 'Premium, sophisticated, relatable to 40-65 demographic, warm Florida aesthetics',
       composition: {
         '1:1': 'Centered composition with bettor and device prominent, TV in background',
-        '9:16': 'Vertical focus on app interface with bettor's hands, TV glimpse at top'
+        '9:16': 'Vertical focus on app interface with bettor hands, TV glimpse at top'
       },
       lighting: 'Natural Florida sunlight through windows, warm interior lighting',
       motion: 'Smooth UI interactions, gentle camera movements, relaxed pacing',
