@@ -8,7 +8,7 @@ import { ModelConfiguration } from '@/components/prompt-to-video/ModelConfigurat
 import { VideoGenerationPanel } from '@/components/prompt-to-video/VideoGenerationPanel';
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { AnimationModel, QueueItem, Format } from '@/types';
-import { OPENROUTER_VIDEO_MODELS } from '@/lib/openrouter-models';
+import { getTextToVideoModels } from '@/lib/video-models';
 
 // Default formats for video generation
 const DEFAULT_FORMATS: Format[] = [
@@ -19,8 +19,9 @@ const DEFAULT_FORMATS: Format[] = [
 ];
 
 export default function PromptToVideoPage() {
+  const textToVideoModels = getTextToVideoModels();
   const [prompts, setPrompts] = useState<string[]>([]);
-  const [selectedModel, setSelectedModel] = useState<AnimationModel>(OPENROUTER_VIDEO_MODELS[0]);
+  const [selectedModel, setSelectedModel] = useState<AnimationModel>(textToVideoModels[0]);
   const [selectedFormats, setSelectedFormats] = useState<Format[]>([DEFAULT_FORMATS[0]]);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
@@ -94,10 +95,6 @@ export default function PromptToVideoPage() {
     setProcessingQueue([...processingQueue, ...newQueueItems]);
     setActiveView('queue');
   };
-
-  const textToVideoModels = OPENROUTER_VIDEO_MODELS.filter(model => 
-    model.capabilities.includes('Text-to-Video')
-  );
 
   return (
     <div className="container mx-auto py-8 space-y-8">
