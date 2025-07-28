@@ -16,57 +16,57 @@ interface PromptInputProps {
 
 const PROMPT_TEMPLATES = [
   {
-    category: 'Action',
+    category: 'Florida Sportsbook (40-65+)',
     templates: [
-      'Cinematic style: A professional stunt driver in black leather jacket, downtown Tokyo at midnight with neon reflections, drifting through narrow streets in a sports car, camera tracking alongside the vehicle then pulling up to aerial view, screeching tires and engine roar with electronic music (no subtitles)',
-      'Hyperrealistic: Athletic woman with braided hair in tactical gear, abandoned warehouse with shafts of light, performing parkour jumps across metal beams, dynamic camera following her movements with quick cuts, heavy breathing and footsteps echoing (no subtitles)',
-      'Action movie style: Two martial artists in traditional robes, ancient temple courtyard at sunset, exchanging rapid kicks and punches, camera circling the fighters with slow-motion moments, combat sounds with dramatic orchestral hits (no subtitles)',
-      'Documentary style: Professional race car driver in full gear, winding mountain road at dawn, navigating hairpin turns at high speed, camera mounted on car hood and aerial drone shots, engine noise and tire squeals with no music',
+      'Florida football betting: Mature gentleman in comfortable Florida home, reviewing NFL odds on tablet with Dolphins game on TV, warm sunlight through windows, smooth UI navigation with relaxed pacing, ambient home sounds with subtle excitement, "21+ Only in FL" visible',
+      'Golf betting experience: Distinguished golfer at Florida country club, checking PGA tour odds on phone at 19th hole, upscale clubhouse ambiance, elegant camera movements showing app and golf course views, gentle background conversations and golf sounds',
+      'Florida sports bar scene: Group of mature friends at upscale sports bar, multiple games on screens while using betting apps, warm lighting with screen glow, natural interactions and app demonstrations, sports bar ambiance with cheering moments',
+      'Retirement community game day: Active retirees in Florida community center, watching games together while placing bets on tablets, bright natural lighting, group celebrations and high-fives, community atmosphere with clear app interface demonstrations',
     ]
   },
   {
-    category: 'Nature',
+    category: 'iCasino NJ',
     templates: [
-      'Timelapse style: Majestic snow-capped mountain range, alpine meadow in early morning, clouds flowing over peaks as sun rises, camera slowly pushing forward, gentle wind sounds with peaceful ambient music (no subtitles)',
-      'Dramatic nature documentary: Massive ocean waves, rocky coastline during storm, waves crashing and spraying high into air, camera on cliff edge with spray hitting lens, thunderous wave crashes and howling wind (no subtitles)',
-      'Ethereal style: Dense rainforest canopy, morning mist with golden sunlight, leaves gently swaying as birds fly through, camera slowly ascending through layers, bird calls and rustling leaves with mystical music (no subtitles)',
-      'Magical realism: Northern lights, frozen lake in Arctic wilderness, aurora dancing and reflecting on ice surface, camera slowly rotating upward from ice to sky, crackling ice and ethereal whooshing sounds (no subtitles)',
+      'Atlantic City jackpot: New Jersey player at home winning online slots, Atlantic City boardwalk visible through window, slot reels aligning with massive win animation, bright game graphics with coastal ambiance, jackpot sounds and celebration, NJ DGE seal prominent',
+      'Garden State blackjack: Player enjoying live dealer blackjack from NJ home, professional dealer on screen, perfect hand reveal moment, studio lighting for dealer with cozy home setting, card sounds and winning celebration, "Licensed in NJ" clearly visible',
+      'Jersey Shore slots: Beach-themed slot game with boardwalk symbols, player at shore house with ocean view, bonus round activation with NJ landmarks, bright beach day lighting with colorful graphics, wave sounds and slot music, NJ gaming compliance visible',
+      'Atlantic City online experience: NJ resident playing multiple casino games on tablet, AC casino partnership branding visible, switching between slots and table games, evening home ambiance with game lights, casino sounds with regulated gaming messaging',
     ]
   },
   {
-    category: 'Abstract',
+    category: 'iCasino PA',
     templates: [
-      'Macro photography style: Vibrant paint colors, white studio backdrop, liquids mixing and creating patterns, extreme close-up with probe lens movement, viscous liquid sounds with experimental electronic music (no subtitles)',
-      'Digital art style: Crystalline geometric shapes, infinite black void, forms rotating and fragmenting into smaller pieces, camera moving through the shapes, digital glitch sounds and synthesizer ambience (no subtitles)',
-      'Scientific visualization: Glowing particles, dark space environment, particles forming DNA helix then dispersing, camera orbiting around the formation, electronic hums and chimes (no subtitles)',
-      'Psychedelic style: Kaleidoscope patterns, bright colored background, patterns morphing and pulsing to rhythm, camera zooming in and out, ambient electronic music synchronized with visuals (no subtitles)',
+      'Pennsylvania slots paradise: PA-themed slot with Liberty Bell symbols, player in Philadelphia home winning big, Keystone State pride graphics, warm indoor lighting with vibrant slot animations, reel spins and celebration effects, PA Gaming Control Board seal visible',
+      'Pocono poker night: Online poker game with PA player avatars, Pocono mountains visible through window, winning poker hand reveal, digital table glow with evening ambiance, card shuffling and chip sounds, PA iGaming license prominent',
+      'Philly freedom spins: Historic Philadelphia themed slots, player with Independence Hall view, bonus round with fireworks animation, patriotic color scheme with warm lighting, Liberty Bell ringing sounds, state-specific responsible gaming visible',
+      'Steel City casino: Pittsburgh player enjoying various iCasino games, city skyline visible, smooth transitions between games, modern apartment setting with game lighting, urban ambiance with winning moments, PA regulatory compliance shown',
     ]
   },
   {
-    category: 'Cinematic',
+    category: 'iCasino MI',
     templates: [
-      'Blade Runner style: Futuristic cityscape, dawn with fog and neon lights, flying cars emerging from mist, camera rising from street level to reveal full city, ambient city sounds with synthwave music (no subtitles)',
-      'Film noir style: Detective in trench coat, rain-slicked city street at night, walking under streetlights with cigarette, extreme close-up transitioning to wide shot, footsteps and rain with jazz saxophone (no subtitles)',
-      'Epic landscape: Mountain valley, golden hour with mist, camera sweeping over peaks and forests, smooth drone movement from low to high altitude, wind sounds with orchestral crescendo (no subtitles)',
-      'Action sequence: Building explosion, urban setting, debris flying in slow motion, camera pulling back while rotating, explosion sound followed by ringing silence then dramatic music (no subtitles)',
+      'Great Lakes mega spins: Michigan nature-themed slots, Detroit skyline view while playing, Great Lakes symbols cascading, bright slot animations with Michigan seasonal lighting, wildlife sounds and winning music, MI Gaming Control Board compliance',
+      'Motor City roulette: Live dealer roulette with Michigan player, Detroit casino partnership visible, ball landing on winning number, professional studio lights with Michigan home comfort, roulette sounds and celebration, MI regulations displayed',
+      'Pure Michigan gaming: Player enjoying Michigan-themed casino games, Great Lakes scenery visible, switching between slots with local themes, natural Michigan lighting with game glow, ambient lake sounds with gaming audio, local responsible gaming resources',
+      'Detroit online casino: Michigan resident winning at multiple games, automotive city energy in design, jackpot celebration moment, modern living space with dynamic lighting, winning sounds and excitement, Detroit partnership branding visible',
     ]
   },
   {
-    category: 'Product & Commercial',
+    category: 'Multi-State Promotions',
     templates: [
-      'Luxury product shot: High-end watch, black reflective surface, watch rotating slowly with light revealing details, camera macro to full view with smooth motion, subtle mechanical sounds with elegant piano (no subtitles)',
-      'Tech product reveal: Latest smartphone, minimalist white environment, device assembling itself piece by piece, camera orbiting with dynamic angles, futuristic assembly sounds with upbeat music (no subtitles)',
-      'Fashion commercial: Model in flowing dress, sunset beach location, fabric billowing in wind as model walks, camera tracking alongside then pulling to wide shot, ocean waves and fabric sounds with contemporary music (no subtitles)',
-      'Food commercial: Gourmet burger, dark moody background, ingredients falling and assembling in slow motion, camera rotating around subject, sizzling sounds and ingredient impacts with upbeat music (no subtitles)',
+      'Welcome bonus reveal: New player in any legal state, bonus amount dramatically revealing on screen, account credit animation, bright inviting lighting with bonus glow effects, exciting reveal sounds with celebration music, state-specific compliance messaging',
+      'Daily promotions showcase: Calendar showing different offers for each state, smooth transitions between promotions, variety of bonuses highlighted, clean modern interface with color coding, page turn sounds and highlight effects, multi-state availability shown',
+      'VIP rewards presentation: High-value player receiving exclusive benefits, luxury aesthetic with state options, rewards accumulating animation, premium lighting with golden accents, sophisticated sounds and fanfare, available in NJ/PA/MI messaging',
+      'Responsible gaming message: Player setting limits across platforms, clear interface demonstrations, positive responsible gaming approach, bright professional lighting, calm reassuring music, state-specific helpline numbers visible',
     ]
   },
   {
-    category: 'Storytelling',
+    category: 'Cross-Platform Features',
     templates: [
-      'Short film opening: Young woman with red scarf, busy train station, looking anxiously at departure board, camera push-in from wide to close-up on eyes, station ambience with emotional piano music (no subtitles)',
-      'Mystery scene: Shadow figure in fedora, foggy alleyway at night, walking slowly toward camera, low angle shot with dramatic lighting, footsteps echoing with suspenseful strings (no subtitles)',
-      'Romance scene: Couple holding hands, sunset on beach, walking along water edge, camera following from behind then circling to front, ocean waves and seagulls with romantic melody (no subtitles)',
-      'Adventure opening: Explorer with backpack, ancient ruins in jungle, discovering hidden entrance, camera following then revealing vast chamber, jungle sounds transitioning to echoing chamber ambience (no subtitles)',
+      'Mobile to desktop transition: Player seamlessly switching devices, same account across platforms, smooth transition effects, consistent branding and UI, device switching sounds, cross-platform availability highlighted',
+      'Live betting action: Real-time odds updates during games, multiple sports with Florida focus, dynamic interface changes, sports broadcast lighting with UI glow, live update sounds and excitement, 21+ and geo-location indicators',
+      'Social betting experience: Friends comparing bets remotely, chat features and leaderboards, social interaction focus, warm friendly lighting, notification sounds and social audio, community features with compliance',
+      'Tutorial walkthrough: Easy onboarding for 40-65+ demographic, clear step-by-step demonstrations, simplified interface highlights, bright clear lighting for visibility, helpful guide voice with button clicks, accessibility features shown',
     ]
   }
 ];
