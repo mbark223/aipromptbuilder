@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppLayout } from './app-layout';
 import { FormatSelector } from '@/components/format/FormatSelector';
@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { QuickSuggestions } from '@/components/prompt/QuickSuggestions';
 import type { Format, ConsistencySettings } from '@/types';
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams();
   const [selectedFormat, setSelectedFormat] = useState<Format | null>(null);
   const [consistencySettings, setConsistencySettings] = useState<ConsistencySettings>({
@@ -129,5 +129,13 @@ export default function Home() {
         </Tabs>
       </div>
     </AppLayout>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
