@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AppLayout } from './app-layout';
 import { FormatSelector } from '@/components/format/FormatSelector';
 import { FormatPreview } from '@/components/format/FormatPreview';
@@ -11,11 +12,26 @@ import { QuickSuggestions } from '@/components/prompt/QuickSuggestions';
 import type { Format, ConsistencySettings } from '@/types';
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [selectedFormat, setSelectedFormat] = useState<Format | null>(null);
   const [consistencySettings, setConsistencySettings] = useState<ConsistencySettings>({
     lockedParams: [],
     colorPalette: [],
   });
+  
+  // Handle template data from URL parameters
+  useEffect(() => {
+    const aspectRatio = searchParams.get('aspectRatio');
+    if (aspectRatio && (aspectRatio === '1:1' || aspectRatio === '9:16' || aspectRatio === '16:9')) {
+      // Set the format based on aspect ratio
+      const formatMap: Record<string, Format> = {
+        '1:1': { id: 'square', name: 'Square', aspectRatio: '1:1', width: 1080, height: 1080 },
+        '9:16': { id: 'vertical', name: 'Vertical', aspectRatio: '9:16', width: 1080, height: 1920 },
+        '16:9': { id: 'horizontal', name: 'Horizontal', aspectRatio: '16:9', width: 1920, height: 1080 }
+      };
+      setSelectedFormat(formatMap[aspectRatio]);
+    }
+  }, [searchParams]);
 
 
   return (
@@ -45,6 +61,14 @@ export default function Home() {
                 <PromptBuilder 
                   format={selectedFormat} 
                   consistency={consistencySettings}
+                  initialContent={{
+                    subject: searchParams.get('subject') || '',
+                    style: searchParams.get('style') || '',
+                    composition: searchParams.get('composition') || '',
+                    lighting: searchParams.get('lighting') || '',
+                    motion: searchParams.get('motion') || '',
+                    technical: searchParams.get('technical') || '',
+                  }}
                 />
               </div>
               <div className="space-y-6">

@@ -1,39 +1,52 @@
-// Comprehensive betting-related suggestions for Sportsbook & iCasino content
+// Comprehensive geo-targeted betting suggestions for Sportsbook & iCasino content
 
 export const SUBJECT_SUGGESTIONS = [
-  // Sportsbook
-  'football player scoring touchdown',
-  'basketball slam dunk moment',
-  'soccer goal celebration',
-  'baseball home run swing',
-  'tennis match point serve',
-  'horse racing photo finish',
-  'boxing knockout punch',
-  'golf hole-in-one celebration',
-  'Formula 1 checkered flag',
-  'UFC championship belt raise',
-  'sports betting app interface',
-  'live odds ticker display',
-  'betting slip with winning bet',
-  'sportsbook lounge atmosphere',
-  'multi-sport parlay ticket',
-  'cash out button animation',
-  'live betting in action',
-  'sports fan celebration',
-  'stadium crowd eruption',
-  'championship trophy presentation',
+  // Sportsbook FL (40-65+ demographic)
+  'mature Florida sports fan checking odds on tablet',
+  'golf course betting at Florida country club',
+  'Florida retiree watching NFL on big screen',
+  'Dolphins game day betting experience',
+  'Tampa Bay Buccaneers touchdown celebration',
+  'Jacksonville Jaguars betting opportunities',
+  'Florida horse racing at Gulfstream Park',
+  'NASCAR Daytona 500 betting action',
+  'fishing tournament betting in Florida Keys',
+  'Florida sports bar mature crowd',
+  'retirement community game day gathering',
+  'PGA tour betting at Florida courses',
+  'spring training baseball betting',
+  'Florida jai alai betting tradition',
+  'mature couple betting on cruise ship',
   
-  // iCasino - Slots
-  'slot machine jackpot win',
-  'spinning slot reels',
-  'bonus round activation',
-  'progressive jackpot meter',
-  'wild symbol expansion',
-  'scatter symbols aligning',
-  'free spins triggering',
-  'mega win celebration',
-  'coin shower animation',
-  'slot lobby interface',
+  // iCasino NJ
+  'Atlantic City online slots at home',
+  'New Jersey player winning jackpot',
+  'Garden State online blackjack session',
+  'Jersey Shore themed slot games',
+  'NJ licensed casino app interface',
+  'Atlantic City boardwalk casino vibes',
+  'Borgata online partnership branding',
+  'New Jersey DGE compliance display',
+  
+  // iCasino PA
+  'Pennsylvania online casino at home',
+  'Philly themed slot game experience',
+  'Pittsburgh player hitting jackpot',
+  'Liberty Bell slot machine symbols',
+  'PA Gaming Control Board approved',
+  'Pocono mountains casino backdrop',
+  'Keystone State gaming pride',
+  'Pennsylvania Dutch themed games',
+  
+  // iCasino MI
+  'Michigan online slots Great Lakes theme',
+  'Detroit skyline casino gaming',
+  'Motor City jackpot celebration',
+  'Pure Michigan casino experience',
+  'Great Lakes themed slot games',
+  'Michigan wildlife casino symbols',
+  'Detroit casino partnership online',
+  'Lansing area player winning big',
   
   // iCasino - Table Games
   'blackjack perfect hand',
@@ -73,17 +86,17 @@ export const SUBJECT_SUGGESTIONS = [
 ];
 
 export const MOTION_SUGGESTIONS = [
-  // Sports Motion
-  'slow-motion replay',
-  'fast-paced action sequence',
-  'freeze-frame at impact',
-  'dynamic camera tracking',
-  'celebration slow-mo',
-  'odds updating in real-time',
-  'score ticker scrolling',
-  'stats overlay animation',
-  'replay from multiple angles',
-  'time-lapse of game progression',
+  // Sports Motion (40-65+ friendly)
+  'smooth slow-motion replay',
+  'comfortable pacing transitions',
+  'clear odds display updates',
+  'gentle camera movements',
+  'celebration moments captured',
+  'easy-to-read ticker scrolling',
+  'stats appearing clearly',
+  'multiple angle replays',
+  'relaxed time progression',
+  'UI demonstrations at readable pace',
   
   // Casino Motion
   'slot reels spinning rapidly',
@@ -111,29 +124,31 @@ export const MOTION_SUGGESTIONS = [
 ];
 
 export const TECHNICAL_SUGGESTIONS = [
-  // Quality Specs
-  '4K ultra HD quality',
-  '60fps smooth motion',
-  'HDR color grading',
-  'cinematic aspect ratio',
-  'broadcast quality standard',
-  'mobile-optimized vertical',
-  'social media ready format',
-  'loop-ready seamless',
-  'sound-off optimization',
-  'quick-loading format',
+  // Format Specific
+  '1:1 square format for social feeds',
+  '9:16 vertical for mobile stories',
+  '16:9 horizontal for web display',
+  'multi-format export capability',
+  'responsive aspect ratio switching',
   
-  // Platform Specific
-  'Instagram Reels optimized',
-  'TikTok native format',
-  'YouTube Shorts ready',
-  'Twitter video specs',
-  'Facebook ad compliant',
-  'email embed compatible',
-  'web banner dimensions',
-  'app store preview format',
-  'push notification size',
-  'landing page hero video',
+  // Quality Specs (Age-Appropriate)
+  'HD quality with clear text',
+  '30fps for comfortable viewing',
+  'high contrast for readability',
+  'larger UI elements visible',
+  'broadcast quality standard',
+  'optimized file size for mobile',
+  'loop-ready for continuous play',
+  'captions and subtitles ready',
+  
+  // Geo-Specific Compliance
+  'Florida 21+ disclaimer visible',
+  'NJ DGE license prominent',
+  'PA Gaming Control Board seal',
+  'MI regulatory compliance shown',
+  'state geo-fence messaging',
+  'responsible gaming footer',
+  'local partnership branding',
   
   // Betting Specific
   'responsible gambling compliant',
@@ -149,29 +164,29 @@ export const TECHNICAL_SUGGESTIONS = [
 ];
 
 export const ATMOSPHERE_SUGGESTIONS = [
-  // Sports Atmosphere
-  'electric stadium energy',
-  'championship atmosphere',
-  'underdog victory emotion',
-  'last-second thriller',
-  'crowd going wild',
-  'tension before kickoff',
-  'victory parade celebration',
-  'locker room triumph',
-  'press conference excitement',
-  'fan zone energy',
+  // Sports Atmosphere (40-65+ FL)
+  'comfortable Florida sports bar',
+  'upscale country club ambiance',
+  'relaxed game day gathering',
+  'mature fan celebration',
+  'sophisticated betting lounge',
+  'Florida sunshine atmosphere',
+  'retirement community excitement',
+  'golf course clubhouse vibe',
+  'yacht club sports viewing',
+  'beachside betting experience',
   
-  // Casino Atmosphere
-  'high-stakes tension',
-  'VIP exclusive ambiance',
-  'jackpot excitement',
-  'lucky streak feeling',
-  'sophisticated elegance',
-  'Vegas strip energy',
-  'Monte Carlo luxury',
-  'winner\'s euphoria',
-  'anticipation building',
-  'fortune favoring moment',
+  // Casino Atmosphere (State-Specific)
+  'Atlantic City boardwalk energy',
+  'Jersey Shore casino vibes',
+  'Pennsylvania gaming excitement',
+  'Philly sophistication',
+  'Michigan casino atmosphere',
+  'Detroit gaming energy',
+  'home comfort gaming',
+  'regulated safe environment',
+  'local casino partnership feel',
+  'state pride gaming experience',
   
   // Emotional Tones
   'adrenaline pumping',
@@ -224,61 +239,81 @@ export const COLOR_PALETTE_SUGGESTIONS = [
   'gradient transitions',
 ];
 
-// Betting-specific prompt templates
+// Geo-targeted betting prompt templates
 export const BETTING_TEMPLATES = {
-  sportsBetting: {
-    name: 'Sports Betting Promo',
+  floridaSportsBetting: {
+    name: 'Florida Sports Betting (40-65+)',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Dynamic sports action with live odds display, multiple sports showcased',
-      style: 'High-energy sports broadcast style with modern graphics overlay',
-      composition: 'Split screen showing game action and betting interface',
-      lighting: 'Stadium floodlights with UI glow elements',
-      motion: 'Fast cuts between sports, odds updating in real-time',
-      technical: '16:9 format, 30 seconds, suitable for social media',
+      subject: 'Mature Florida resident using sports betting app in comfortable home setting, local team highlights on TV',
+      style: 'Sophisticated and relatable to 40-65 demographic, warm Florida aesthetics',
+      composition: {
+        '1:1': 'Balanced view of user and betting interface',
+        '9:16': 'Mobile-first with Florida context visible'
+      },
+      lighting: 'Natural Florida sunlight, warm interior lighting',
+      motion: 'Smooth UI interactions, relaxed pacing appropriate for demographic',
+      technical: 'Clear text display, Florida compliance messaging, responsible gaming visible',
     }
   },
-  slotJackpot: {
-    name: 'Slot Machine Big Win',
+  njOnlineCasino: {
+    name: 'New Jersey iCasino Experience',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Slot reels aligning for massive jackpot, coins exploding outward',
-      style: 'Vegas casino excitement with premium golden aesthetics',
-      composition: 'Close-up on reels transitioning to wide celebration shot',
-      lighting: 'Jackpot spotlights with golden coin reflections',
-      motion: 'Reels spinning fast, then slow-mo win moment, coin cascade',
-      technical: '9:16 vertical format, loop-ready, mobile-first design',
+      subject: 'NJ player enjoying online casino from home with Atlantic City imagery',
+      style: 'Jersey Shore authenticity with premium online gaming feel',
+      composition: {
+        '1:1': 'Device and NJ setting equally featured',
+        '9:16': 'Mobile gaming with NJ landmarks'
+      },
+      lighting: 'Bright casino graphics with coastal ambiance',
+      motion: 'Winning animations, smooth gameplay demonstration',
+      technical: 'NJ DGE compliance prominent, geo-location indicators',
     }
   },
-  liveCasino: {
-    name: 'Live Dealer Experience',
+  paOnlineSlots: {
+    name: 'Pennsylvania iCasino Slots',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Professional dealer at luxurious casino table, cards being dealt',
-      style: 'Sophisticated and exclusive, premium casino atmosphere',
-      composition: 'Multiple angles: dealer POV, player view, table overhead',
-      lighting: 'Elegant casino ambiance with focused table lighting',
-      motion: 'Smooth card dealing, chip movements, camera transitions',
-      technical: '16:9 HD quality, 60fps for smooth motion, 20 seconds',
+      subject: 'PA-themed slot game with Liberty Bell symbols, Keystone State player winning',
+      style: 'Pennsylvania pride with modern online gaming excitement',
+      composition: {
+        '1:1': 'Slot game centered with PA context',
+        '9:16': 'Mobile slot interface with state elements'
+      },
+      lighting: 'Bright slot animations, warm PA home setting',
+      motion: 'Reels spinning with PA symbols, celebration effects',
+      technical: 'PA Gaming Control Board seal visible, state compliance messaging',
     }
   },
-  winnerCelebration: {
-    name: 'Big Winner Moment',
+  michiganLiveCasino: {
+    name: 'Michigan Live Dealer Games',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Player celebrating massive win, confetti and lights explosion',
-      style: 'Euphoric celebration with luxury winner aesthetics',
-      composition: 'Hero shot of winner with dynamic celebration elements',
-      lighting: 'Spotlight on winner with colorful celebration lights',
-      motion: 'Slow-motion celebration, confetti falling, numbers climbing',
-      technical: '1:1 square format, perfect for social media posts',
+      subject: 'Live dealer on screen with Michigan player at home, Great Lakes themed backdrop',
+      style: 'Motor City elegance meets accessible online gaming',
+      composition: {
+        '1:1': 'Split between dealer and Michigan setting',
+        '9:16': 'Vertical live stream with MI branding'
+      },
+      lighting: 'Professional studio lights, cozy Michigan home',
+      motion: 'Real-time dealing, smooth streaming quality',
+      technical: 'MI regulatory compliance, Detroit partnership visible',
     }
   },
-  oddsBoost: {
-    name: 'Enhanced Odds Promotion',
+  matureAudiencePromo: {
+    name: 'Florida 40-65+ Welcome Offer',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Odds numbers dramatically increasing, sports action background',
-      style: 'Modern digital graphics with exciting sports energy',
-      composition: 'Odds display prominent with sports action supporting',
-      lighting: 'Digital UI glow with dramatic sports lighting',
-      motion: 'Numbers climbing animation, dynamic sports clips',
-      technical: 'Multi-format export, 15 seconds, clear CTA inclusion',
+      subject: 'Mature couple in Florida discovering sports betting app benefits, easy interface demo',
+      style: 'Approachable, trustworthy, age-appropriate design',
+      composition: {
+        '1:1': 'Couple with device, clear UI visibility',
+        '9:16': 'Mobile-first tutorial style presentation'
+      },
+      lighting: 'Bright, clear, high contrast for readability',
+      motion: 'Slow, clear demonstrations of app features',
+      technical: 'Large text, simplified UI, Florida compliance, tutorial pacing',
     }
   },
 };

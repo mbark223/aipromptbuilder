@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '../app-layout';
 import { Card } from '@/components/ui/card';
@@ -8,220 +9,294 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const TEMPLATE_CATEGORIES = [
-  { id: 'sportsbook', name: 'Sportsbook', icon: '🏈' },
-  { id: 'casino', name: 'iCasino', icon: '🎰' },
-  { id: 'live', name: 'Live Casino', icon: '🎲' },
+  { id: 'sportsbook-fl', name: 'Sportsbook FL (40-65+)', icon: '🏈' },
+  { id: 'icasino-nj', name: 'iCasino NJ', icon: '🎰' },
+  { id: 'icasino-pa', name: 'iCasino PA', icon: '🎲' },
+  { id: 'icasino-mi', name: 'iCasino MI', icon: '🎯' },
   { id: 'promotion', name: 'Promotions', icon: '🎁' },
-  { id: 'winner', name: 'Winner Moments', icon: '🏆' },
-  { id: 'social', name: 'Social Media', icon: '📱' },
+  { id: 'all', name: 'All Templates', icon: '📱' },
 ];
 
 const SAMPLE_TEMPLATES = [
-  // Sportsbook Templates
+  // Sportsbook FL Templates (40-65+ demographic)
   {
     id: '1',
-    name: 'Live Betting Action',
-    category: 'sportsbook',
-    description: 'High-energy live sports betting showcase',
+    name: 'Florida Football Betting Experience',
+    category: 'sportsbook-fl',
+    description: 'Mature audience football betting showcase for Florida market',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Multiple sports in action with live odds ticker, betting slip animation',
-      style: 'Sports broadcast energy with modern UI overlay, dynamic and exciting',
-      composition: 'Split screen sports action and betting interface, dynamic transitions',
-      lighting: 'Stadium floodlights mixed with digital UI glow',
-      motion: 'Fast cuts between sports, odds updating in real-time, winning bet celebration',
-      technical: '16:9 format, 30 seconds, suitable for social media and web',
+      subject: 'Experienced bettor in comfortable Florida setting, reviewing NFL odds on tablet, Dolphins/Jaguars/Bucs highlights playing on TV',
+      style: 'Premium, sophisticated, relatable to 40-65 demographic, warm Florida aesthetics',
+      composition: {
+        '1:1': 'Centered composition with bettor and device prominent, TV in background',
+        '9:16': 'Vertical focus on app interface with bettor's hands, TV glimpse at top'
+      },
+      lighting: 'Natural Florida sunlight through windows, warm interior lighting',
+      motion: 'Smooth UI interactions, gentle camera movements, relaxed pacing',
+      technical: 'HD quality, clear UI elements, Florida regulatory compliance visible',
     },
   },
   {
     id: '2',
-    name: 'Parlay Winner Celebration',
-    category: 'sportsbook',
-    description: 'Epic multi-bet winning moment',
+    name: 'Golf Betting - Florida Masters',
+    category: 'sportsbook-fl',
+    description: 'Golf betting content for mature Florida audience',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Parlay ticket showing all legs hitting, confetti explosion, cash out moment',
-      style: 'Championship celebration atmosphere with golden winner aesthetics',
-      composition: 'Close-up on winning ticket transitioning to wide celebration shot',
-      lighting: 'Dramatic spotlight with golden celebration lights',
-      motion: 'Slow reveal of each winning leg, climactic celebration explosion',
-      technical: '9:16 vertical for mobile, loop-ready for stories',
+      subject: 'Golf course views, PGA tour odds display, mature golfer checking bets on phone at clubhouse',
+      style: 'Upscale Florida golf culture, sophisticated betting experience',
+      composition: {
+        '1:1': 'Split between golf course beauty shot and betting interface',
+        '9:16': 'Phone-first view with golf course bokeh background'
+      },
+      lighting: 'Golden hour Florida sunshine, professional sports broadcast quality',
+      motion: 'Elegant transitions, odds updates, golf swing slow-motion cuts',
+      technical: 'Must show "21+ only in FL" disclaimer, responsible gaming message',
     },
   },
   {
     id: '3',
-    name: 'Game Day Promo',
-    category: 'sportsbook',
-    description: 'Pre-game hype and betting opportunities',
+    name: 'Florida Sports Bar Experience',
+    category: 'sportsbook-fl',
+    description: 'Social sports betting for 40-65 demographic',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Stadium atmosphere, team logos, enhanced odds display, crowd energy',
-      style: 'Electric pre-game energy with team colors and betting focus',
-      composition: 'Aerial stadium shot zooming to odds display and app interface',
-      lighting: 'Night game stadium lights with neon accent lighting',
-      motion: 'Building energy, countdown timer, odds boost animation',
-      technical: '1:1 square for social posts, 15 seconds with strong CTA',
+      subject: 'Mature friends at upscale Florida sports bar, multiple games on screens, mobile betting in social setting',
+      style: 'Social, fun but sophisticated, age-appropriate entertainment',
+      composition: {
+        '1:1': 'Wide shot of social group with betting apps and TV screens',
+        '9:16': 'Focus on individual using app with friends and TVs in background'
+      },
+      lighting: 'Warm bar ambiance with screen glow, Florida evening atmosphere',
+      motion: 'Natural interactions, app demonstrations, celebration moments',
+      technical: 'Florida geo-fence messaging, responsible social betting emphasis',
     },
   },
   
-  // iCasino Templates
+  // iCasino NJ Templates
   {
     id: '4',
-    name: 'Mega Jackpot Win',
-    category: 'casino',
-    description: 'Slot machine massive jackpot moment',
+    name: 'Atlantic City Jackpot Experience',
+    category: 'icasino-nj',
+    description: 'New Jersey online slots mega win moment',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Slot reels aligning perfectly, jackpot explosion, coins cascading',
-      style: 'Vegas luxury with golden jackpot aesthetics, premium celebration',
-      composition: 'Tight on reels, pull back to reveal massive win amount',
-      lighting: 'Jackpot spotlights, golden coin reflections, winner glow',
-      motion: 'Reels spinning fast to slow-mo alignment, explosive celebration',
-      technical: '16:9 HD, particle effects for coins, 20 seconds',
+      subject: 'Online slot game on mobile device with Atlantic City boardwalk view, massive jackpot win animation, NJ player celebrating at home',
+      style: 'Jersey Shore vibes meet premium online gaming, authentic NJ atmosphere',
+      composition: {
+        '1:1': 'Device centered with NJ landmarks visible through window',
+        '9:16': 'Full screen slot game with NJ location indicators'
+      },
+      lighting: 'Bright slot game graphics with natural NJ coastal light',
+      motion: 'Reels spinning, jackpot explosion, confetti animation, winner reaction',
+      technical: 'NJ Division of Gaming Enforcement compliance messaging, geo-location indicator',
     },
   },
   {
     id: '5',
-    name: 'Slot Bonus Feature',
-    category: 'casino',
-    description: 'Exciting bonus round activation',
+    name: 'Garden State Blackjack Live',
+    category: 'icasino-nj',
+    description: 'Live dealer blackjack for NJ players',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Bonus symbols landing, screen transformation, multiplier reveals',
-      style: 'High-energy casino excitement with game-specific theme',
-      composition: 'Full screen slot view with dynamic bonus round elements',
-      lighting: 'Flashing bonus lights, colorful game-specific lighting',
-      motion: 'Symbol animations, screen transitions, multiplier countup',
-      technical: '9:16 mobile-first, seamless loop capability',
+      subject: 'Live dealer on screen dealing blackjack, NJ player at home with perfect hand, Atlantic City casino branding',
+      style: 'Professional live casino with NJ authenticity, trustworthy and regulated',
+      composition: {
+        '1:1': 'Split screen dealer and player hand, NJ license visible',
+        '9:16': 'Vertical live dealer stream with player controls below'
+      },
+      lighting: 'Professional studio lighting for dealer, cozy home setting for player',
+      motion: 'Real-time card dealing, chip animations, winning hand reveal',
+      technical: 'HD streaming quality, "Licensed in NJ" prominent, responsible gaming footer',
     },
   },
+  
+  // iCasino PA Templates
   {
     id: '6',
-    name: 'Table Games Elegance',
-    category: 'casino',
-    description: 'Classic casino table game atmosphere',
+    name: 'Pennsylvania Slots Paradise',
+    category: 'icasino-pa',
+    description: 'PA-themed online slots experience',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Blackjack perfect hand, roulette spin, poker royal flush reveal',
-      style: 'Sophisticated casino elegance, James Bond aesthetic',
-      composition: 'Multiple angle cuts: overhead table, close-up cards, player POV',
-      lighting: 'Classic casino ambiance, focused table lighting',
-      motion: 'Smooth card deals, chip slides, dramatic reveals',
-      technical: '16:9 cinematic, 4K quality, 30fps for smoothness',
+      subject: 'PA-themed slot game (Liberty Bell symbols), player in Pittsburgh or Philly setting, big win moment',
+      style: 'Keystone State pride with modern online gaming, local authenticity',
+      composition: {
+        '1:1': 'Slot game with PA imagery, player environment visible',
+        '9:16': 'Mobile-first slot interface with PA-specific elements'
+      },
+      lighting: 'Vibrant slot graphics, warm indoor Pennsylvania home setting',
+      motion: 'Smooth reel spins, PA symbols aligning, celebration effects',
+      technical: 'PA Gaming Control Board seal visible, state-specific responsible gaming',
     },
   },
-  
-  // Live Casino Templates
   {
     id: '7',
-    name: 'Live Dealer Experience',
-    category: 'live',
-    description: 'Premium live casino atmosphere',
+    name: 'Pocono Poker Night Online',
+    category: 'icasino-pa',
+    description: 'Online poker for Pennsylvania players',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Professional dealer at luxury table, real-time game action, player interaction',
-      style: 'Exclusive VIP room atmosphere, premium and trustworthy',
-      composition: 'Multi-camera angles showing dealer, table, and UI elements',
-      lighting: 'Professional studio lighting with elegant ambiance',
-      motion: 'Smooth camera switches, natural dealer movements, card animations',
-      technical: '16:9 HD streaming quality, 60fps for live feel',
+      subject: 'Online poker table with PA players avatars, Pocono mountains visible through window, winning poker hand',
+      style: 'Sophisticated PA gaming culture, community feel with state pride',
+      composition: {
+        '1:1': 'Poker table overview with PA setting context',
+        '9:16': 'Mobile poker interface with hand close-up'
+      },
+      lighting: 'Digital poker table glow, evening Pennsylvania ambiance',
+      motion: 'Card animations, pot sliding to winner, chat reactions',
+      technical: 'PA iGaming license prominent, geolocation verified indicator',
     },
   },
+  
+  // iCasino MI Templates
   {
     id: '8',
-    name: 'Game Show Excitement',
-    category: 'live',
-    description: 'Live game show winning moment',
+    name: 'Great Lakes Mega Spins',
+    category: 'icasino-mi',
+    description: 'Michigan online casino slot adventure',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Wheel spinning, host excitement, multiplier reveal, winner celebration',
-      style: 'TV game show energy with casino excitement',
-      composition: 'Dynamic camera work, wheel close-ups, reaction shots',
-      lighting: 'Bright studio lights with colorful wheel illumination',
-      motion: 'Wheel spin slow-mo, number reveal, celebration sequence',
-      technical: '16:9 broadcast quality, multiple camera angles',
+      subject: 'Michigan-themed slot game with Great Lakes imagery, Detroit skyline view, player winning big on tablet',
+      style: 'Pure Michigan meets modern iGaming, automotive city energy',
+      composition: {
+        '1:1': 'Tablet gameplay with Michigan backdrop elements',
+        '9:16': 'Vertical slot game with MI-specific bonus features'
+      },
+      lighting: 'Bright slot animations with Michigan seasonal lighting',
+      motion: 'Dynamic reel action, Michigan symbols cascading, bonus round entry',
+      technical: 'Michigan Gaming Control Board compliance, Detroit/Lansing geo-targeting',
     },
   },
-  
-  // Promotion Templates
   {
     id: '9',
-    name: 'Welcome Bonus Reveal',
-    category: 'promotion',
-    description: 'New player welcome offer showcase',
+    name: 'Motor City Live Roulette',
+    category: 'icasino-mi',
+    description: 'Live casino roulette for Michigan market',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Bonus amount reveal, free spins animation, account credit visual',
-      style: 'Exciting and welcoming, premium offer presentation',
-      composition: 'Center-focused offer with supporting game imagery',
-      lighting: 'Bright and inviting with bonus glow effects',
-      motion: 'Number countup, gift unwrapping effect, CTA pulse',
-      technical: 'Multi-format export, clear text readability, 15 seconds',
-    },
-  },
-  {
-    id: '10',
-    name: 'Daily Promotions',
-    category: 'promotion',
-    description: 'Rotating daily offers showcase',
-    content: {
-      subject: 'Calendar animation, different daily offers, bonus variety display',
-      style: 'Dynamic and fresh, emphasizing daily value',
-      composition: 'Calendar flip or carousel showing different offers',
-      lighting: 'Bright with color coding for different offer types',
-      motion: 'Page turns, sliding transitions, offer highlights',
-      technical: '1:1 and 9:16 formats, easily updatable template',
+      subject: 'Live roulette wheel spinning, Michigan player placing bets from home, Detroit casino partnership branding',
+      style: 'Motor City glamour meets accessible online gaming',
+      composition: {
+        '1:1': 'Roulette wheel prominent with betting interface below',
+        '9:16': 'Vertical live stream optimized for mobile betting'
+      },
+      lighting: 'Casino floor lighting with cozy Michigan home contrast',
+      motion: 'Ball spinning, number selection, chip placement animations',
+      technical: 'MI online gaming regulations compliance, local responsible gaming resources',
     },
   },
   
-  // Winner Moments
+  // More Sportsbook FL Templates (40-65+)
+  {
+    id: '10',
+    name: 'Florida Racing Legends',
+    category: 'sportsbook-fl',
+    description: 'Horse racing and NASCAR betting for mature FL audience',
+    formats: ['1:1', '9:16'],
+    content: {
+      subject: 'Gulfstream Park racing, NASCAR Daytona highlights, mature bettor studying racing form on tablet',
+      style: 'Classic racing tradition meets modern betting convenience',
+      composition: {
+        '1:1': 'Racing action with betting interface overlay',
+        '9:16': 'Mobile racing form with track action in background'
+      },
+      lighting: 'Bright Florida track lighting, sophisticated interior',
+      motion: 'Horse racing footage, odds changes, form scrolling',
+      technical: 'Florida pari-mutuel regulations visible, 40-65 demographic imagery',
+    },
+  },
   {
     id: '11',
-    name: 'Big Winner Story',
-    category: 'winner',
-    description: 'Real winner testimonial style',
+    name: 'Retirement Community Game Day',
+    category: 'sportsbook-fl',
+    description: 'Active retirement sports betting in Florida',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Winner celebration, winning amount display, emotional moment',
-      style: 'Authentic and emotional, documentary feel',
-      composition: 'Portrait style with winning moment recreation',
-      lighting: 'Natural with dramatic winner spotlight moments',
-      motion: 'Slow-mo celebration, money count up, emotional reactions',
-      technical: '16:9 testimonial format, subtitle ready',
+      subject: 'Active retirees in Florida community center watching games, using betting apps together, social betting experience',
+      style: 'Vibrant retirement lifestyle, social and engaging, age-positive',
+      composition: {
+        '1:1': 'Group setting with multiple devices and TV screens',
+        '9:16': 'Individual focus with community atmosphere visible'
+      },
+      lighting: 'Bright Florida community center, natural light',
+      motion: 'Natural interactions, app tutorials, group celebrations',
+      technical: 'Large text UI elements, simplified betting interface showcase',
     },
   },
   {
     id: '12',
-    name: 'Winner Hall of Fame',
-    category: 'winner',
-    description: 'Multiple winners showcase',
+    name: 'Florida Fishing Tournament Bets',
+    category: 'sportsbook-fl',
+    description: 'Unique Florida sports betting opportunities',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Gallery of winners, amounts won, variety of games',
-      style: 'Prestigious and aspirational, wall of fame aesthetic',
-      composition: 'Grid or carousel of winner moments and amounts',
-      lighting: 'Gallery lighting with individual spotlights',
-      motion: 'Smooth transitions between winners, amount reveals',
-      technical: 'Adaptable to various formats, data-driven template',
+      subject: 'Deep sea fishing tournament, boat captain checking odds, Florida Keys setting, unique betting markets',
+      style: 'Authentic Florida outdoor lifestyle, adventurous mature audience',
+      composition: {
+        '1:1': 'Boat deck with ocean and betting app',
+        '9:16': 'Mobile app focus with marine background'
+      },
+      lighting: 'Bright Florida sun, ocean reflections',
+      motion: 'Ocean movement, app navigation, fish catch moments',
+      technical: 'Weather-resistant device usage, Florida-specific betting options',
     },
   },
   
-  // Social Media
+  // Additional iCasino Templates for balance
   {
     id: '13',
-    name: 'Quick Bet Win - Stories',
-    category: 'social',
-    description: 'Snackable winning content for stories',
+    name: 'Jersey Shore Bonus Rounds',
+    category: 'icasino-nj',
+    description: 'Beach-themed slot bonuses for NJ',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Quick bet placement to win reveal, instant gratification',
-      style: 'Fast-paced and exciting, mobile-first design',
-      composition: 'Full screen mobile UI with dynamic elements',
-      lighting: 'Bright UI with win celebration effects',
-      motion: 'Tap animations, quick transitions, celebration burst',
-      technical: '9:16 vertical, under 15 seconds, sound-off optimized',
+      subject: 'Beach-themed slot game with boardwalk symbols, bonus round with NJ landmarks, player at shore house',
+      style: 'Fun Jersey Shore atmosphere, bright and engaging',
+      composition: {
+        '1:1': 'Slot game with ocean view window',
+        '9:16': 'Full screen bonus round with NJ elements'
+      },
+      lighting: 'Bright beach day lighting, colorful slot graphics',
+      motion: 'Wave animations, seagull symbols, bonus multipliers',
+      technical: 'NJ DGE approved messaging, Atlantic City partnerships visible',
     },
   },
   {
     id: '14',
-    name: 'Tips & Predictions',
-    category: 'social',
-    description: 'Expert betting tips content',
+    name: 'Philly Freedom Spins',
+    category: 'icasino-pa',
+    description: 'Historic Philadelphia themed slots',
+    formats: ['1:1', '9:16'],
     content: {
-      subject: 'Stats display, expert analysis visualization, tip reveal',
-      style: 'Professional sports analysis with modern graphics',
-      composition: 'Data visualization with supporting footage',
-      lighting: 'Clean and professional with data highlights',
-      motion: 'Stats animation, percentage bars, prediction reveals',
-      technical: 'Multiple formats, clear data presentation, 20-30 seconds',
+      subject: 'Liberty Bell slot machine, Philadelphia skyline view, PA player winning with historic symbols',
+      style: 'Patriotic Pennsylvania pride, historical reverence with modern gaming',
+      composition: {
+        '1:1': 'Slot game with Philly landmarks framing',
+        '9:16': 'Mobile slot with Independence Hall backdrop'
+      },
+      lighting: 'Warm historic building tones, bright slot animations',
+      motion: 'Liberty Bell ringing, symbol cascades, fireworks win animation',
+      technical: 'PA Gaming Control Board seal, Philadelphia geo-targeting',
+    },
+  },
+  {
+    id: '15',
+    name: 'Great Lakes Fortune',
+    category: 'icasino-mi',
+    description: 'Michigan nature-themed casino games',
+    formats: ['1:1', '9:16'],
+    content: {
+      subject: 'Nature-themed casino game with Michigan wildlife, Great Lakes scenery, outdoor enthusiast playing',
+      style: 'Pure Michigan outdoor beauty meets online gaming excitement',
+      composition: {
+        '1:1': 'Game interface with Michigan nature photography',
+        '9:16': 'Mobile gaming with lakeside view'
+      },
+      lighting: 'Natural Michigan lighting, golden hour on lakes',
+      motion: 'Wildlife animations, water effects, seasonal changes',
+      technical: 'Michigan-specific responsible gaming resources, local partnerships',
     },
   },
 ];
@@ -238,9 +313,9 @@ export default function TemplatesPage() {
         </div>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 flex-wrap h-auto">
             <TabsTrigger value="all">All Templates</TabsTrigger>
-            {TEMPLATE_CATEGORIES.map((category) => (
+            {TEMPLATE_CATEGORIES.filter(cat => cat.id !== 'all').map((category) => (
               <TabsTrigger key={category.id} value={category.id}>
                 <span className="mr-2">{category.icon}</span>
                 {category.name}
@@ -256,7 +331,7 @@ export default function TemplatesPage() {
             </div>
           </TabsContent>
 
-          {TEMPLATE_CATEGORIES.map((category) => (
+          {TEMPLATE_CATEGORIES.filter(cat => cat.id !== 'all').map((category) => (
             <TabsContent key={category.id} value={category.id}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {SAMPLE_TEMPLATES.filter((t) => t.category === category.id).map(
@@ -278,10 +353,11 @@ interface TemplateData {
   name: string;
   category: string;
   description: string;
+  formats?: string[];
   content: {
     subject: string;
     style: string;
-    composition: string;
+    composition: string | { [key: string]: string };
     lighting: string;
     motion?: string;
     technical: string;
@@ -290,19 +366,26 @@ interface TemplateData {
 
 function TemplateCard({ template }: { template: TemplateData }) {
   const router = useRouter();
+  const [selectedFormat, setSelectedFormat] = useState(template.formats?.[0] || '16:9');
   const category = TEMPLATE_CATEGORIES.find((c) => c.id === template.category);
 
   const handleUseTemplate = () => {
+    // Get composition for selected format
+    const composition = typeof template.content.composition === 'object' 
+      ? template.content.composition[selectedFormat] || template.content.composition['1:1']
+      : template.content.composition;
+
     // Create query parameters with template data
     const params = new URLSearchParams({
       templateId: template.id,
       templateName: template.name,
       subject: template.content.subject,
       style: template.content.style,
-      composition: template.content.composition,
+      composition: composition,
       lighting: template.content.lighting,
       motion: template.content.motion || '',
-      technical: template.content.technical
+      technical: template.content.technical,
+      aspectRatio: selectedFormat
     });
     
     // Navigate to the prompt builder page with template data in URL
@@ -321,6 +404,24 @@ function TemplateCard({ template }: { template: TemplateData }) {
         
         <p className="text-sm text-muted-foreground">{template.description}</p>
         
+        {template.formats && template.formats.length > 0 && (
+          <div className="flex gap-2">
+            <span className="text-sm font-medium">Format:</span>
+            <div className="flex gap-2">
+              {template.formats.map((format) => (
+                <Badge
+                  key={format}
+                  variant={selectedFormat === format ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedFormat(format)}
+                >
+                  {format}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+        
         <div className="space-y-2 text-sm">
           <div>
             <span className="font-medium">Style: </span>
@@ -333,7 +434,7 @@ function TemplateCard({ template }: { template: TemplateData }) {
         </div>
         
         <Button className="w-full" variant="outline" onClick={handleUseTemplate}>
-          Use Template
+          Use Template ({selectedFormat})
         </Button>
       </div>
     </Card>

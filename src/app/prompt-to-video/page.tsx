@@ -10,19 +10,20 @@ import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { AnimationModel, QueueItem, Format } from '@/types';
 import { getTextToVideoModels } from '@/lib/video-models';
 
-// Default formats for video generation
+// Default formats for video generation - optimized for betting content
 const DEFAULT_FORMATS: Format[] = [
-  { aspectRatio: '16:9', width: 1920, height: 1080, name: '16:9 (1920x1080)', custom: false },
-  { aspectRatio: '9:16', width: 1080, height: 1920, name: '9:16 (1080x1920)', custom: false },
-  { aspectRatio: '1:1', width: 1080, height: 1080, name: '1:1 (1080x1080)', custom: false },
-  { aspectRatio: '4:5', width: 864, height: 1080, name: '4:5 (864x1080)', custom: false },
+  { aspectRatio: '1:1', width: 1080, height: 1080, name: '1:1 Square (Social Feed)', custom: false },
+  { aspectRatio: '9:16', width: 1080, height: 1920, name: '9:16 Vertical (Stories/Reels)', custom: false },
+  { aspectRatio: '16:9', width: 1920, height: 1080, name: '16:9 Horizontal (Web/Desktop)', custom: false },
+  { aspectRatio: '4:5', width: 864, height: 1080, name: '4:5 Portrait (Feed)', custom: false },
 ];
 
 export default function PromptToVideoPage() {
   const textToVideoModels = getTextToVideoModels();
   const [prompts, setPrompts] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(textToVideoModels[0]);
-  const [selectedFormats, setSelectedFormats] = useState<Format[]>([DEFAULT_FORMATS[0]]);
+  // Default to both 1:1 and 9:16 formats for multi-format generation
+  const [selectedFormats, setSelectedFormats] = useState<Format[]>([DEFAULT_FORMATS[0], DEFAULT_FORMATS[1]]);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'create' | 'configure' | 'queue'>('create');
@@ -101,7 +102,7 @@ export default function PromptToVideoPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">Prompt → Video</h1>
         <p className="text-muted-foreground">
-          Generate videos directly from text prompts using AI models
+          Generate videos directly from text prompts using AI models - create multiple formats (1:1, 9:16) from the same prompt
         </p>
       </div>
 

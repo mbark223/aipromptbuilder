@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -91,19 +91,41 @@ const COMPOSITION_SUGGESTIONS = [
 interface PromptBuilderProps {
   format: Format | null;
   consistency?: ConsistencySettings;
+  initialContent?: {
+    subject: string;
+    style: string;
+    composition: string;
+    lighting: string;
+    motion: string;
+    technical: string;
+  };
 }
 
-export function PromptBuilder({ format, consistency }: PromptBuilderProps) {
+export function PromptBuilder({ format, consistency, initialContent }: PromptBuilderProps) {
   const { toast } = useToast();
   const [selectedPlatform, setSelectedPlatform] = useState<'veo' | 'flows' | 'generic'>('generic');
   const [promptContent, setPromptContent] = useState({
-    subject: '',
-    style: '',
-    composition: '',
-    lighting: '',
-    motion: '',
-    technical: '',
+    subject: initialContent?.subject || '',
+    style: initialContent?.style || '',
+    composition: initialContent?.composition || '',
+    lighting: initialContent?.lighting || '',
+    motion: initialContent?.motion || '',
+    technical: initialContent?.technical || '',
   });
+
+  // Update content when initialContent changes (e.g., when loading a template)
+  useEffect(() => {
+    if (initialContent) {
+      setPromptContent({
+        subject: initialContent.subject || '',
+        style: initialContent.style || '',
+        composition: initialContent.composition || '',
+        lighting: initialContent.lighting || '',
+        motion: initialContent.motion || '',
+        technical: initialContent.technical || '',
+      });
+    }
+  }, [initialContent]);
 
   const handleSectionChange = (section: keyof typeof promptContent, value: string) => {
     setPromptContent((prev) => ({
