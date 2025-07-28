@@ -11,6 +11,12 @@ import { StaticAsset, Format, AnimationModel, QueueItem } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 // Default model - Using a verified Replicate model with exact version
 const DEFAULT_MODEL: AnimationModel = {
@@ -309,21 +315,43 @@ export default function StaticToMotionPage() {
       // Get the video URL
       const videoUrl = item.outputs[0].url;
       
-      // Create a temporary anchor element to trigger download
-      const link = document.createElement('a');
-      link.href = videoUrl;
-      link.download = `${item.asset.originalFile.name.split('.')[0]}_animated_${format.width}x${format.height}.mp4`;
-      link.target = '_blank';
+      // Generate filename with format info
+      const baseFilename = item.asset.originalFile.name.split('.')[0];
+      const filename = `${baseFilename}_animated_${format.width}x${format.height}_${format.aspectRatio.replace(':', '-')}.mp4`;
       
-      // Trigger the download
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Show success message (you can add a toast notification here)
-      console.log('Export started for:', item.asset.originalFile.name);
+      // For cross-origin URLs (like from Replicate), we need to fetch and create a blob
+      try {
+        const response = await fetch(videoUrl);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the blob URL
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+        
+        console.log('Export completed:', filename);
+      } catch (fetchError) {
+        // If fetch fails (CORS), fall back to direct link
+        console.warn('Direct download failed, opening in new tab:', fetchError);
+        const link = document.createElement('a');
+        link.href = videoUrl;
+        link.download = filename;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     } catch (error) {
       console.error('Export failed:', error);
+      alert('Export failed. You can right-click the video in the preview to save it.');
     }
   };
 
@@ -466,13 +494,36 @@ export default function StaticToMotionPage() {
                                 <Icons.eye className="h-4 w-4 mr-1" />
                                 Preview
                               </Button>
-                              <Button size="sm" onClick={() => {
-                                // TODO: Implement export
-                                console.log('Export:', item);
-                              }}>
-                                <Icons.download className="h-4 w-4 mr-1" />
-                                Export
-                              </Button>
+                              {item.formats && item.formats.length === 1 ? (
+                                <Button size="sm" onClick={() => handleExport(item, item.formats[0])}>
+                                  <Icons.download className="h-4 w-4 mr-1" />
+                                  Export
+                                </Button>
+                              ) : (
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button size="sm">
+                                      <Icons.download className="h-4 w-4 mr-1" />
+                                      Export
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" className="w-48">
+                                    {item.formats?.map((format, idx) => (
+                                      <DropdownMenuItem
+                                        key={idx}
+                                        onClick={() => handleExport(item, format)}
+                                      >
+                                        <div className="flex flex-col">
+                                          <span className="font-medium">{format.name}</span>
+                                          <span className="text-xs text-muted-foreground">
+                                            {format.width} × {format.height} • {format.aspectRatio}
+                                          </span>
+                                        </div>
+                                      </DropdownMenuItem>
+                                    ))}
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              )}
                             </>
                           )}
                           {item.status === 'failed' && (
