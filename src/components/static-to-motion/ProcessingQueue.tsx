@@ -12,6 +12,7 @@ import { QueueItem, AnimationModel } from '@/types';
 import { DownloadDialog } from './DownloadDialog';
 import { BatchDownloadDialog } from './BatchDownloadDialog';
 import { VideoPreview } from './VideoPreview';
+import { formatToModelInputs } from '@/lib/format-utils';
 
 interface ProcessingQueueProps {
   queue: QueueItem[];
@@ -68,10 +69,15 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
       }
 
       try {
-        // Process the video generation
+        // Get format information from the first selected format
+        const primaryFormat = processingItem.formats[0];
+        const formatInputs = primaryFormat ? formatToModelInputs(primaryFormat) : {};
+        
+        // Process the video generation with format information
         const result = await replicateService.generateVideo(model, {
-          prompt: (modelInputs.prompt as string) || 'Generate a video',
+          prompt: (modelInputs.prompt as string) || processingItem.prompt || 'Generate a video',
           ...modelInputs,
+          ...formatInputs, // This adds aspect_ratio and resolution
           image: processingItem.asset.originalFile.url
         });
 
