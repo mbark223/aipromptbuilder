@@ -7,7 +7,7 @@ import { FramesUploader } from '@/components/frames-to-video/FramesUploader';
 import { ConfigPanel } from '@/components/frames-to-video/ConfigPanel';
 import { ProcessingQueue } from '@/components/frames-to-video/ProcessingQueue';
 import { Preview } from '@/components/frames-to-video/Preview';
-import { StaticAsset, Veo2FrameAsset, Veo2InterpolationConfig, Veo2QueueItem, AnimationModel, QueueItem, Format } from '@/types';
+import { StaticAsset, Veo2FrameAsset, Veo2InterpolationConfig, Veo2QueueItem, AnimationModel } from '@/types';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Icons } from '@/components/icons';
 import { getFrameInterpolationModels } from '@/lib/video-models';
@@ -25,7 +25,7 @@ export default function FramesToVideoPage() {
     interpolationType: 'smooth',
     transitionStyle: 'blend'
   });
-  const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
+  const [processingQueue, setProcessingQueue] = useState<Veo2QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'upload' | 'configure' | 'process' | 'preview'>('upload');
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(defaultModel);
 
@@ -133,8 +133,6 @@ export default function FramesToVideoPage() {
           <ProcessingQueue
             queue={processingQueue}
             onUpdateQueue={setProcessingQueue}
-            model={selectedModel}
-            modelInputs={{}}
           />
         </TabsContent>
 
