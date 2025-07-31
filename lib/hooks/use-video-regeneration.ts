@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { VideoEditOptions } from '@/lib/services/video/ffmpeg-service';
 
 interface RegenerationOptions {
@@ -29,6 +29,49 @@ export function useVideoRegeneration() {
     regeneratedVideoUrl: null,
     error: null
   });
+
+  const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const pollGenerationStatus = useCallback(async (predictionId: string) => {
+    pollIntervalRef.current = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/video/generation-status?id=${predictionId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to check status');
+        }
+
+        const result = await response.json();
+        const { generation, isComplete } = result;
+
+        if (isComplete) {
+          if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current);
+            pollIntervalRef.current = null;
+          }
+          
+          setState(prev => ({
+            ...prev,
+            isRegenerating: false,
+            regenerationStatus: generation.status,
+            regeneratedVideoUrl: generation.output || null,
+            error: generation.error || null
+          }));
+        }
+      } catch (error) {
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+          pollIntervalRef.current = null;
+        }
+        setState(prev => ({
+          ...prev,
+          isRegenerating: false,
+          regenerationStatus: 'failed',
+          error: error instanceof Error ? error.message : 'Status check failed'
+        }));
+      }
+    }, 2000);
+  }, []);
 
   const editAndRegenerate = useCallback(async (
     videoUrl: string,
@@ -81,44 +124,14 @@ export function useVideoRegeneration() {
         error: error instanceof Error ? error.message : 'Unknown error'
       }));
     }
-  }, []);
-
-  const pollGenerationStatus = useCallback(async (predictionId: string) => {
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await fetch(`/api/video/generation-status?id=${predictionId}`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to check status');
-        }
-
-        const result = await response.json();
-        const { generation, isComplete } = result;
-
-        if (isComplete) {
-          clearInterval(pollInterval);
-          
-          setState(prev => ({
-            ...prev,
-            isRegenerating: false,
-            regenerationStatus: generation.status,
-            regeneratedVideoUrl: generation.output || null,
-            error: generation.error || null
-          }));
-        }
-      } catch (error) {
-        clearInterval(pollInterval);
-        setState(prev => ({
-          ...prev,
-          isRegenerating: false,
-          regenerationStatus: 'failed',
-          error: error instanceof Error ? error.message : 'Status check failed'
-        }));
-      }
-    }, 2000);
-  }, []);
+  }, [pollGenerationStatus]);
 
   const reset = useCallback(() => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+      pollIntervalRef.current = null;
+    }
+    
     setState({
       isEditing: false,
       isRegenerating: false,

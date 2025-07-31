@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ffmpegService, VideoEditOptions } from '@/lib/services/video/ffmpeg-service';
-import { writeFile, unlink } from 'fs/promises';
+import { writeFile } from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 

@@ -106,7 +106,7 @@ class FFmpegService {
       const command = ffmpeg(inputPath)
         .input(overlayPath);
 
-      let overlay = `overlay=${x}:${y}`;
+      const overlay = `overlay=${x}:${y}`;
       if (width && height) {
         command.complexFilter([
           `[1:v]scale=${width}:${height}[overlay]`,
@@ -179,7 +179,7 @@ class FFmpegService {
 
       if (options.overlayImage) {
         command.input(options.overlayImage.path);
-        let overlay = `overlay=${options.overlayImage.x}:${options.overlayImage.y}`;
+        const overlay = `overlay=${options.overlayImage.x}:${options.overlayImage.y}`;
         if (options.overlayImage.width && options.overlayImage.height) {
           command.complexFilter([
             `[1:v]scale=${options.overlayImage.width}:${options.overlayImage.height}[overlay]`,
