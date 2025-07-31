@@ -33,6 +33,14 @@ interface OverlayRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if FFmpeg is available
+    if (!ffmpegService.isFFmpegAvailable()) {
+      return NextResponse.json(
+        { error: 'Video editing is not available in this environment. FFmpeg is required.' },
+        { status: 503 }
+      );
+    }
+
     const body: OverlayRequest = await request.json();
     const { videoUrl, overlay } = body;
 

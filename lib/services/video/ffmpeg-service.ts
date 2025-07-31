@@ -1,9 +1,16 @@
 import ffmpeg from 'fluent-ffmpeg';
-import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-ffmpeg.setFfmpegPath(ffmpegPath);
+// Only set FFmpeg path in non-serverless environments
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  try {
+    const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
+    ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+  } catch (error) {
+    console.warn('FFmpeg installer not available, using system FFmpeg');
+  }
+}
 
 export interface VideoEditOptions {
   trimStart?: number;
@@ -30,10 +37,28 @@ export interface VideoEditOptions {
 
 class FFmpegService {
   private tempDir: string;
+  private isAvailable: boolean = false;
 
   constructor() {
     this.tempDir = path.join(process.cwd(), 'tmp', 'video-edits');
     this.ensureTempDir();
+    this.checkAvailability();
+  }
+
+  private async checkAvailability() {
+    try {
+      // Check if FFmpeg is available
+      await new Promise((resolve, reject) => {
+        ffmpeg.getAvailableFormats((err, formats) => {
+          if (err) reject(err);
+          else resolve(formats);
+        });
+      });
+      this.isAvailable = true;
+    } catch (error) {
+      console.warn('FFmpeg is not available in this environment');
+      this.isAvailable = false;
+    }
   }
 
   private async ensureTempDir() {
@@ -44,7 +69,14 @@ class FFmpegService {
     }
   }
 
+  private ensureAvailable() {
+    if (!this.isAvailable) {
+      throw new Error('FFmpeg is not available in this environment. Video editing features require FFmpeg to be installed.');
+    }
+  }
+
   async trimVideo(inputPath: string, outputPath: string, startTime: number, duration: number): Promise<void> {
+    this.ensureAvailable();
     return new Promise((resolve, reject) => {
       ffmpeg(inputPath)
         .setStartTime(startTime)
@@ -57,6 +89,7 @@ class FFmpegService {
   }
 
   async applyFilters(inputPath: string, outputPath: string, filters: string[]): Promise<void> {
+    this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const command = ffmpeg(inputPath);
       
@@ -81,6 +114,7 @@ class FFmpegService {
     fontSize: number = 24, 
     color: string = 'white'
   ): Promise<void> {
+    this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const drawtext = `drawtext=text='${text}':fontsize=${fontSize}:fontcolor=${color}:x=${x}:y=${y}`;
       
@@ -102,6 +136,7 @@ class FFmpegService {
     width?: number,
     height?: number
   ): Promise<void> {
+    this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const command = ffmpeg(inputPath)
         .input(overlayPath);
@@ -125,6 +160,7 @@ class FFmpegService {
   }
 
   async changeSpeed(inputPath: string, outputPath: string, speed: number): Promise<void> {
+    this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const videoFilter = `setpts=${1/speed}*PTS`;
       const audioFilter = speed > 1 ? `atempo=${speed}` : `atempo=${speed}`;
@@ -140,6 +176,7 @@ class FFmpegService {
   }
 
   async applyComplexEdit(inputPath: string, outputPath: string, options: VideoEditOptions): Promise<void> {
+    this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const command = ffmpeg(inputPath);
       const filters: string[] = [];
@@ -199,6 +236,7 @@ class FFmpegService {
   }
 
   async getVideoInfo(inputPath: string): Promise<ffmpeg.FfprobeData> {
+    this.ensureAvailable();
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(inputPath, (err, data) => {
         if (err) {
@@ -222,6 +260,10 @@ class FFmpegService {
     } catch (error) {
       console.error('Failed to cleanup temp file:', error);
     }
+  }
+
+  isFFmpegAvailable(): boolean {
+    return this.isAvailable;
   }
 }
 
