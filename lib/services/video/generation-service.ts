@@ -64,8 +64,8 @@ class VideoGenerationService {
         id: prediction.id,
         status: prediction.status,
         output: prediction.output as string,
-        error: prediction.error,
-        logs: prediction.logs,
+        error: prediction.error as string | undefined,
+        logs: prediction.logs as string | undefined,
         metrics: prediction.metrics
       };
     } catch (error) {
@@ -82,8 +82,8 @@ class VideoGenerationService {
         id: prediction.id,
         status: prediction.status,
         output: prediction.output as string,
-        error: prediction.error,
-        logs: prediction.logs,
+        error: prediction.error as string | undefined,
+        logs: prediction.logs as string | undefined,
         metrics: prediction.metrics
       };
     } catch (error) {
