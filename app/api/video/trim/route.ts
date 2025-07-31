@@ -1,0 +1,86 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { ffmpegService } from '@/lib/services/video/ffmpeg-service';
+import { writeFile } from 'fs/promises';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+
+export const runtime = 'nodejs';
+export const maxDuration = 300;
+
+interface TrimRequest {
+  videoUrl: string;
+  startTime: number;
+  endTime: number;
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body: TrimRequest = await request.json();
+    const { videoUrl, startTime, endTime } = body;
+
+    if (!videoUrl || startTime === undefined || endTime === undefined) {
+      return NextResponse.json(
+        { error: 'Video URL, start time, and end time are required' },
+        { status: 400 }
+      );
+    }
+
+    if (startTime < 0 || endTime <= startTime) {
+      return NextResponse.json(
+        { error: 'Invalid time range' },
+        { status: 400 }
+      );
+    }
+
+    const tempInputPath = path.join(process.cwd(), 'tmp', `input_${uuidv4()}.mp4`);
+    const tempOutputPath = ffmpegService.generateTempFilePath();
+
+    try {
+      const videoResponse = await fetch(videoUrl);
+      if (!videoResponse.ok) {
+        throw new Error('Failed to fetch video');
+      }
+
+      const videoBuffer = await videoResponse.arrayBuffer();
+      await writeFile(tempInputPath, Buffer.from(videoBuffer));
+
+      const duration = endTime - startTime;
+      await ffmpegService.trimVideo(tempInputPath, tempOutputPath, startTime, duration);
+
+      const trimmedVideoBuffer = await import('fs/promises').then(fs => 
+        fs.readFile(tempOutputPath)
+      );
+
+      const base64Video = trimmedVideoBuffer.toString('base64');
+      const dataUrl = `data:video/mp4;base64,${base64Video}`;
+
+      await ffmpegService.cleanupTempFile(tempInputPath);
+      await ffmpegService.cleanupTempFile(tempOutputPath);
+
+      return NextResponse.json({
+        success: true,
+        trimmedVideoUrl: dataUrl,
+        metadata: {
+          originalDuration: endTime,
+          trimmedDuration: duration,
+          startTime,
+          endTime,
+          timestamp: new Date().toISOString()
+        }
+      });
+
+    } catch (error) {
+      await ffmpegService.cleanupTempFile(tempInputPath).catch(() => {});
+      await ffmpegService.cleanupTempFile(tempOutputPath).catch(() => {});
+      
+      throw error;
+    }
+
+  } catch (error) {
+    console.error('Video trim error:', error);
+    return NextResponse.json(
+      { error: 'Failed to trim video', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
+  }
+}
