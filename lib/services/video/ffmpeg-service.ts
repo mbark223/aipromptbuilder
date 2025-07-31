@@ -2,13 +2,15 @@ import ffmpeg from 'fluent-ffmpeg';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-// Only set FFmpeg path in non-serverless environments
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  try {
-    const ffmpegInstaller = require('@ffmpeg-installer/ffmpeg');
-    ffmpeg.setFfmpegPath(ffmpegInstaller.path);
-  } catch (error) {
-    console.warn('FFmpeg installer not available, using system FFmpeg');
+// Dynamic import for FFmpeg installer in non-serverless environments
+async function setupFFmpegPath() {
+  if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    try {
+      const ffmpegInstaller = await import('@ffmpeg-installer/ffmpeg');
+      ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+    } catch {
+      console.warn('FFmpeg installer not available, using system FFmpeg');
+    }
   }
 }
 
@@ -38,11 +40,18 @@ export interface VideoEditOptions {
 class FFmpegService {
   private tempDir: string;
   private isAvailable: boolean = false;
+  private initialized: boolean = false;
 
   constructor() {
     this.tempDir = path.join(process.cwd(), 'tmp', 'video-edits');
-    this.ensureTempDir();
-    this.checkAvailability();
+    this.initialize();
+  }
+
+  private async initialize() {
+    await this.ensureTempDir();
+    await setupFFmpegPath();
+    await this.checkAvailability();
+    this.initialized = true;
   }
 
   private async checkAvailability() {
@@ -55,7 +64,7 @@ class FFmpegService {
         });
       });
       this.isAvailable = true;
-    } catch (error) {
+    } catch {
       console.warn('FFmpeg is not available in this environment');
       this.isAvailable = false;
     }
@@ -69,6 +78,12 @@ class FFmpegService {
     }
   }
 
+  private async ensureInitialized() {
+    if (!this.initialized) {
+      await this.initialize();
+    }
+  }
+
   private ensureAvailable() {
     if (!this.isAvailable) {
       throw new Error('FFmpeg is not available in this environment. Video editing features require FFmpeg to be installed.');
@@ -76,6 +91,7 @@ class FFmpegService {
   }
 
   async trimVideo(inputPath: string, outputPath: string, startTime: number, duration: number): Promise<void> {
+    await this.ensureInitialized();
     this.ensureAvailable();
     return new Promise((resolve, reject) => {
       ffmpeg(inputPath)
@@ -89,6 +105,7 @@ class FFmpegService {
   }
 
   async applyFilters(inputPath: string, outputPath: string, filters: string[]): Promise<void> {
+    await this.ensureInitialized();
     this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const command = ffmpeg(inputPath);
@@ -114,6 +131,7 @@ class FFmpegService {
     fontSize: number = 24, 
     color: string = 'white'
   ): Promise<void> {
+    await this.ensureInitialized();
     this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const drawtext = `drawtext=text='${text}':fontsize=${fontSize}:fontcolor=${color}:x=${x}:y=${y}`;
@@ -136,6 +154,7 @@ class FFmpegService {
     width?: number,
     height?: number
   ): Promise<void> {
+    await this.ensureInitialized();
     this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const command = ffmpeg(inputPath)
@@ -160,6 +179,7 @@ class FFmpegService {
   }
 
   async changeSpeed(inputPath: string, outputPath: string, speed: number): Promise<void> {
+    await this.ensureInitialized();
     this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const videoFilter = `setpts=${1/speed}*PTS`;
@@ -176,6 +196,7 @@ class FFmpegService {
   }
 
   async applyComplexEdit(inputPath: string, outputPath: string, options: VideoEditOptions): Promise<void> {
+    await this.ensureInitialized();
     this.ensureAvailable();
     return new Promise((resolve, reject) => {
       const command = ffmpeg(inputPath);
@@ -236,6 +257,7 @@ class FFmpegService {
   }
 
   async getVideoInfo(inputPath: string): Promise<ffmpeg.FfprobeData> {
+    await this.ensureInitialized();
     this.ensureAvailable();
     return new Promise((resolve, reject) => {
       ffmpeg.ffprobe(inputPath, (err, data) => {
