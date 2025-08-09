@@ -38,7 +38,7 @@ interface VideoClipsPanelProps {
   clips: VideoClip[];
   selectedClips: Set<string>;
   exportFormat: '1080x1080' | '1080x1920';
-  onUpdateClip: (clipId: string, updates: Partial<VideoClip>) => void;
+  onUpdateClip?: (clipId: string, updates: Partial<VideoClip>) => void;
   onSelectClip: (clipId: string) => void;
   onSelectAll: () => void;
   onSelectNone: () => void;
@@ -52,7 +52,6 @@ export function VideoClipsPanel({
   clips,
   selectedClips,
   exportFormat,
-  onUpdateClip,
   onSelectClip,
   onSelectAll,
   onSelectNone,
@@ -101,7 +100,7 @@ export function VideoClipsPanel({
         title: 'Clip exported',
         description: `Clip ${clip.id} exported in ${exportFormat} format`,
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Export failed',
         description: 'Failed to export clip',
@@ -130,7 +129,7 @@ export function VideoClipsPanel({
           <h3 className="text-lg font-medium">Generated Clips</h3>
           <Badge variant="secondary">{clips.length} clips</Badge>
           {selectedClips.size > 0 && (
-            <Badge variant="primary">{selectedClips.size} selected</Badge>
+            <Badge variant="default">{selectedClips.size} selected</Badge>
           )}
           <Badge variant="outline">{exportFormat}</Badge>
         </div>

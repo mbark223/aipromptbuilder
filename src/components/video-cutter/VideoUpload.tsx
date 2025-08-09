@@ -3,7 +3,6 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Icons } from '@/components/icons';
-import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 
@@ -130,7 +129,7 @@ export function VideoUpload({ onVideoUpload }: VideoUploadProps) {
         title: 'Video uploaded successfully',
         description: `Duration: ${Math.floor(duration)}s, Resolution: ${dimensions.width}x${dimensions.height}`,
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Upload failed',
         description: 'Failed to process video file',
