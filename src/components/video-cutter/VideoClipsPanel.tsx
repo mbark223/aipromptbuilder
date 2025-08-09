@@ -8,6 +8,9 @@ import { Icons } from '@/components/icons';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
+import { useFFmpeg } from '@/hooks/use-ffmpeg';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 interface VideoFile {
   file: File;
@@ -63,7 +66,9 @@ export function VideoClipsPanel({
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
   const [exportingClipId, setExportingClipId] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(false);
+  const [useClientProcessing, setUseClientProcessing] = useState(false);
   const videoRefs = useRef<{ [key: string]: HTMLVideoElement }>({});
+  const { processVideo, isProcessing, progress: ffmpegProgress, preloadFFmpeg } = useFFmpeg();
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -93,45 +98,76 @@ export function VideoClipsPanel({
     setExportingClipId(clip.id);
     
     try {
-      // Call the export API
-      const response = await fetch('/api/video-export', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          videoUrl: video.url,
-          startTime: clip.startTime,
-          endTime: clip.endTime,
-          format: exportFormat,
-          clipId: clip.id
-        }),
-      });
+      if (useClientProcessing) {
+        // Use client-side FFmpeg processing
+        const processedBlob = await processVideo(
+          video.url,
+          clip.startTime,
+          clip.endTime,
+          exportFormat
+        );
 
-      if (!response.ok) {
-        throw new Error('Export failed');
-      }
-
-      const data = await response.json();
-      
-      if (data.success && data.downloadUrl) {
-        // Use the download API for better cross-origin support
-        const downloadUrl = `/api/video-download?url=${encodeURIComponent(data.downloadUrl)}&filename=${encodeURIComponent(data.filename)}`;
-        
-        // Create a download link
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = data.filename || `clip-${clip.id}.mp4`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        toast({
-          title: 'Clip exported successfully',
-          description: `Downloaded ${data.filename}`,
-        });
+        if (processedBlob) {
+          // Create download link for processed video
+          const url = URL.createObjectURL(processedBlob);
+          const filename = `clip-${clip.id}-${exportFormat.replace('x', '-')}-${clip.startTime}s-${clip.endTime}s.mp4`;
+          
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Clean up the blob URL
+          setTimeout(() => URL.revokeObjectURL(url), 100);
+          
+          toast({
+            title: 'Clip exported successfully',
+            description: `Downloaded ${filename}`,
+          });
+        }
       } else {
-        throw new Error(data.error || 'Export failed');
+        // Use server-side processing (existing code)
+        const response = await fetch('/api/video-export', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            videoUrl: video.url,
+            startTime: clip.startTime,
+            endTime: clip.endTime,
+            format: exportFormat,
+            clipId: clip.id
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Export failed');
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.downloadUrl) {
+          // Use the download API for better cross-origin support
+          const downloadUrl = `/api/video-download?url=${encodeURIComponent(data.downloadUrl)}&filename=${encodeURIComponent(data.filename)}`;
+          
+          // Create a download link
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = data.filename || `clip-${clip.id}.mp4`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          toast({
+            title: 'Clip exported successfully',
+            description: `Downloaded ${data.filename}`,
+          });
+        } else {
+          throw new Error(data.error || 'Export failed');
+        }
       }
     } catch (error) {
       console.error('Export error:', error);
@@ -295,7 +331,7 @@ export function VideoClipsPanel({
                   size="sm"
                   className="flex-1"
                   onClick={() => exportClip(clip)}
-                  disabled={exportingClipId === clip.id || isExporting}
+                  disabled={exportingClipId === clip.id || isExporting || isProcessing}
                 >
                   {exportingClipId === clip.id ? (
                     <>
@@ -329,15 +365,55 @@ export function VideoClipsPanel({
         ))}
       </div>
 
-      <div className="bg-muted/50 rounded-lg p-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Icons.info className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium text-sm">Export Information</span>
+      <div className="space-y-4">
+        <div className="bg-muted/50 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Icons.cog className="h-4 w-4 text-muted-foreground" />
+              <span className="font-medium text-sm">Processing Options</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="client-processing" className="text-sm">
+                Client-side processing
+              </Label>
+              <Switch
+                id="client-processing"
+                checked={useClientProcessing}
+                onCheckedChange={(checked) => {
+                  setUseClientProcessing(checked);
+                  if (checked) {
+                    preloadFFmpeg();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          {useClientProcessing && (
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">
+                Videos will be processed directly in your browser. This may take longer but ensures privacy.
+              </p>
+              {isProcessing && ffmpegProgress.message && (
+                <div className="space-y-1">
+                  <p className="text-xs">{ffmpegProgress.message}</p>
+                  <Progress value={ffmpegProgress.progress} className="h-1" />
+                </div>
+              )}
+            </div>
+          )}
         </div>
-        <p className="text-sm text-muted-foreground">
-          Clips will be exported in {exportFormat} format. Each clip includes the selected video segment
-          {clips.some(c => c.endCard) && ' and any configured end cards'}.
-        </p>
+        
+        <div className="bg-muted/50 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Icons.info className="h-4 w-4 text-muted-foreground" />
+            <span className="font-medium text-sm">Export Information</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Clips will be exported in {exportFormat} format. Each clip includes the selected video segment
+            {clips.some(c => c.endCard) && ' and any configured end cards'}.
+            {useClientProcessing && ' Videos are trimmed and formatted in your browser.'}
+          </p>
+        </div>
       </div>
     </div>
   );
