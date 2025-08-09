@@ -8,6 +8,7 @@ const navigation = [
   { name: 'Static → Motion', href: '/static-to-motion', icon: '🎬' },
   { name: 'Frames → Video', href: '/frames-to-video', icon: '🎞️' },
   { name: 'Prompt → Video', href: '/prompt-to-video', icon: '✨' },
+  { name: 'Video Cutter', href: '/video-cutter', icon: '✂️' },
 ];
 
 export function Sidebar() {

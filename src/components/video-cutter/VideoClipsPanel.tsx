@@ -1,0 +1,264 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Icons } from '@/components/icons';
+import { useToast } from '@/hooks/use-toast';
+
+interface VideoFile {
+  file: File;
+  url: string;
+  duration: number;
+  width: number;
+  height: number;
+}
+
+interface EndCard {
+  text: string;
+  backgroundColor: string;
+  textColor: string;
+  duration: number;
+}
+
+interface VideoClip {
+  id: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  thumbnailUrl?: string;
+  endCard?: EndCard;
+}
+
+interface VideoClipsPanelProps {
+  video: VideoFile;
+  clips: VideoClip[];
+  exportFormat: '1080x1080' | '1080x1920';
+  onUpdateClip: (clipId: string, updates: Partial<VideoClip>) => void;
+}
+
+export function VideoClipsPanel({
+  video,
+  clips,
+  exportFormat,
+  onUpdateClip
+}: VideoClipsPanelProps) {
+  const { toast } = useToast();
+  const [playingClipId, setPlayingClipId] = useState<string | null>(null);
+  const [exportingClipId, setExportingClipId] = useState<string | null>(null);
+  const [exportingAll, setExportingAll] = useState(false);
+  const videoRefs = useRef<{ [key: string]: HTMLVideoElement }>({});
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const playClip = (clipId: string) => {
+    const videoEl = videoRefs.current[clipId];
+    if (!videoEl) return;
+
+    if (playingClipId === clipId) {
+      videoEl.pause();
+      setPlayingClipId(null);
+    } else {
+      // Pause any currently playing video
+      if (playingClipId && videoRefs.current[playingClipId]) {
+        videoRefs.current[playingClipId].pause();
+      }
+      
+      videoEl.play();
+      setPlayingClipId(clipId);
+    }
+  };
+
+  const exportClip = async (clip: VideoClip) => {
+    setExportingClipId(clip.id);
+    
+    try {
+      // In a real implementation, this would use FFmpeg.wasm or a server-side solution
+      // For now, we'll simulate the export process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: 'Clip exported',
+        description: `Clip ${clip.id} exported in ${exportFormat} format`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Export failed',
+        description: 'Failed to export clip',
+        variant: 'destructive',
+      });
+    } finally {
+      setExportingClipId(null);
+    }
+  };
+
+  const exportAllClips = async () => {
+    setExportingAll(true);
+    
+    try {
+      // Simulate batch export
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      toast({
+        title: 'All clips exported',
+        description: `${clips.length} clips exported in ${exportFormat} format`,
+      });
+    } catch (error) {
+      toast({
+        title: 'Export failed',
+        description: 'Failed to export clips',
+        variant: 'destructive',
+      });
+    } finally {
+      setExportingAll(false);
+    }
+  };
+
+  const handleVideoTimeUpdate = (clipId: string, videoEl: HTMLVideoElement) => {
+    const clip = clips.find(c => c.id === clipId);
+    if (!clip) return;
+    
+    // Loop the clip within its time range
+    if (videoEl.currentTime >= clip.endTime || videoEl.currentTime < clip.startTime) {
+      videoEl.currentTime = clip.startTime;
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <h3 className="text-lg font-medium">Generated Clips</h3>
+          <Badge variant="secondary">{clips.length} clips</Badge>
+          <Badge variant="outline">{exportFormat}</Badge>
+        </div>
+        
+        <Button
+          onClick={exportAllClips}
+          disabled={exportingAll || clips.length === 0}
+        >
+          {exportingAll ? (
+            <>
+              <Icons.loader className="mr-2 h-4 w-4 animate-spin" />
+              Exporting All...
+            </>
+          ) : (
+            <>
+              <Icons.download className="mr-2 h-4 w-4" />
+              Export All Clips
+            </>
+          )}
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {clips.map((clip, index) => (
+          <Card key={clip.id} className="overflow-hidden">
+            <div className="relative bg-black aspect-square">
+              <video
+                ref={(el) => {
+                  if (el) videoRefs.current[clip.id] = el;
+                }}
+                src={video.url}
+                className="w-full h-full object-cover"
+                onTimeUpdate={(e) => handleVideoTimeUpdate(clip.id, e.currentTarget)}
+                onEnded={() => setPlayingClipId(null)}
+                muted
+              />
+              
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="rounded-full bg-white/80 hover:bg-white"
+                  onClick={() => playClip(clip.id)}
+                >
+                  {playingClipId === clip.id ? (
+                    <Icons.pause className="h-6 w-6" />
+                  ) : (
+                    <Icons.play className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
+              
+              <div className="absolute top-2 left-2">
+                <Badge variant="secondary" className="bg-black/80 text-white">
+                  Clip {index + 1}
+                </Badge>
+              </div>
+
+              {clip.endCard && (
+                <div className="absolute top-2 right-2">
+                  <Badge variant="default" className="bg-green-600">
+                    Has End Card
+                  </Badge>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-4 space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  {formatTime(clip.startTime)} - {formatTime(clip.endTime)}
+                </span>
+                <Badge variant="outline">{clip.duration}s</Badge>
+              </div>
+              
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => exportClip(clip)}
+                  disabled={exportingClipId === clip.id}
+                >
+                  {exportingClipId === clip.id ? (
+                    <>
+                      <Icons.loader className="mr-2 h-3 w-3 animate-spin" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <Icons.download className="mr-2 h-3 w-3" />
+                      Export
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    // This would open an end card editor modal
+                    toast({
+                      title: 'End Card Editor',
+                      description: 'Edit end card in the section below',
+                    });
+                  }}
+                >
+                  <Icons.edit className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="bg-muted/50 rounded-lg p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Icons.info className="h-4 w-4 text-muted-foreground" />
+          <span className="font-medium text-sm">Export Information</span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Clips will be exported in {exportFormat} format. Each clip includes the selected video segment
+          {clips.some(c => c.endCard) && ' and any configured end cards'}.
+        </p>
+      </div>
+    </div>
+  );
+}

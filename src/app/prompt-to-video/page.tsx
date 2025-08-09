@@ -27,6 +27,7 @@ export default function PromptToVideoPage() {
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'create' | 'configure' | 'queue'>('create');
+  const [videosPerPrompt, setVideosPerPrompt] = useState(1);
 
   const handlePromptsGenerated = (generatedPrompts: string[]) => {
     setPrompts(generatedPrompts);
@@ -36,62 +37,71 @@ export default function PromptToVideoPage() {
   };
 
   const handleStartProcessing = () => {
-    const newQueueItems: QueueItem[] = prompts.map((prompt, index) => ({
-      id: `prompt-${Date.now()}-${index}`,
-      assetId: `prompt-asset-${Date.now()}-${index}`,
-      asset: {
-        id: `prompt-asset-${Date.now()}-${index}`,
-        projectId: 'current-project',
-        originalFile: {
-          url: '',
-          name: `prompt-${index + 1}`,
-          size: 0,
-          format: 'mp4' as 'jpg' | 'png' | 'webp' | 'svg',
-          dimensions: {
-            width: 1920,
-            height: 1080,
-            aspectRatio: '16:9'
-          }
-        },
-        processedVersions: [],
-        animationProfile: {
-          id: 'prompt-animation',
-          name: 'Prompt to Video',
-          type: 'ai',
-          movements: [],
-          duration: 4,
-          loop: false,
-          transitions: {
-            in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
-            out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
-          }
-        },
-        metadata: {
-          uploaded: new Date(),
-          author: 'current-user',
-          tags: ['prompt-to-video'],
-        }
-      },
-      formats: selectedFormats,
-      animation: {
-        id: 'prompt-animation',
-        name: 'Prompt to Video',
-        type: 'ai',
-        movements: [],
-        duration: 4,
-        fps: 30,
-        loop: false,
-        transitions: {
-          in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
-          out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
-        }
-      },
-      animationType: 'ai',
-      model: selectedModel,
-      prompt: prompt,
-      status: 'pending',
-      progress: 0
-    }));
+    const newQueueItems: QueueItem[] = [];
+    
+    prompts.forEach((prompt, promptIndex) => {
+      for (let videoIndex = 0; videoIndex < videosPerPrompt; videoIndex++) {
+        const timestamp = Date.now();
+        const uniqueId = `prompt-${timestamp}-${promptIndex}-${videoIndex}`;
+        
+        newQueueItems.push({
+          id: uniqueId,
+          assetId: `prompt-asset-${timestamp}-${promptIndex}-${videoIndex}`,
+          asset: {
+            id: `prompt-asset-${timestamp}-${promptIndex}-${videoIndex}`,
+            projectId: 'current-project',
+            originalFile: {
+              url: '',
+              name: `prompt-${promptIndex + 1}${videosPerPrompt > 1 ? `-v${videoIndex + 1}` : ''}`,
+              size: 0,
+              format: 'mp4' as 'jpg' | 'png' | 'webp' | 'svg',
+              dimensions: {
+                width: 1920,
+                height: 1080,
+                aspectRatio: '16:9'
+              }
+            },
+            processedVersions: [],
+            animationProfile: {
+              id: 'prompt-animation',
+              name: 'Prompt to Video',
+              type: 'ai',
+              movements: [],
+              duration: 4,
+              loop: false,
+              transitions: {
+                in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+                out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+              }
+            },
+            metadata: {
+              uploaded: new Date(),
+              author: 'current-user',
+              tags: ['prompt-to-video'],
+            }
+          },
+          formats: selectedFormats,
+          animation: {
+            id: 'prompt-animation',
+            name: 'Prompt to Video',
+            type: 'ai',
+            movements: [],
+            duration: 4,
+            fps: 30,
+            loop: false,
+            transitions: {
+              in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
+              out: { type: 'fade', duration: 0.5, easing: 'ease-in' }
+            }
+          },
+          animationType: 'ai',
+          model: selectedModel,
+          prompt: prompt,
+          status: 'pending',
+          progress: 0
+        });
+      }
+    });
     
     setProcessingQueue([...processingQueue, ...newQueueItems]);
     setActiveView('queue');
@@ -134,6 +144,8 @@ export default function PromptToVideoPage() {
               onSelectFormats={setSelectedFormats}
               modelInputs={modelInputs}
               onModelInputsChange={setModelInputs}
+              videosPerPrompt={videosPerPrompt}
+              onVideosPerPromptChange={setVideosPerPrompt}
             />
           </Card>
 
@@ -143,6 +155,7 @@ export default function PromptToVideoPage() {
               onUpdatePrompts={setPrompts}
               selectedModel={selectedModel}
               selectedFormats={selectedFormats}
+              videosPerPrompt={videosPerPrompt}
               onStartProcessing={handleStartProcessing}
             />
           )}

@@ -12,6 +12,7 @@ interface VideoGenerationPanelProps {
   onUpdatePrompts: (prompts: string[]) => void;
   selectedModel: AnimationModel;
   selectedFormats: Format[];
+  videosPerPrompt: number;
   onStartProcessing: () => void;
 }
 
@@ -20,10 +21,10 @@ export function VideoGenerationPanel({
   onUpdatePrompts,
   selectedModel,
   selectedFormats,
+  videosPerPrompt,
   onStartProcessing,
 }: VideoGenerationPanelProps) {
-  const totalVideos = prompts.length * selectedFormats.length;
-  const estimatedCost = totalVideos * (selectedModel.costPerGeneration || 0);
+  const totalVideos = prompts.length * selectedFormats.length * videosPerPrompt;
 
   const handleRemovePrompt = (index: number) => {
     const newPrompts = prompts.filter((_, i) => i !== index);
@@ -55,8 +56,8 @@ export function VideoGenerationPanel({
           </Card>
           <Card className="p-4 bg-muted/50">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Est. Cost</p>
-              <p className="text-2xl font-bold">${estimatedCost.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground">Videos per Prompt</p>
+              <p className="text-2xl font-bold">{videosPerPrompt}</p>
             </div>
           </Card>
         </div>
@@ -73,6 +74,11 @@ export function VideoGenerationPanel({
                     <div className="flex-1">
                       <p className="text-sm font-medium mb-1">Prompt {index + 1}</p>
                       <p className="text-sm text-muted-foreground">{prompt}</p>
+                      {videosPerPrompt > 1 && (
+                        <Badge variant="secondary" className="mt-1 text-xs">
+                          ×{videosPerPrompt} videos
+                        </Badge>
+                      )}
                       <div className="flex gap-1 mt-2">
                         {selectedFormats.map((format, fIdx) => (
                           <Badge key={fIdx} variant="outline" className="text-xs">
@@ -101,7 +107,7 @@ export function VideoGenerationPanel({
             <span className="font-medium">Generation Details</span>
           </div>
           <ul className="space-y-1 text-sm text-muted-foreground">
-            <li>• Each prompt will be generated in {selectedFormats.length} format{selectedFormats.length > 1 ? 's' : ''}</li>
+            <li>• Each prompt will be generated {videosPerPrompt} time{videosPerPrompt > 1 ? 's' : ''} in {selectedFormats.length} format{selectedFormats.length > 1 ? 's' : ''}</li>
             <li>• Using {selectedModel.name} by {selectedModel.provider}</li>
             <li>• Estimated generation time: {totalVideos * 2}-{totalVideos * 5} minutes</li>
             {selectedModel.capabilities.includes('Native Audio') && (
