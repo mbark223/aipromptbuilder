@@ -3,6 +3,9 @@ import { createVideoStorageService } from '@/lib/storage';
 
 export const runtime = 'nodejs';
 
+// Configure for large file uploads (4GB)
+export const maxDuration = 300; // 5 minutes timeout for large uploads
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

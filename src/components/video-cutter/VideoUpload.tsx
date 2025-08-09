@@ -69,11 +69,11 @@ export function VideoUpload({ onVideoUpload }: VideoUploadProps) {
     const file = acceptedFiles[0];
     if (!file) return;
 
-    // Validate file size (max 500MB)
-    if (file.size > 500 * 1024 * 1024) {
+    // Validate file size (max 4GB)
+    if (file.size > 4 * 1024 * 1024 * 1024) {
       toast({
         title: 'File too large',
-        description: 'Please upload a video file smaller than 500MB',
+        description: 'Please upload a video file smaller than 4GB',
         variant: 'destructive',
       });
       return;
@@ -183,7 +183,7 @@ export function VideoUpload({ onVideoUpload }: VideoUploadProps) {
                 or click to select a video file
               </p>
               <p className="text-xs text-muted-foreground mt-4">
-                Supported formats: MP4, MOV, AVI, WebM • Max size: 500MB • Max duration: 5 minutes
+                Supported formats: MP4, MOV, AVI, WebM • Max size: 4GB • Max duration: 5 minutes
               </p>
             </div>
           )}
