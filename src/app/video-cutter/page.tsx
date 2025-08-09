@@ -36,8 +36,9 @@ interface EndCard {
 interface ClipSettingsData {
   clipDuration: number;
   numberOfClips: number;
-  strategy: 'ai' | 'even' | 'manual';
+  strategy: 'ai' | 'even' | 'manual' | 'object';
   exportFormat: '1080x1080' | '1080x1920';
+  objectQueries?: string[];
 }
 
 export default function VideoCutterPage() {
@@ -46,7 +47,8 @@ export default function VideoCutterPage() {
     clipDuration: 7,
     numberOfClips: 5,
     strategy: 'ai',
-    exportFormat: '1080x1080'
+    exportFormat: '1080x1080',
+    objectQueries: []
   });
   const [generatedClips, setGeneratedClips] = useState<VideoClip[]>([]);
   const [activeTab, setActiveTab] = useState<'upload' | 'configure' | 'results'>('upload');
@@ -62,41 +64,74 @@ export default function VideoCutterPage() {
     
     setIsProcessing(true);
     
-    // Simulate clip generation (in production, this would call an API)
-    const clips: VideoClip[] = [];
-    const { clipDuration, numberOfClips, strategy } = clipSettings;
-    
-    if (strategy === 'even') {
-      // Even distribution
-      const totalDuration = uploadedVideo.duration;
-      const interval = (totalDuration - clipDuration) / (numberOfClips - 1);
+    try {
+      const clips: VideoClip[] = [];
+      const { clipDuration, numberOfClips, strategy, objectQueries } = clipSettings;
       
-      for (let i = 0; i < numberOfClips; i++) {
-        const startTime = i * interval;
-        clips.push({
-          id: `clip-${i}`,
-          startTime,
-          endTime: startTime + clipDuration,
-          duration: clipDuration
+      if (strategy === 'object' && objectQueries && objectQueries.length > 0) {
+        // Object detection strategy
+        const response = await fetch('/api/video-segmentation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            videoUrl: uploadedVideo.url,
+            objectQueries,
+            splitStrategy: 'object-presence',
+            minSegmentDuration: clipDuration - 1,
+            maxSegmentDuration: clipDuration + 1,
+            confidenceThreshold: 0.6
+          })
         });
+
+        if (response.ok) {
+          const { data } = await response.json();
+          
+          // Convert segments to clips, limiting to requested number
+          data.segments.slice(0, numberOfClips).forEach((segment: any, index: number) => {
+            clips.push({
+              id: `clip-${index}`,
+              startTime: segment.startTime,
+              endTime: segment.endTime,
+              duration: segment.duration,
+              thumbnailUrl: segment.thumbnailUrl
+            });
+          });
+        }
+      } else if (strategy === 'even') {
+        // Even distribution
+        const totalDuration = uploadedVideo.duration;
+        const interval = (totalDuration - clipDuration) / (numberOfClips - 1);
+        
+        for (let i = 0; i < numberOfClips; i++) {
+          const startTime = i * interval;
+          clips.push({
+            id: `clip-${i}`,
+            startTime,
+            endTime: startTime + clipDuration,
+            duration: clipDuration
+          });
+        }
+      } else {
+        // AI strategy - simulate AI-detected interesting moments
+        const interestingMoments = [5, 15, 30, 45, 60, 75, 90, 105, 120, 135];
+        for (let i = 0; i < Math.min(numberOfClips, interestingMoments.length); i++) {
+          const startTime = interestingMoments[i];
+          clips.push({
+            id: `clip-${i}`,
+            startTime,
+            endTime: startTime + clipDuration,
+            duration: clipDuration
+          });
+        }
       }
-    } else {
-      // AI strategy - simulate AI-detected interesting moments
-      const interestingMoments = [5, 15, 30, 45, 60, 75, 90, 105, 120, 135];
-      for (let i = 0; i < Math.min(numberOfClips, interestingMoments.length); i++) {
-        const startTime = interestingMoments[i];
-        clips.push({
-          id: `clip-${i}`,
-          startTime,
-          endTime: startTime + clipDuration,
-          duration: clipDuration
-        });
-      }
+      
+      setGeneratedClips(clips);
+      setActiveTab('results');
+    } catch (error) {
+      console.error('Error generating clips:', error);
+    } finally {
+      setIsProcessing(false);
     }
-    
-    setGeneratedClips(clips);
-    setIsProcessing(false);
-    setActiveTab('results');
   };
 
   const handleUpdateClip = (clipId: string, updates: Partial<VideoClip>) => {

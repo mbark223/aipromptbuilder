@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -9,12 +10,14 @@ import { NumberInput } from '@/components/ui/number-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 
 interface ClipSettingsData {
   clipDuration: number;
   numberOfClips: number;
-  strategy: 'ai' | 'even' | 'manual';
+  strategy: 'ai' | 'even' | 'manual' | 'object';
   exportFormat: '1080x1080' | '1080x1920';
+  objectQueries?: string[];
 }
 
 interface ClipSettingsProps {
@@ -90,7 +93,7 @@ export function ClipSettings({
           </p>
           <RadioGroup
             value={settings.strategy}
-            onValueChange={(value) => updateSetting('strategy', value as 'ai' | 'even' | 'manual')}
+            onValueChange={(value) => updateSetting('strategy', value as 'ai' | 'even' | 'manual' | 'object')}
           >
             <Card className="p-4">
               <div className="flex items-start space-x-3">
@@ -121,6 +124,21 @@ export function ClipSettings({
               </div>
             </Card>
             
+            <Card className="p-4">
+              <div className="flex items-start space-x-3">
+                <RadioGroupItem value="object" id="object" className="mt-1" />
+                <div className="flex-1">
+                  <Label htmlFor="object" className="font-medium cursor-pointer">
+                    Object Detection
+                    <Badge variant="secondary" className="ml-2">New</Badge>
+                  </Label>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Detect and split by objects (person, car, etc.)
+                  </p>
+                </div>
+              </div>
+            </Card>
+            
             <Card className="p-4 opacity-50">
               <div className="flex items-start space-x-3">
                 <RadioGroupItem value="manual" id="manual" disabled className="mt-1" />
@@ -136,6 +154,29 @@ export function ClipSettings({
               </div>
             </Card>
           </RadioGroup>
+
+          {settings.strategy === 'object' && (
+            <Card className="p-4 mt-4 border-primary/20">
+              <Label htmlFor="object-queries" className="text-sm font-medium">
+                Objects to Detect
+              </Label>
+              <p className="text-xs text-muted-foreground mb-2">
+                Enter objects separated by commas (e.g., person, car, dog)
+              </p>
+              <Input
+                id="object-queries"
+                value={settings.objectQueries?.join(', ') || ''}
+                onChange={(e) => {
+                  const queries = e.target.value
+                    .split(',')
+                    .map(q => q.trim())
+                    .filter(q => q.length > 0);
+                  updateSetting('objectQueries', queries);
+                }}
+                placeholder="person, car, dog"
+              />
+            </Card>
+          )}
         </div>
 
         <div>
