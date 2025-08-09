@@ -9,6 +9,7 @@ import { ClipSettings } from '@/components/video-cutter/ClipSettings';
 import { VideoClipsPanel } from '@/components/video-cutter/VideoClipsPanel';
 import { EndCardEditor } from '@/components/video-cutter/EndCardEditor';
 import type { VideoSegment } from '@/types/video-segmentation';
+import { useToast } from '@/hooks/use-toast';
 
 interface VideoFile {
   file: File;
@@ -43,6 +44,7 @@ interface ClipSettingsData {
 }
 
 export default function VideoCutterPage() {
+  const { toast } = useToast();
   const [uploadedVideo, setUploadedVideo] = useState<VideoFile | null>(null);
   const [clipSettings, setClipSettings] = useState<ClipSettingsData>({
     clipDuration: 7,
@@ -177,21 +179,63 @@ export default function VideoCutterPage() {
       const totalClips = clipsToExport.length;
 
       // Simulate batch export (in production, this would call an API)
+      const exportResults = [];
+      
       for (let i = 0; i < totalClips; i++) {
         const clip = clipsToExport[i];
         
-        // Simulate export processing
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Update progress
-        setExportProgress(((i + 1) / totalClips) * 100);
-        
-        // In production, you would:
-        // 1. Call an API to process the video segment
-        // 2. Generate the export URL
-        // 3. Download or provide download links
-        console.log(`Exporting clip ${clip.id}: ${clip.startTime}s - ${clip.endTime}s`);
+        try {
+          // Call the export API for each clip
+          const response = await fetch('/api/video-export', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              videoUrl: uploadedVideo.url,
+              startTime: clip.startTime,
+              endTime: clip.endTime,
+              format: exportFormat,
+              clipId: clip.id
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to export clip ${clip.id}`);
+          }
+
+          const data = await response.json();
+          exportResults.push(data);
+          
+          // Update progress
+          setExportProgress(((i + 1) / totalClips) * 100);
+        } catch (error) {
+          console.error(`Error exporting clip ${clip.id}:`, error);
+        }
       }
+      
+      // Download all successfully exported clips
+      for (const result of exportResults) {
+        if (result.success && result.downloadUrl) {
+          // Use the download API for better cross-origin support
+          const downloadUrl = `/api/video-download?url=${encodeURIComponent(result.downloadUrl)}&filename=${encodeURIComponent(result.filename)}`;
+          
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = result.filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // Add a small delay between downloads
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+      
+      toast({
+        title: 'Batch export completed',
+        description: `Exported ${exportResults.filter(r => r.success).length} of ${totalClips} clips`,
+      });
 
       // Reset selection after export
       setSelectedClips(new Set());

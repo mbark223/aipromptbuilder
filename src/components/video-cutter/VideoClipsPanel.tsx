@@ -62,6 +62,7 @@ export function VideoClipsPanel({
   const { toast } = useToast();
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
   const [exportingClipId, setExportingClipId] = useState<string | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
   const videoRefs = useRef<{ [key: string]: HTMLVideoElement }>({});
 
   const formatTime = (seconds: number) => {
@@ -92,18 +93,51 @@ export function VideoClipsPanel({
     setExportingClipId(clip.id);
     
     try {
-      // In a real implementation, this would use FFmpeg.wasm or a server-side solution
-      // For now, we'll simulate the export process
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: 'Clip exported',
-        description: `Clip ${clip.id} exported in ${exportFormat} format`,
+      // Call the export API
+      const response = await fetch('/api/video-export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          videoUrl: video.url,
+          startTime: clip.startTime,
+          endTime: clip.endTime,
+          format: exportFormat,
+          clipId: clip.id
+        }),
       });
-    } catch (_error) {
+
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
+
+      const data = await response.json();
+      
+      if (data.success && data.downloadUrl) {
+        // Use the download API for better cross-origin support
+        const downloadUrl = `/api/video-download?url=${encodeURIComponent(data.downloadUrl)}&filename=${encodeURIComponent(data.filename)}`;
+        
+        // Create a download link
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = data.filename || `clip-${clip.id}.mp4`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        toast({
+          title: 'Clip exported successfully',
+          description: `Downloaded ${data.filename}`,
+        });
+      } else {
+        throw new Error(data.error || 'Export failed');
+      }
+    } catch (error) {
+      console.error('Export error:', error);
       toast({
         title: 'Export failed',
-        description: 'Failed to export clip',
+        description: error instanceof Error ? error.message : 'Failed to export clip',
         variant: 'destructive',
       });
     } finally {
@@ -135,6 +169,23 @@ export function VideoClipsPanel({
         </div>
         
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsMuted(!isMuted)}
+          >
+            {isMuted ? (
+              <>
+                <Icons.volumeX className="mr-2 h-4 w-4" />
+                Unmute
+              </>
+            ) : (
+              <>
+                <Icons.volume2 className="mr-2 h-4 w-4" />
+                Mute
+              </>
+            )}
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -192,7 +243,7 @@ export function VideoClipsPanel({
                 className="w-full h-full object-cover"
                 onTimeUpdate={(e) => handleVideoTimeUpdate(clip.id, e.currentTarget)}
                 onEnded={() => setPlayingClipId(null)}
-                muted
+                muted={isMuted}
               />
               
               <div className="absolute inset-0 flex items-center justify-center">
