@@ -6,7 +6,7 @@
  */
 
 import { createVideoSegmentationService } from './video-segmentation';
-import { VideoSegmentationInput } from '@/types/video-segmentation';
+import { VideoSegmentationInput, SegmentationProgress } from '@/types/video-segmentation';
 
 // Example 1: Basic usage - detect persons and cars
 async function basicExample() {
@@ -60,7 +60,7 @@ async function advancedExample() {
   };
 
   // Track progress
-  const progressCallback = (progress) => {
+  const progressCallback = (progress: SegmentationProgress) => {
     console.log(`[${progress.stage}] ${progress.message} - ${progress.progress}%`);
     if (progress.currentFrame && progress.totalFrames) {
       console.log(`  Frame ${progress.currentFrame}/${progress.totalFrames}`);
