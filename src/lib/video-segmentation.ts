@@ -294,14 +294,14 @@ export class VideoSegmentationService {
         activeTraces.delete(event.track);
         
         if (activeTraces.size === 0 && segmentStart !== null) {
-          const duration = event.time - segmentStart;
+          const startTime = segmentStart; // TypeScript now knows this is not null
+          const duration = event.time - startTime;
           
           if (duration >= options.minDuration) {
             // Split long segments if needed
             if (duration > options.maxDuration) {
               const numSegments = Math.ceil(duration / options.maxDuration);
               const segmentDuration = duration / numSegments;
-              const startTime = segmentStart; // TypeScript now knows this is not null
               
               for (let i = 0; i < numSegments; i++) {
                 segments.push({
@@ -319,12 +319,12 @@ export class VideoSegmentationService {
             } else {
               segments.push({
                 id: `segment-${segments.length}`,
-                startTime: segmentStart,
+                startTime: startTime,
                 endTime: event.time,
                 duration,
                 detectedObjects: [...new Set(tracks.map(t => t.label))],
                 tracks: tracks.filter(t => 
-                  t.firstFrame / 30 <= event.time && t.lastFrame / 30 >= segmentStart
+                  t.firstFrame / 30 <= event.time && t.lastFrame / 30 >= startTime
                 ),
               });
             }
