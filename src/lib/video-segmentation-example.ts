@@ -116,7 +116,7 @@ async function apiExample() {
     console.log(`Found ${data.segments.length} segments`);
     
     // Show progress updates
-    progress.forEach(update => {
+    progress.forEach((update: SegmentationProgress) => {
       console.log(`Progress: ${update.stage} - ${update.message}`);
     });
   } catch (error) {
