@@ -12,7 +12,6 @@ import {
   SAM2Input,
   SAM2Output,
   ProgressCallback,
-  SegmentationProgress,
 } from '@/types/video-segmentation';
 
 export class VideoSegmentationService {
@@ -241,8 +240,6 @@ export class VideoSegmentationService {
     strategy: VideoSegmentationInput['splitStrategy'],
     options: { minDuration: number; maxDuration: number }
   ): Promise<VideoSegment[]> {
-    const segments: VideoSegment[] = [];
-
     switch (strategy) {
       case 'object-presence':
         return this.generateObjectPresenceSegments(tracks, options);
@@ -284,7 +281,7 @@ export class VideoSegmentationService {
     timelineEvents.sort((a, b) => a.time - b.time);
 
     // Generate segments
-    let activeTraces = new Set<TrackedObject>();
+    const activeTraces = new Set<TrackedObject>();
     let segmentStart: number | null = null;
 
     for (const event of timelineEvents) {
@@ -344,8 +341,8 @@ export class VideoSegmentationService {
    * Generate segments where specified objects are absent
    */
   private generateObjectAbsenceSegments(
-    tracks: TrackedObject[],
-    options: { minDuration: number; maxDuration: number }
+    _tracks: TrackedObject[],
+    _options: { minDuration: number; maxDuration: number }
   ): VideoSegment[] {
     // This would be the inverse of object presence
     // Implementation would identify gaps between object appearances
@@ -357,8 +354,8 @@ export class VideoSegmentationService {
    * Generate segments based on scene changes
    */
   private generateSceneChangeSegments(
-    tracks: TrackedObject[],
-    options: { minDuration: number; maxDuration: number }
+    _tracks: TrackedObject[],
+    _options: { minDuration: number; maxDuration: number }
   ): VideoSegment[] {
     // This would analyze when the set of visible objects changes significantly
     // For brevity, returning empty array

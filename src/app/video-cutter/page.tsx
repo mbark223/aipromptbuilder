@@ -8,6 +8,7 @@ import { VideoPreview } from '@/components/video-cutter/VideoPreview';
 import { ClipSettings } from '@/components/video-cutter/ClipSettings';
 import { VideoClipsPanel } from '@/components/video-cutter/VideoClipsPanel';
 import { EndCardEditor } from '@/components/video-cutter/EndCardEditor';
+import type { VideoSegment } from '@/types/video-segmentation';
 
 interface VideoFile {
   file: File;
@@ -87,7 +88,7 @@ export default function VideoCutterPage() {
           const { data } = await response.json();
           
           // Convert segments to clips, limiting to requested number
-          data.segments.slice(0, numberOfClips).forEach((segment: any, index: number) => {
+          data.segments.slice(0, numberOfClips).forEach((segment: VideoSegment, index: number) => {
             clips.push({
               id: `clip-${index}`,
               startTime: segment.startTime,
