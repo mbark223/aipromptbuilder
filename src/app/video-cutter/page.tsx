@@ -116,7 +116,7 @@ export default function VideoCutterPage() {
         </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'upload' | 'configure' | 'results')}>
         <TabsList className="grid w-full grid-cols-3 max-w-xl">
           <TabsTrigger value="upload">Upload Video</TabsTrigger>
           <TabsTrigger value="configure" disabled={!uploadedVideo}>
