@@ -195,7 +195,7 @@ export default function VideoCutterPage() {
               videoUrl: uploadedVideo.url,
               startTime: clip.startTime,
               endTime: clip.endTime,
-              format: exportFormat,
+              format: clipSettings.exportFormat,
               clipId: clip.id
             }),
           });
