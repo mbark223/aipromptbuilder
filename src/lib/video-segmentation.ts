@@ -301,17 +301,18 @@ export class VideoSegmentationService {
             if (duration > options.maxDuration) {
               const numSegments = Math.ceil(duration / options.maxDuration);
               const segmentDuration = duration / numSegments;
+              const startTime = segmentStart; // TypeScript now knows this is not null
               
               for (let i = 0; i < numSegments; i++) {
                 segments.push({
                   id: `segment-${segments.length}`,
-                  startTime: segmentStart + (i * segmentDuration),
-                  endTime: segmentStart + ((i + 1) * segmentDuration),
+                  startTime: startTime + (i * segmentDuration),
+                  endTime: startTime + ((i + 1) * segmentDuration),
                   duration: segmentDuration,
                   detectedObjects: [...new Set(tracks.map(t => t.label))],
                   tracks: tracks.filter(t => 
-                    t.firstFrame / 30 <= segmentStart + ((i + 1) * segmentDuration) &&
-                    t.lastFrame / 30 >= segmentStart + (i * segmentDuration)
+                    t.firstFrame / 30 <= startTime + ((i + 1) * segmentDuration) &&
+                    t.lastFrame / 30 >= startTime + (i * segmentDuration)
                   ),
                 });
               }
