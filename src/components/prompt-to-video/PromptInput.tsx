@@ -74,7 +74,7 @@ const PROMPT_TEMPLATES = [
 export function PromptInput({ onPromptsGenerated }: PromptInputProps) {
   const { toast } = useToast();
   const [basePrompt, setBasePrompt] = useState('');
-  const [variations, setVariations] = useState(3);
+  const [variations, setVariations] = useState(1);
   const [generatedPrompts, setGeneratedPrompts] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
