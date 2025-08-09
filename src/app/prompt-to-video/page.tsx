@@ -87,7 +87,6 @@ export default function PromptToVideoPage() {
             type: 'ai',
             movements: [],
             duration: 4,
-            fps: 30,
             loop: false,
             transitions: {
               in: { type: 'fade', duration: 0.5, easing: 'ease-out' },
