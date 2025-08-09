@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
 import { useToast } from '@/hooks/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Progress } from '@/components/ui/progress';
 
 interface VideoFile {
   file: File;
@@ -34,20 +36,33 @@ interface VideoClip {
 interface VideoClipsPanelProps {
   video: VideoFile;
   clips: VideoClip[];
+  selectedClips: Set<string>;
   exportFormat: '1080x1080' | '1080x1920';
   onUpdateClip: (clipId: string, updates: Partial<VideoClip>) => void;
+  onSelectClip: (clipId: string) => void;
+  onSelectAll: () => void;
+  onSelectNone: () => void;
+  onBatchExport: () => void;
+  isExporting: boolean;
+  exportProgress: number;
 }
 
 export function VideoClipsPanel({
   video,
   clips,
+  selectedClips,
   exportFormat,
-  onUpdateClip
+  onUpdateClip,
+  onSelectClip,
+  onSelectAll,
+  onSelectNone,
+  onBatchExport,
+  isExporting,
+  exportProgress
 }: VideoClipsPanelProps) {
   const { toast } = useToast();
   const [playingClipId, setPlayingClipId] = useState<string | null>(null);
   const [exportingClipId, setExportingClipId] = useState<string | null>(null);
-  const [exportingAll, setExportingAll] = useState(false);
   const videoRefs = useRef<{ [key: string]: HTMLVideoElement }>({});
 
   const formatTime = (seconds: number) => {
@@ -97,27 +112,6 @@ export function VideoClipsPanel({
     }
   };
 
-  const exportAllClips = async () => {
-    setExportingAll(true);
-    
-    try {
-      // Simulate batch export
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      toast({
-        title: 'All clips exported',
-        description: `${clips.length} clips exported in ${exportFormat} format`,
-      });
-    } catch (error) {
-      toast({
-        title: 'Export failed',
-        description: 'Failed to export clips',
-        variant: 'destructive',
-      });
-    } finally {
-      setExportingAll(false);
-    }
-  };
 
   const handleVideoTimeUpdate = (clipId: string, videoEl: HTMLVideoElement) => {
     const clip = clips.find(c => c.id === clipId);
@@ -135,30 +129,61 @@ export function VideoClipsPanel({
         <div className="flex items-center gap-4">
           <h3 className="text-lg font-medium">Generated Clips</h3>
           <Badge variant="secondary">{clips.length} clips</Badge>
+          {selectedClips.size > 0 && (
+            <Badge variant="primary">{selectedClips.size} selected</Badge>
+          )}
           <Badge variant="outline">{exportFormat}</Badge>
         </div>
         
-        <Button
-          onClick={exportAllClips}
-          disabled={exportingAll || clips.length === 0}
-        >
-          {exportingAll ? (
-            <>
-              <Icons.loader className="mr-2 h-4 w-4 animate-spin" />
-              Exporting All...
-            </>
-          ) : (
-            <>
-              <Icons.download className="mr-2 h-4 w-4" />
-              Export All Clips
-            </>
-          )}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSelectAll}
+            disabled={isExporting}
+          >
+            Select All
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onSelectNone}
+            disabled={isExporting || selectedClips.size === 0}
+          >
+            Select None
+          </Button>
+          <Button
+            onClick={onBatchExport}
+            disabled={isExporting || selectedClips.size === 0}
+          >
+            {isExporting ? (
+              <>
+                <Icons.loader className="mr-2 h-4 w-4 animate-spin" />
+                Exporting {selectedClips.size} Clips...
+              </>
+            ) : (
+              <>
+                <Icons.download className="mr-2 h-4 w-4" />
+                Export Selected ({selectedClips.size})
+              </>
+            )}
+          </Button>
+        </div>
       </div>
+
+      {isExporting && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Exporting clips...</span>
+            <span>{Math.round(exportProgress)}%</span>
+          </div>
+          <Progress value={exportProgress} className="h-2" />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {clips.map((clip, index) => (
-          <Card key={clip.id} className="overflow-hidden">
+          <Card key={clip.id} className={`overflow-hidden ${selectedClips.has(clip.id) ? 'ring-2 ring-primary' : ''}`}>
             <div className="relative bg-black aspect-square">
               <video
                 ref={(el) => {
@@ -186,7 +211,12 @@ export function VideoClipsPanel({
                 </Button>
               </div>
               
-              <div className="absolute top-2 left-2">
+              <div className="absolute top-2 left-2 flex items-center gap-2">
+                <Checkbox
+                  checked={selectedClips.has(clip.id)}
+                  onCheckedChange={() => onSelectClip(clip.id)}
+                  className="bg-white/80 border-white"
+                />
                 <Badge variant="secondary" className="bg-black/80 text-white">
                   Clip {index + 1}
                 </Badge>
@@ -215,7 +245,7 @@ export function VideoClipsPanel({
                   size="sm"
                   className="flex-1"
                   onClick={() => exportClip(clip)}
-                  disabled={exportingClipId === clip.id}
+                  disabled={exportingClipId === clip.id || isExporting}
                 >
                   {exportingClipId === clip.id ? (
                     <>

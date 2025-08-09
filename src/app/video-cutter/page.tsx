@@ -52,8 +52,11 @@ export default function VideoCutterPage() {
     objectQueries: []
   });
   const [generatedClips, setGeneratedClips] = useState<VideoClip[]>([]);
+  const [selectedClips, setSelectedClips] = useState<Set<string>>(new Set());
   const [activeTab, setActiveTab] = useState<'upload' | 'configure' | 'results'>('upload');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
 
   const handleVideoUpload = (videoFile: VideoFile) => {
     setUploadedVideo(videoFile);
@@ -143,6 +146,63 @@ export default function VideoCutterPage() {
     );
   };
 
+  const handleSelectClip = (clipId: string) => {
+    setSelectedClips(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(clipId)) {
+        newSet.delete(clipId);
+      } else {
+        newSet.add(clipId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSelectAll = () => {
+    setSelectedClips(new Set(generatedClips.map(clip => clip.id)));
+  };
+
+  const handleSelectNone = () => {
+    setSelectedClips(new Set());
+  };
+
+  const handleBatchExport = async () => {
+    if (selectedClips.size === 0 || !uploadedVideo) return;
+
+    setIsExporting(true);
+    setExportProgress(0);
+
+    try {
+      const clipsToExport = generatedClips.filter(clip => selectedClips.has(clip.id));
+      const totalClips = clipsToExport.length;
+
+      // Simulate batch export (in production, this would call an API)
+      for (let i = 0; i < totalClips; i++) {
+        const clip = clipsToExport[i];
+        
+        // Simulate export processing
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Update progress
+        setExportProgress(((i + 1) / totalClips) * 100);
+        
+        // In production, you would:
+        // 1. Call an API to process the video segment
+        // 2. Generate the export URL
+        // 3. Download or provide download links
+        console.log(`Exporting clip ${clip.id}: ${clip.startTime}s - ${clip.endTime}s`);
+      }
+
+      // Reset selection after export
+      setSelectedClips(new Set());
+    } catch (error) {
+      console.error('Batch export failed:', error);
+    } finally {
+      setIsExporting(false);
+      setExportProgress(0);
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div>
@@ -199,8 +259,15 @@ export default function VideoCutterPage() {
                 <VideoClipsPanel
                   video={uploadedVideo}
                   clips={generatedClips}
+                  selectedClips={selectedClips}
                   exportFormat={clipSettings.exportFormat}
                   onUpdateClip={handleUpdateClip}
+                  onSelectClip={handleSelectClip}
+                  onSelectAll={handleSelectAll}
+                  onSelectNone={handleSelectNone}
+                  onBatchExport={handleBatchExport}
+                  isExporting={isExporting}
+                  exportProgress={exportProgress}
                 />
               </Card>
               
