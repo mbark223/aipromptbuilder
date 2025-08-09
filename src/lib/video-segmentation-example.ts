@@ -6,7 +6,7 @@
  */
 
 import { createVideoSegmentationService } from './video-segmentation';
-import { VideoSegmentationInput, SegmentationProgress } from '@/types/video-segmentation';
+import { VideoSegmentationInput, SegmentationProgress, VideoSegment } from '@/types/video-segmentation';
 
 // Example 1: Basic usage - detect persons and cars
 async function basicExample() {
