@@ -152,7 +152,7 @@ async function videoCutterIntegration() {
     const { data } = await response.json();
     
     // Convert segments to video cutter format
-    const clips = data.segments.map((segment, index) => ({
+    const clips = data.segments.map((segment: VideoSegment, index: number) => ({
       id: `clip-${index}`,
       startTime: segment.startTime,
       endTime: segment.endTime,
