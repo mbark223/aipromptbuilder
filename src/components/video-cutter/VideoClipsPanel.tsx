@@ -439,7 +439,7 @@ export function VideoClipsPanel({
                     Enable client-side processing for best results
                   </p>
                   <p className="text-yellow-700 dark:text-yellow-300">
-                    Your video is stored locally in the browser. Turn on "Client-side processing" above to export trimmed clips.
+                    Your video is stored locally in the browser. Turn on &quot;Client-side processing&quot; above to export trimmed clips.
                   </p>
                 </div>
               </div>

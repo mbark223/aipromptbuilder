@@ -20,7 +20,7 @@ export async function downloadVideoDirectly(videoUrl: string, filename: string):
       setTimeout(() => URL.revokeObjectURL(url), 100);
       return true;
     }
-  } catch (error) {
+  } catch {
     console.log('Direct download failed, trying alternative method');
   }
 
