@@ -35,9 +35,9 @@ export async function POST(request: NextRequest) {
       exportedAt: new Date().toISOString()
     };
 
-    // For now, return the original video URL with timestamp parameters
-    // This won't actually trim the video, but it demonstrates the flow
-    const downloadUrl = `${videoUrl}#t=${startTime},${endTime}`;
+    // Since we're not processing server-side yet, we'll return the original URL
+    // but ensure it's properly formatted for download
+    const downloadUrl = videoUrl;
     const filename = `clip-${clipId}-${format.replace('x', '-')}-${startTime}s-${endTime}s.mp4`;
     
     // Log the export request for debugging
