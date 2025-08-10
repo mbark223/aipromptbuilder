@@ -100,7 +100,15 @@ export function VideoClipsPanel({
     setExportingClipId(clip.id);
     
     try {
-      if (useClientProcessing) {
+      // Auto-enable client processing for blob URLs
+      const shouldUseClientProcessing = useClientProcessing || isBlobUrl(video.url);
+      
+      if (shouldUseClientProcessing) {
+        // Ensure FFmpeg is loaded if we're auto-enabling for blob URLs
+        if (!useClientProcessing && isBlobUrl(video.url)) {
+          await preloadFFmpeg();
+        }
+        
         // Use client-side FFmpeg processing
         const processedBlob = await processVideo(
           video.url,
@@ -130,72 +138,84 @@ export function VideoClipsPanel({
           });
         }
       } else {
-        // For server-side processing with blob URLs, we need to download the original video
+        // For regular URLs, use the server-side processing
         const filename = `clip-${clip.id}-${exportFormat.replace('x', '-')}-${clip.startTime}s-${clip.endTime}s.mp4`;
+        const response = await fetch('/api/video-export', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            videoUrl: video.url,
+            startTime: clip.startTime,
+            endTime: clip.endTime,
+            format: exportFormat,
+            clipId: clip.id
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Export failed');
+        }
+
+        const data = await response.json();
         
-        // Check if it's a blob URL
-        if (isBlobUrl(video.url)) {
-          // For blob URLs, we can't use server-side processing
-          // So we'll just download the full video with a descriptive filename
-          const success = await downloadVideoFromBlob(video.url, filename);
+        if (data.requiresClientProcessing) {
+          // Server indicates client processing is needed
+          // This should rarely happen since we auto-enable for blob URLs
+          setUseClientProcessing(true);
+          await preloadFFmpeg();
           
-          if (success) {
+          toast({
+            title: 'Switching to client processing',
+            description: 'Server processing unavailable. Processing on your device...',
+          });
+          
+          // Retry with client processing
+          const processedBlob = await processVideo(
+            video.url,
+            clip.startTime,
+            clip.endTime,
+            exportFormat
+          );
+          
+          if (processedBlob) {
+            const url = URL.createObjectURL(processedBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+            
             toast({
-              title: 'Video downloaded',
-              description: `Downloaded full video as ${filename}. Use video editing software to trim to ${clip.startTime}s - ${clip.endTime}s.`,
+              title: 'Clip exported successfully',
+              description: `Downloaded ${filename}`,
+            });
+          }
+        } else if (data.success && data.downloadUrl) {
+          // Server processing succeeded
+          const result = await downloadVideoWithFallback(
+            data.downloadUrl,
+            data.filename || filename,
+            true
+          );
+          
+          if (result.success) {
+            toast({
+              title: 'Clip exported successfully',
+              description: `Downloaded ${data.filename}`,
             });
           } else {
             toast({
-              title: 'Download failed',
-              description: 'Could not download the video. Try enabling client-side processing.',
-              variant: 'destructive',
+              title: 'Download started',
+              description: result.error || 'Check your downloads folder.',
+              variant: 'default',
             });
           }
         } else {
-          // For regular URLs, use the server-side processing
-          const response = await fetch('/api/video-export', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              videoUrl: video.url,
-              startTime: clip.startTime,
-              endTime: clip.endTime,
-              format: exportFormat,
-              clipId: clip.id
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Export failed');
-          }
-
-          const data = await response.json();
-          
-          if (data.success && data.downloadUrl) {
-            // Try multiple download methods
-            const result = await downloadVideoWithFallback(
-              data.downloadUrl,
-              data.filename || filename,
-              true // Use server proxy as fallback
-            );
-            
-            if (result.success) {
-              toast({
-                title: 'Clip exported successfully',
-                description: `Downloaded ${data.filename}`,
-              });
-            } else {
-              toast({
-                title: 'Download started',
-                description: result.error || 'Check your downloads folder.',
-                variant: 'default',
-              });
-            }
-          } else {
-            throw new Error(data.error || 'Export failed');
-          }
+          throw new Error(data.error || 'Export failed');
         }
       }
     } catch (error) {
@@ -431,15 +451,15 @@ export function VideoClipsPanel({
             </div>
           )}
           {!useClientProcessing && video && isBlobUrl(video.url) && (
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-3 mt-2">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-3 mt-2">
               <div className="flex items-start gap-2">
-                <Icons.alertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-500 mt-0.5" />
+                <Icons.info className="h-4 w-4 text-blue-600 dark:text-blue-500 mt-0.5" />
                 <div className="text-xs space-y-1">
-                  <p className="font-medium text-yellow-800 dark:text-yellow-200">
-                    Enable client-side processing for best results
+                  <p className="font-medium text-blue-800 dark:text-blue-200">
+                    Client processing will be used automatically
                   </p>
-                  <p className="text-yellow-700 dark:text-yellow-300">
-                    Your video is stored locally in the browser. Turn on &quot;Client-side processing&quot; above to export trimmed clips.
+                  <p className="text-blue-700 dark:text-blue-300">
+                    Your video is stored locally in the browser. Clips will be processed on your device to ensure proper trimming.
                   </p>
                 </div>
               </div>
