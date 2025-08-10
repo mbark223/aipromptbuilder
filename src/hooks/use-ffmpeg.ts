@@ -16,31 +16,46 @@ export function useFFmpeg() {
   const { toast } = useToast();
   const ffmpegLoadedRef = useRef(false);
 
-  // Preload FFmpeg
+  // Preload FFmpeg with retry logic
   const preloadFFmpeg = useCallback(async () => {
     if (ffmpegLoadedRef.current) return;
     
     setIsLoading(true);
-    try {
-      await loadFFmpeg((message, progress) => {
-        setProgress({ message, progress });
-      });
-      ffmpegLoadedRef.current = true;
-      toast({
-        title: 'FFmpeg loaded',
-        description: 'Video processing engine ready',
-      });
-    } catch (error) {
-      console.error('Failed to load FFmpeg:', error);
-      toast({
-        title: 'Failed to load video processor',
-        description: 'Please refresh the page and try again',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-      setProgress({ message: '', progress: 0 });
+    let retryCount = 0;
+    const maxRetries = 2;
+    
+    while (retryCount <= maxRetries) {
+      try {
+        await loadFFmpeg((message, progress) => {
+          setProgress({ message, progress });
+        });
+        ffmpegLoadedRef.current = true;
+        toast({
+          title: 'FFmpeg loaded',
+          description: 'Video processing engine ready',
+        });
+        break; // Success, exit the loop
+      } catch (error) {
+        console.error(`Failed to load FFmpeg (attempt ${retryCount + 1}):`, error);
+        retryCount++;
+        
+        if (retryCount > maxRetries) {
+          toast({
+            title: 'Failed to load video processor',
+            description: 'Please check your internet connection and refresh the page',
+            variant: 'destructive',
+          });
+          break;
+        } else {
+          // Wait a bit before retrying
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          setProgress({ message: `Retrying... (attempt ${retryCount + 1})`, progress: 0 });
+        }
+      }
     }
+    
+    setIsLoading(false);
+    setProgress({ message: '', progress: 0 });
   }, [toast]);
 
   // Process video from URL

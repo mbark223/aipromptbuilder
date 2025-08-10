@@ -30,19 +30,59 @@ export async function loadFFmpeg(
   try {
     onProgress?.('Loading FFmpeg...', 0);
     
-    // Load FFmpeg with the correct URLs for the WASM files
-    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm';
-    await ffmpeg.load({
-      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-    });
+    // Try multiple CDN sources for better reliability
+    const cdnSources = [
+      {
+        baseURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm',
+        coreFile: 'ffmpeg-core.js',
+        wasmFile: 'ffmpeg-core.wasm'
+      },
+      {
+        baseURL: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/esm',
+        coreFile: 'ffmpeg-core.js',
+        wasmFile: 'ffmpeg-core.wasm'
+      }
+    ];
     
-    isLoaded = true;
-    onProgress?.('FFmpeg loaded successfully', 100);
-    return ffmpeg;
+    let loadError: Error | null = null;
+    
+    // Try each CDN source
+    for (const source of cdnSources) {
+      try {
+        console.log(`Attempting to load FFmpeg from ${source.baseURL}`);
+        
+        const coreURL = await toBlobURL(
+          `${source.baseURL}/${source.coreFile}`,
+          'text/javascript'
+        );
+        const wasmURL = await toBlobURL(
+          `${source.baseURL}/${source.wasmFile}`,
+          'application/wasm'
+        );
+        
+        await ffmpeg.load({
+          coreURL,
+          wasmURL,
+        });
+        
+        isLoaded = true;
+        onProgress?.('FFmpeg loaded successfully', 100);
+        console.log('FFmpeg loaded successfully');
+        return ffmpeg;
+      } catch (error) {
+        console.error(`Failed to load from ${source.baseURL}:`, error);
+        loadError = error as Error;
+        // Continue to next CDN
+      }
+    }
+    
+    // If all CDN sources failed, throw error
+    throw loadError || new Error('Failed to load FFmpeg from all CDN sources');
   } catch (error) {
     console.error('Failed to load FFmpeg:', error);
-    throw new Error('Failed to load FFmpeg. Please refresh and try again.');
+    isLoaded = false;
+    ffmpeg = null;
+    throw new Error('Failed to load FFmpeg. Please check your internet connection and try again.');
   }
 }
 

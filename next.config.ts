@@ -4,8 +4,22 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        // Apply strict CORS headers to all routes except API routes
-        source: '/((?!api).*)',
+        // Apply CORS headers to video-cutter page for FFmpeg
+        source: '/video-cutter',
+        headers: [
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'credentialless',
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+        ],
+      },
+      {
+        // Apply strict CORS headers to other non-API routes
+        source: '/((?!api|video-cutter).*)',
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',
