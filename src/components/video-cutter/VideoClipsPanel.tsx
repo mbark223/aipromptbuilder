@@ -433,7 +433,7 @@ export function VideoClipsPanel({
           {!useClientProcessing && video && isBlobUrl(video.url) && (
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-3 mt-2">
               <div className="flex items-start gap-2">
-                <Icons.alertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-500 mt-0.5" />
+                <Icons.alertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-500 mt-0.5" />
                 <div className="text-xs space-y-1">
                   <p className="font-medium text-yellow-800 dark:text-yellow-200">
                     Enable client-side processing for best results
