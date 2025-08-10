@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { downloadVideoWithFallback } from '@/lib/video-download';
 import { downloadVideoFromBlob, isBlobUrl } from '@/lib/video-blob-handler';
+import { testFFmpeg, getBrowserCompatibility } from '@/lib/ffmpeg-test';
 
 interface VideoFile {
   file: File;
@@ -70,7 +71,7 @@ export function VideoClipsPanel({
   const [isMuted, setIsMuted] = useState(false);
   const [useClientProcessing, setUseClientProcessing] = useState(false);
   const videoRefs = useRef<{ [key: string]: HTMLVideoElement }>({});
-  const { processVideo, isProcessing, progress: ffmpegProgress, preloadFFmpeg } = useFFmpeg();
+  const { processVideo, isProcessing, isLoading, progress: ffmpegProgress, preloadFFmpeg } = useFFmpeg();
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -136,6 +137,29 @@ export function VideoClipsPanel({
             title: 'Clip exported successfully',
             description: `Downloaded ${filename}`,
           });
+        } else {
+          // FFmpeg processing failed - offer fallback
+          console.error('FFmpeg processing returned null');
+          
+          // Offer to download the full video as a fallback
+          const fallbackResult = await downloadVideoFromBlob(
+            video.url, 
+            `full-video-${clip.id}-trim-${clip.startTime}s-${clip.endTime}s.mp4`
+          );
+          
+          if (fallbackResult) {
+            toast({
+              title: 'Processing failed - Downloaded full video',
+              description: `Please use video editing software to trim from ${clip.startTime}s to ${clip.endTime}s`,
+              variant: 'default',
+            });
+          } else {
+            toast({
+              title: 'Export failed',
+              description: 'Unable to process video. Please try refreshing the page or using a different browser.',
+              variant: 'destructive',
+            });
+          }
         }
       } else {
         // For regular URLs, use the server-side processing
@@ -385,7 +409,7 @@ export function VideoClipsPanel({
                   {exportingClipId === clip.id ? (
                     <>
                       <Icons.loader className="mr-2 h-3 w-3 animate-spin" />
-                      Exporting...
+                      {isProcessing ? 'Processing...' : 'Exporting...'}
                     </>
                   ) : (
                     <>
@@ -442,11 +466,14 @@ export function VideoClipsPanel({
               <p className="text-xs text-muted-foreground">
                 Videos will be processed directly in your browser. This may take longer but ensures privacy.
               </p>
-              {isProcessing && ffmpegProgress.message && (
-                <div className="space-y-1">
-                  <p className="text-xs">{ffmpegProgress.message}</p>
-                  <Progress value={ffmpegProgress.progress} className="h-1" />
-                </div>
+            </div>
+          )}
+          {(isProcessing || isLoading) && ffmpegProgress.message && (
+            <div className="space-y-1 mt-2">
+              <p className="text-xs font-medium">{ffmpegProgress.message}</p>
+              <Progress value={ffmpegProgress.progress} className="h-2" />
+              {ffmpegProgress.progress > 0 && (
+                <p className="text-xs text-muted-foreground text-right">{ffmpegProgress.progress}%</p>
               )}
             </div>
           )}
@@ -478,6 +505,40 @@ export function VideoClipsPanel({
             {useClientProcessing && ' Videos are trimmed and formatted in your browser.'}
           </p>
         </div>
+        
+        {/* Debug section - only shown in development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-muted/50 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Icons.settings className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium text-sm">Debug Tools</span>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={async () => {
+                  const result = await testFFmpeg();
+                  const compatibility = getBrowserCompatibility();
+                  console.log('FFmpeg Test Result:', result);
+                  console.log('Browser Compatibility:', compatibility);
+                  toast({
+                    title: result.success ? 'FFmpeg Test Passed' : 'FFmpeg Test Failed',
+                    description: result.message,
+                    variant: result.success ? 'default' : 'destructive',
+                  });
+                }}
+              >
+                Test FFmpeg
+              </Button>
+            </div>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>Browser: {getBrowserCompatibility().browser} {getBrowserCompatibility().version}</p>
+              <p>SharedArrayBuffer: {getBrowserCompatibility().hasSharedArrayBuffer ? '✓' : '✗'}</p>
+              <p>CrossOriginIsolated: {getBrowserCompatibility().hasCrossOriginIsolated ? '✓' : '✗'}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
