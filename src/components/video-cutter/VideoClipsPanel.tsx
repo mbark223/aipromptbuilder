@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import { useFFmpeg } from '@/hooks/use-ffmpeg';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { downloadVideoWithFallback } from '@/lib/video-download';
 
 interface VideoFile {
   file: File;
@@ -150,21 +151,25 @@ export function VideoClipsPanel({
         const data = await response.json();
         
         if (data.success && data.downloadUrl) {
-          // Use the download API for better cross-origin support
-          const downloadUrl = `/api/video-download?url=${encodeURIComponent(data.downloadUrl)}&filename=${encodeURIComponent(data.filename)}`;
+          // Try multiple download methods
+          const result = await downloadVideoWithFallback(
+            data.downloadUrl,
+            data.filename || `clip-${clip.id}.mp4`,
+            true // Use server proxy as fallback
+          );
           
-          // Create a download link
-          const link = document.createElement('a');
-          link.href = downloadUrl;
-          link.download = data.filename || `clip-${clip.id}.mp4`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          
-          toast({
-            title: 'Clip exported successfully',
-            description: `Downloaded ${data.filename}`,
-          });
+          if (result.success) {
+            toast({
+              title: 'Clip exported successfully',
+              description: `Downloaded ${data.filename}`,
+            });
+          } else {
+            toast({
+              title: 'Download started',
+              description: result.error || 'Check your downloads folder. If the download didn\'t start, try right-clicking the video and selecting "Save video as..."',
+              variant: 'default',
+            });
+          }
         } else {
           throw new Error(data.error || 'Export failed');
         }
