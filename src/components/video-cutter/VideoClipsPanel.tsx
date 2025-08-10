@@ -12,6 +12,7 @@ import { useFFmpeg } from '@/hooks/use-ffmpeg';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { downloadVideoWithFallback } from '@/lib/video-download';
+import { downloadVideoFromBlob, isBlobUrl } from '@/lib/video-blob-handler';
 
 interface VideoFile {
   file: File;
@@ -129,49 +130,72 @@ export function VideoClipsPanel({
           });
         }
       } else {
-        // Use server-side processing (existing code)
-        const response = await fetch('/api/video-export', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            videoUrl: video.url,
-            startTime: clip.startTime,
-            endTime: clip.endTime,
-            format: exportFormat,
-            clipId: clip.id
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Export failed');
-        }
-
-        const data = await response.json();
+        // For server-side processing with blob URLs, we need to download the original video
+        const filename = `clip-${clip.id}-${exportFormat.replace('x', '-')}-${clip.startTime}s-${clip.endTime}s.mp4`;
         
-        if (data.success && data.downloadUrl) {
-          // Try multiple download methods
-          const result = await downloadVideoWithFallback(
-            data.downloadUrl,
-            data.filename || `clip-${clip.id}.mp4`,
-            true // Use server proxy as fallback
-          );
+        // Check if it's a blob URL
+        if (isBlobUrl(video.url)) {
+          // For blob URLs, we can't use server-side processing
+          // So we'll just download the full video with a descriptive filename
+          const success = await downloadVideoFromBlob(video.url, filename);
           
-          if (result.success) {
+          if (success) {
             toast({
-              title: 'Clip exported successfully',
-              description: `Downloaded ${data.filename}`,
+              title: 'Video downloaded',
+              description: `Downloaded full video as ${filename}. Use video editing software to trim to ${clip.startTime}s - ${clip.endTime}s.`,
             });
           } else {
             toast({
-              title: 'Download started',
-              description: result.error || 'Check your downloads folder. If the download didn\'t start, try right-clicking the video and selecting "Save video as..."',
-              variant: 'default',
+              title: 'Download failed',
+              description: 'Could not download the video. Try enabling client-side processing.',
+              variant: 'destructive',
             });
           }
         } else {
-          throw new Error(data.error || 'Export failed');
+          // For regular URLs, use the server-side processing
+          const response = await fetch('/api/video-export', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              videoUrl: video.url,
+              startTime: clip.startTime,
+              endTime: clip.endTime,
+              format: exportFormat,
+              clipId: clip.id
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Export failed');
+          }
+
+          const data = await response.json();
+          
+          if (data.success && data.downloadUrl) {
+            // Try multiple download methods
+            const result = await downloadVideoWithFallback(
+              data.downloadUrl,
+              data.filename || filename,
+              true // Use server proxy as fallback
+            );
+            
+            if (result.success) {
+              toast({
+                title: 'Clip exported successfully',
+                description: `Downloaded ${data.filename}`,
+              });
+            } else {
+              toast({
+                title: 'Download started',
+                description: result.error || 'Check your downloads folder.',
+                variant: 'default',
+              });
+            }
+          } else {
+            throw new Error(data.error || 'Export failed');
+          }
         }
       }
     } catch (error) {
@@ -404,6 +428,21 @@ export function VideoClipsPanel({
                   <Progress value={ffmpegProgress.progress} className="h-1" />
                 </div>
               )}
+            </div>
+          )}
+          {!useClientProcessing && video && isBlobUrl(video.url) && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md p-3 mt-2">
+              <div className="flex items-start gap-2">
+                <Icons.alertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-500 mt-0.5" />
+                <div className="text-xs space-y-1">
+                  <p className="font-medium text-yellow-800 dark:text-yellow-200">
+                    Enable client-side processing for best results
+                  </p>
+                  <p className="text-yellow-700 dark:text-yellow-300">
+                    Your video is stored locally in the browser. Turn on "Client-side processing" above to export trimmed clips.
+                  </p>
+                </div>
+              </div>
             </div>
           )}
         </div>
