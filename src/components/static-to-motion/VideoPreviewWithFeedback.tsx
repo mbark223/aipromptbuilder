@@ -55,6 +55,7 @@ export function VideoPreviewWithFeedback({
     if (!video) return;
 
     console.log('VideoPreviewWithFeedback: Loading video from URL:', videoUrl);
+    console.log('Video element present:', !!video);
     
     // Force load the video
     video.load();
