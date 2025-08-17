@@ -55,8 +55,6 @@ export async function POST(request: NextRequest) {
     Please refine this prompt to address these issues.`
 
     // Try Replicate API first, fall back to OpenRouter if not configured
-    let response: Response;
-    
     if (process.env.REPLICATE_API_TOKEN) {
       // Use Meta's Llama model via Replicate for prompt refinement
       const replicate = await import('replicate').then(m => new m.default({
@@ -97,7 +95,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Fall back to OpenRouter (Claude)
-    response = await fetch(
+    const response = await fetch(
       `${process.env.NEXT_PUBLIC_OPENROUTER_API_URL}/chat/completions`,
       {
         method: 'POST',
