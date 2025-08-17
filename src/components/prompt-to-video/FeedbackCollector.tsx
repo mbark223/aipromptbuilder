@@ -95,6 +95,12 @@ export function FeedbackCollector({
       })
 
       // Get refined prompt based on feedback
+      console.log('Sending refinement request with:', {
+        originalPrompt: enhancedPrompt || originalPrompt,
+        feedback,
+        modelParams
+      })
+      
       const refinementResponse = await fetch('/api/refine-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -105,12 +111,20 @@ export function FeedbackCollector({
         })
       })
 
+      console.log('Refinement response status:', refinementResponse.status)
+
       if (!refinementResponse.ok) {
-        throw new Error('Failed to refine prompt')
+        const errorText = await refinementResponse.text()
+        console.error('Refinement error:', errorText)
+        throw new Error(`Failed to refine prompt: ${errorText}`)
       }
 
-      const { refinedPrompt } = await refinementResponse.json()
+      const refinementData = await refinementResponse.json()
+      console.log('Refinement response data:', refinementData)
       
+      const { refinedPrompt } = refinementData
+      
+      console.log('Calling onRefineAndRegenerate with:', refinedPrompt)
       onRefineAndRegenerate(refinedPrompt, feedback)
       
       toast({
