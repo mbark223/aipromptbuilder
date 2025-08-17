@@ -6,7 +6,7 @@ import { loadFFmpeg, cleanupFFmpeg } from './ffmpeg-processor';
 export async function testFFmpeg(): Promise<{
   success: boolean;
   message: string;
-  details?: any;
+  details?: unknown;
 }> {
   console.log('Starting FFmpeg test...');
   
@@ -118,6 +118,6 @@ export function getBrowserCompatibility(): {
     version,
     isSupported,
     hasSharedArrayBuffer: typeof SharedArrayBuffer !== 'undefined',
-    hasCrossOriginIsolated: (window as any).crossOriginIsolated || false
+    hasCrossOriginIsolated: (window as Window & { crossOriginIsolated?: boolean }).crossOriginIsolated || false
   };
 }
