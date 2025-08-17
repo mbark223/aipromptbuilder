@@ -54,8 +54,50 @@ export async function POST(request: NextRequest) {
     
     Please refine this prompt to address these issues.`
 
-    // Call Claude API for refinement
-    const response = await fetch(
+    // Try Replicate API first, fall back to OpenRouter if not configured
+    let response;
+    
+    if (process.env.REPLICATE_API_TOKEN) {
+      // Use Meta's Llama model via Replicate for prompt refinement
+      const replicate = await import('replicate').then(m => new m.default({
+        auth: process.env.REPLICATE_API_TOKEN,
+      }));
+      
+      try {
+        const output = await replicate.run(
+          "meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
+          {
+            input: {
+              prompt: `${systemPrompt}\n\n${userPrompt}`,
+              max_new_tokens: 500,
+              temperature: 0.7,
+              top_p: 0.9,
+              repetition_penalty: 1
+            }
+          }
+        );
+        
+        const refinedPrompt = Array.isArray(output) ? output.join('') : String(output);
+        
+        // Skip the OpenRouter call if Replicate succeeded
+        if (refinedPrompt && refinedPrompt.trim()) {
+          // Add quality improvements based on feedback
+          const enhancedPrompt = addQualityEnhancements(refinedPrompt.trim(), data.feedback)
+          
+          return NextResponse.json({
+            refinedPrompt: enhancedPrompt,
+            improvements: getImprovementSummary(data.feedback),
+            originalPrompt: data.originalPrompt,
+            model: 'meta/llama-2-70b-chat'
+          })
+        }
+      } catch (replicateError) {
+        console.log('Replicate API failed, falling back to OpenRouter:', replicateError)
+      }
+    }
+    
+    // Fall back to OpenRouter (Claude)
+    response = await fetch(
       `${process.env.NEXT_PUBLIC_OPENROUTER_API_URL}/chat/completions`,
       {
         method: 'POST',

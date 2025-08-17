@@ -54,7 +54,13 @@ export function VideoPreviewWithFeedback({
     const video = videoRef.current;
     if (!video) return;
 
+    console.log('VideoPreviewWithFeedback: Loading video from URL:', videoUrl);
+    
+    // Force load the video
+    video.load();
+
     const handleLoadedMetadata = () => {
+      console.log('Video loaded, duration:', video.duration);
       setVideoDuration(video.duration);
       setIsLoading(false);
     };
@@ -68,6 +74,7 @@ export function VideoPreviewWithFeedback({
     };
 
     const handleError = () => {
+      console.error('Video load error:', video.error);
       setError('Failed to load video');
       setIsLoading(false);
     };
@@ -189,6 +196,9 @@ export function VideoPreviewWithFeedback({
               src={videoUrl}
               className="w-full h-auto max-h-[500px]"
               style={{ display: isLoading || error ? 'none' : 'block' }}
+              preload="metadata"
+              playsInline
+              crossOrigin="anonymous"
             />
 
             {/* Format badge */}
