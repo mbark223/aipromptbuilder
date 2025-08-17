@@ -318,7 +318,7 @@ export function VideoPreviewWithFeedback({
             videoUrl={videoUrl}
             originalPrompt={originalPrompt}
             enhancedPrompt={enhancedPrompt}
-            modelParams={modelParams}
+            modelParams={modelParams || {}}
             onRefineAndRegenerate={handleRefineAndRegenerate}
             onClose={onClose}
           />

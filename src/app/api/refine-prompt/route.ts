@@ -159,41 +159,7 @@ function hasStyleKeywords(prompt: string): boolean {
   return styleKeywords.some(keyword => lowerPrompt.includes(keyword))
 }
 
-function performRuleBasedRefinement(
-  originalPrompt: string,
-  feedback: RefinePromptRequest['feedback']
-): string {
-  let refined = originalPrompt
-  
-  // Add improvements based on quality aspects
-  const improvements = []
-  
-  if (!feedback.qualityAspects.videoQuality) {
-    improvements.push('high quality, 4K resolution')
-  }
-  if (!feedback.qualityAspects.promptAdherence) {
-    improvements.push('detailed and accurate to description')
-  }
-  if (!feedback.qualityAspects.motionSmoothness) {
-    improvements.push('smooth and fluid motion')
-  }
-  if (!feedback.qualityAspects.styleConsistency) {
-    improvements.push('consistent cinematic style throughout')
-  }
-  
-  // Add specific feedback if provided
-  if (feedback.specificFeedback) {
-    const specificKeywords = extractKeywordsFromFeedback(feedback.specificFeedback)
-    improvements.push(...specificKeywords)
-  }
-  
-  // Combine improvements
-  if (improvements.length > 0) {
-    refined = `${originalPrompt}, ${improvements.join(', ')}`
-  }
-  
-  return refined
-}
+// Removed unused performRuleBasedRefinement function
 
 function extractKeywordsFromFeedback(feedback: string): string[] {
   const keywords = []
