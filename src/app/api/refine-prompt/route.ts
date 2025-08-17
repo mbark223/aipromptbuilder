@@ -17,8 +17,10 @@ interface RefinePromptRequest {
 }
 
 export async function POST(request: NextRequest) {
+  let data: RefinePromptRequest;
+  
   try {
-    const data: RefinePromptRequest = await request.json()
+    data = await request.json()
     
     if (!data.originalPrompt || !data.feedback) {
       return NextResponse.json(
