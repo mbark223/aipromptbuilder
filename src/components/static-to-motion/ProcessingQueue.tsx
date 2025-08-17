@@ -12,6 +12,8 @@ import { QueueItem, AnimationModel } from '@/types';
 import { DownloadDialog } from './DownloadDialog';
 import { BatchDownloadDialog } from './BatchDownloadDialog';
 import { VideoPreview } from './VideoPreview';
+import { VideoPreviewWithFeedback } from './VideoPreviewWithFeedback';
+import { VideoFeedback } from '@/components/prompt-to-video/FeedbackCollector';
 import { formatToModelInputs } from '@/lib/format-utils';
 
 interface ProcessingQueueProps {
@@ -30,6 +32,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
   
   const [batchDownloadOpen, setBatchDownloadOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  const [showFeedbackFor, setShowFeedbackFor] = useState<string | null>(null);
   // Process queue items with Replicate API
   useEffect(() => {
     const processingItem = queue.find(item => item.status === 'processing');
@@ -282,6 +285,34 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
     });
   };
 
+  const handleRefineAndRegenerate = (itemId: string, refinedPrompt: string, feedback: VideoFeedback) => {
+    const item = queue.find(q => q.id === itemId);
+    if (!item) return;
+
+    // Create a new queue item with the refined prompt
+    const newItem: QueueItem = {
+      ...item,
+      id: `${item.id}_refined_${Date.now()}`,
+      prompt: refinedPrompt,
+      status: 'pending',
+      progress: 0,
+      outputs: undefined,
+      error: undefined,
+      startTime: undefined,
+      endTime: undefined,
+      metadata: {
+        ...item.metadata,
+        isRefinement: true,
+        originalId: item.id,
+        feedback: feedback
+      }
+    };
+
+    // Add the new item to the queue
+    onUpdateQueue([...queue, newItem]);
+    setShowFeedbackFor(null);
+  };
+
   const completedCount = queue.filter(item => item.status === 'completed').length;
   const failedCount = queue.filter(item => item.status === 'failed').length;
 
@@ -352,6 +383,12 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                       <span className="text-sm text-muted-foreground">
                         {item.animationType === 'ai' ? 'AI Animation' : item.animation?.name || 'Animation'} • {item.formats.length} formats
                       </span>
+                      {item.metadata?.isRefinement && (
+                        <Badge variant="outline" className="text-xs">
+                          <Icons.refreshCw className="w-3 h-3 mr-1" />
+                          Refined
+                        </Badge>
+                      )}
                     </div>
                   </div>
 
@@ -448,23 +485,49 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
             {/* Video Preview */}
             {item.status === 'completed' && item.outputs && expandedItems.has(item.id) && (
               <div className="mt-4 border-t pt-4">
-                <VideoPreview
-                  videoUrl={item.outputs[0].url}
-                  format={item.formats[0] ? {
-                    name: item.formats[0].name,
-                    aspectRatio: item.formats[0].aspectRatio,
-                    width: item.formats[0].width,
-                    height: item.formats[0].height
-                  } : undefined}
-                  modelName={item.model?.name}
-                  onDownload={() => {
-                    setDownloadDialog({
-                      open: true,
-                      videoUrl: item.outputs![0].url,
-                      fileName: item.asset.originalFile.name.replace(/\.[^/.]+$/, '')
-                    });
-                  }}
-                />
+                {item.animationType === 'ai' && item.prompt ? (
+                  <VideoPreviewWithFeedback
+                    videoUrl={item.outputs[0].url}
+                    format={item.formats[0] ? {
+                      name: item.formats[0].name,
+                      aspectRatio: item.formats[0].aspectRatio,
+                      width: item.formats[0].width,
+                      height: item.formats[0].height
+                    } : undefined}
+                    modelName={item.model?.name}
+                    originalPrompt={item.prompt}
+                    enhancedPrompt={item.metadata?.enhancedPrompt}
+                    modelParams={modelInputs}
+                    onDownload={() => {
+                      setDownloadDialog({
+                        open: true,
+                        videoUrl: item.outputs![0].url,
+                        fileName: item.asset.originalFile.name.replace(/\.[^/.]+$/, '')
+                      });
+                    }}
+                    onRefineAndRegenerate={(refinedPrompt, feedback) => 
+                      handleRefineAndRegenerate(item.id, refinedPrompt, feedback)
+                    }
+                  />
+                ) : (
+                  <VideoPreview
+                    videoUrl={item.outputs[0].url}
+                    format={item.formats[0] ? {
+                      name: item.formats[0].name,
+                      aspectRatio: item.formats[0].aspectRatio,
+                      width: item.formats[0].width,
+                      height: item.formats[0].height
+                    } : undefined}
+                    modelName={item.model?.name}
+                    onDownload={() => {
+                      setDownloadDialog({
+                        open: true,
+                        videoUrl: item.outputs![0].url,
+                        fileName: item.asset.originalFile.name.replace(/\.[^/.]+$/, '')
+                      });
+                    }}
+                  />
+                )}
               </div>
             )}
           </Card>

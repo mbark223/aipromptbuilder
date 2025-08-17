@@ -302,6 +302,13 @@ export interface QueueItem {
   endTime?: Date;
   error?: string;
   outputs?: { format: string; url: string }[];
+  metadata?: {
+    isRefinement?: boolean;
+    originalId?: string;
+    feedback?: any;
+    enhancedPrompt?: string;
+    [key: string]: any;
+  };
 }
 
 export interface ProcessingResult {
