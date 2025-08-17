@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+// Fixed TypeScript error - data variable is now scoped correctly
 
 interface RefinePromptRequest {
   originalPrompt: string
