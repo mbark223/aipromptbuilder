@@ -486,7 +486,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
             {/* Video Preview */}
             {item.status === 'completed' && item.outputs && expandedItems.has(item.id) && (
               <div className="mt-4 border-t pt-4">
-                {item.animationType === 'ai' && item.prompt ? (
+                {item.animationType === 'ai' ? (
                   <VideoPreviewWithFeedback
                     videoUrl={item.outputs[0].url}
                     format={item.formats[0] ? {
@@ -496,7 +496,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                       height: item.formats[0].height
                     } : undefined}
                     modelName={item.model?.name}
-                    originalPrompt={item.prompt}
+                    originalPrompt={item.prompt || ''}
                     enhancedPrompt={item.metadata?.enhancedPrompt}
                     modelParams={modelInputs}
                     onDownload={() => {
