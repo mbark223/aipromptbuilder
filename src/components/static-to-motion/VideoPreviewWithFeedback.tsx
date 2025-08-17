@@ -91,7 +91,7 @@ export function VideoPreviewWithFeedback({
       video.removeEventListener('ended', handleEnded);
       video.removeEventListener('error', handleError);
     };
-  }, []);
+  }, [videoUrl]);
 
   const togglePlayPause = () => {
     const video = videoRef.current;
