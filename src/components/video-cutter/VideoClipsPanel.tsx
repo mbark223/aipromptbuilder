@@ -511,7 +511,7 @@ export function VideoClipsPanel({
           <div className="bg-muted/50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <Icons.settings className="h-4 w-4 text-muted-foreground" />
+                <Icons.wand2 className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium text-sm">Debug Tools</span>
               </div>
               <Button

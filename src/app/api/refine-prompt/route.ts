@@ -159,28 +159,7 @@ function hasStyleKeywords(prompt: string): boolean {
   return styleKeywords.some(keyword => lowerPrompt.includes(keyword))
 }
 
-// Removed unused performRuleBasedRefinement function
-
-function extractKeywordsFromFeedback(feedback: string): string[] {
-  const keywords = []
-  const lower = feedback.toLowerCase()
-  
-  // Extract common improvement requests
-  if (lower.includes('slow') || lower.includes('fast')) {
-    keywords.push('natural pacing')
-  }
-  if (lower.includes('dark') || lower.includes('bright')) {
-    keywords.push('balanced lighting')
-  }
-  if (lower.includes('blur') || lower.includes('focus')) {
-    keywords.push('sharp focus')
-  }
-  if (lower.includes('color')) {
-    keywords.push('vibrant colors')
-  }
-  
-  return keywords
-}
+// Removed unused performRuleBasedRefinement and extractKeywordsFromFeedback functions
 
 function getImprovementSummary(feedback: RefinePromptRequest['feedback']): string[] {
   const improvements = []
