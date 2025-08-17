@@ -15,6 +15,7 @@ import { VideoPreview } from './VideoPreview';
 import { VideoPreviewWithFeedback } from './VideoPreviewWithFeedback';
 import { VideoFeedback } from '@/components/prompt-to-video/FeedbackCollector';
 import { formatToModelInputs } from '@/lib/format-utils';
+import { getDemoVideoUrl } from '@/lib/demo-video';
 
 interface ProcessingQueueProps {
   queue: QueueItem[];
@@ -152,7 +153,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                         status: 'completed' as const,
                         outputs: item.formats.map(format => ({
                           format: format.name,
-                          url: `https://demo.blob.core.windows.net/animated/${item.id}_${format.name.toLowerCase().replace(/\s+/g, '_')}_preserved.mp4`
+                          url: getDemoVideoUrl(item.id, format.name)
                         }))
                       };
                     }
@@ -199,7 +200,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                   status: 'completed' as const,
                   outputs: item.formats.map(format => ({
                     format: format.name,
-                    url: `https://demo.blob.core.windows.net/videos/${item.id}_${format.name.toLowerCase().replace(/\s+/g, '_')}.mp4` // Demo URL that looks more realistic
+                    url: getDemoVideoUrl(item.id, format.name)
                   }))
                 };
               }
