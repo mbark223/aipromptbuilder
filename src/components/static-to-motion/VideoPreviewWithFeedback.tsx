@@ -22,7 +22,7 @@ interface VideoPreviewWithFeedbackProps {
   modelName?: string;
   originalPrompt: string;
   enhancedPrompt?: string;
-  modelParams?: any;
+  modelParams?: Record<string, string | number | boolean | null>;
   onDownload?: () => void;
   onClose?: () => void;
   onRefineAndRegenerate?: (refinedPrompt: string, feedback: VideoFeedback) => void;
@@ -48,7 +48,7 @@ export function VideoPreviewWithFeedback({
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showFeedback, setShowFeedback] = useState(false);
+  // const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -136,7 +136,7 @@ export function VideoPreviewWithFeedback({
   };
 
   const handleRefineAndRegenerate = (refinedPrompt: string, feedback: VideoFeedback) => {
-    setShowFeedback(false);
+    // setShowFeedback(false);
     if (onRefineAndRegenerate) {
       onRefineAndRegenerate(refinedPrompt, feedback);
     }
@@ -274,15 +274,7 @@ export function VideoPreviewWithFeedback({
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Feedback Button */}
-                <Button
-                  variant="outline"
-                  onClick={() => setShowFeedback(true)}
-                  disabled={isLoading || !!error}
-                >
-                  <Icons.messageSquare className="mr-2 h-4 w-4" />
-                  Give Feedback
-                </Button>
+                {/* Feedback Button - removed as we use tabs instead */}
 
                 {/* Download Button */}
                 {onDownload && (
@@ -328,7 +320,7 @@ export function VideoPreviewWithFeedback({
             enhancedPrompt={enhancedPrompt}
             modelParams={modelParams}
             onRefineAndRegenerate={handleRefineAndRegenerate}
-            onClose={() => setShowFeedback(false)}
+            onClose={onClose}
           />
         </TabsContent>
       </Tabs>

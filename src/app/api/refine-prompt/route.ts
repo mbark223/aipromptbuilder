@@ -13,7 +13,7 @@ interface RefinePromptRequest {
     }
     specificFeedback: string
   }
-  modelParams?: any
+  modelParams?: Record<string, string | number | boolean | null>
 }
 
 export async function POST(request: NextRequest) {

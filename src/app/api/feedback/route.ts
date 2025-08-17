@@ -4,7 +4,7 @@ export interface FeedbackData {
   videoUrl: string
   originalPrompt: string
   enhancedPrompt?: string
-  modelParams: any
+  modelParams: Record<string, string | number | boolean | null>
   feedback: {
     rating: number
     qualityAspects: {

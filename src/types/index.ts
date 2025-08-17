@@ -305,9 +305,9 @@ export interface QueueItem {
   metadata?: {
     isRefinement?: boolean;
     originalId?: string;
-    feedback?: any;
+    feedback?: unknown;
     enhancedPrompt?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Star, ThumbsUp, ThumbsDown, RefreshCw, AlertCircle } from 'lucide-react'
+import { Star, RefreshCw, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,7 +11,7 @@ interface FeedbackCollectorProps {
   videoUrl: string
   originalPrompt: string
   enhancedPrompt?: string
-  modelParams: any
+  modelParams: Record<string, string | number | boolean | null>
   onRefineAndRegenerate: (refinedPrompt: string, feedback: VideoFeedback) => void
   onClose?: () => void
 }

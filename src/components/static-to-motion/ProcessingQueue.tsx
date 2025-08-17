@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Icons } from '@/components/icons';
 import { useEffect, useState } from 'react';
 import { createReplicateService } from '@/lib/replicate';
-import { renderAnimatedImage } from '@/lib/animation-renderer';
+// import { renderAnimatedImage } from '@/lib/animation-renderer';
 import { QueueItem, AnimationModel } from '@/types';
 import { DownloadDialog } from './DownloadDialog';
 import { BatchDownloadDialog } from './BatchDownloadDialog';
@@ -32,7 +32,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
   
   const [batchDownloadOpen, setBatchDownloadOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  const [showFeedbackFor, setShowFeedbackFor] = useState<string | null>(null);
+  // const [showFeedbackFor, setShowFeedbackFor] = useState<string | null>(null);
   // Process queue items with Replicate API
   useEffect(() => {
     const processingItem = queue.find(item => item.status === 'processing');
@@ -162,7 +162,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                 })
               );
             }
-          } catch (error) {
+          } catch (_error) {
             onUpdateQueue((currentQueue) =>
               currentQueue.map(item => {
                 if (item.id === processingItemId) {
@@ -310,7 +310,7 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
 
     // Add the new item to the queue
     onUpdateQueue([...queue, newItem]);
-    setShowFeedbackFor(null);
+    // setShowFeedbackFor(null);
   };
 
   const completedCount = queue.filter(item => item.status === 'completed').length;
