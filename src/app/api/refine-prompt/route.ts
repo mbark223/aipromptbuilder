@@ -17,10 +17,8 @@ interface RefinePromptRequest {
 }
 
 export async function POST(request: NextRequest) {
-  let data: RefinePromptRequest;
-  
   try {
-    data = await request.json()
+    const data: RefinePromptRequest = await request.json()
     
     if (!data.originalPrompt || !data.feedback) {
       return NextResponse.json(
@@ -100,18 +98,11 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error refining prompt:', error)
     
-    // Fallback to rule-based refinement if AI fails
-    const fallbackRefinement = performRuleBasedRefinement(
-      data.originalPrompt,
-      data.feedback
+    // Return error response if we couldn't parse the request
+    return NextResponse.json(
+      { error: 'Failed to process request' },
+      { status: 500 }
     )
-    
-    return NextResponse.json({
-      refinedPrompt: fallbackRefinement,
-      improvements: getImprovementSummary(data.feedback),
-      originalPrompt: data.originalPrompt,
-      fallback: true
-    })
   }
 }
 
