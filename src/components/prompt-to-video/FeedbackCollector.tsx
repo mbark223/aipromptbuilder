@@ -62,7 +62,10 @@ export function FeedbackCollector({
   }
 
   const handleRefineAndRegenerate = async () => {
+    console.log('Refine button clicked! Current rating:', rating)
+    
     if (rating === 0) {
+      console.log('No rating provided, showing toast')
       toast({
         title: "Rating Required",
         description: "Please provide a rating before refining the prompt",
@@ -242,6 +245,7 @@ export function FeedbackCollector({
           onClick={handleRefineAndRegenerate}
           disabled={rating === 0 || isRefining}
           className="gap-2"
+          title={rating === 0 ? "Please select a rating first" : "Refine prompt and regenerate video"}
         >
           <RefreshCw className={`w-4 h-4 ${isRefining ? 'animate-spin' : ''}`} />
           Refine & Regenerate
