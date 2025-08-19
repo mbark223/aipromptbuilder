@@ -172,7 +172,7 @@ export function LumaProcessingDialog({
                     className="flex flex-col items-center space-y-3 cursor-pointer"
                   >
                     <div className="w-16 h-24 bg-muted rounded-md flex items-center justify-center">
-                      <Icons.smartphone className="h-12 w-12 text-muted-foreground" />
+                      <Icons.box className="h-12 w-12 text-muted-foreground" />
                     </div>
                     <div className="text-center">
                       <p className="font-medium">1080x1920</p>
