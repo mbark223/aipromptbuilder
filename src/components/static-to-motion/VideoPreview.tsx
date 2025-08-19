@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Icons } from '@/components/icons';
 import { Separator } from '@/components/ui/separator';
+import { LumaProcessingDialog } from '@/components/luma-processing/LumaProcessingDialog';
+import { isLumaAIConfigured } from '@/lib/luma-ai';
 
 interface VideoPreviewProps {
   videoUrl: string;
@@ -38,6 +40,8 @@ export function VideoPreview({
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showLumaDialog, setShowLumaDialog] = useState(false);
+  const hasLumaAI = isLumaAIConfigured();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -248,16 +252,30 @@ export function VideoPreview({
             </div>
           </div>
 
-          {/* Download Button */}
-          {onDownload && (
-            <Button
-              onClick={onDownload}
-              disabled={isLoading || !!error}
-            >
-              <Icons.download className="mr-2 h-4 w-4" />
-              Download Video
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {/* Luma AI Button */}
+            {hasLumaAI && (
+              <Button
+                variant="outline"
+                onClick={() => setShowLumaDialog(true)}
+                disabled={isLoading || !!error}
+              >
+                <Icons.sparkles className="mr-2 h-4 w-4" />
+                Process with Luma AI
+              </Button>
+            )}
+
+            {/* Download Button */}
+            {onDownload && (
+              <Button
+                onClick={onDownload}
+                disabled={isLoading || !!error}
+              >
+                <Icons.download className="mr-2 h-4 w-4" />
+                Download Video
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -274,6 +292,18 @@ export function VideoPreview({
           </div>
         </div>
       )}
+
+      {/* Luma AI Processing Dialog */}
+      <LumaProcessingDialog
+        open={showLumaDialog}
+        onOpenChange={setShowLumaDialog}
+        videoUrl={videoUrl}
+        videoName={format?.name || 'video'}
+        onProcessingComplete={(outputUrl, format) => {
+          console.log('Luma AI processing complete:', outputUrl, format);
+          // You can add additional handling here if needed
+        }}
+      />
     </Card>
   );
 }

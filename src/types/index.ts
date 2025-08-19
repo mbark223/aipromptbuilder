@@ -2058,3 +2058,32 @@ export interface Veo2QueueItem {
   error?: string;
   completedAt?: Date;
 }
+
+// Luma AI Types
+export interface LumaProcessingOptions {
+  format: '1080x1080' | '1080x1920';
+  prompt?: string;
+  loop?: boolean;
+  duration?: number; // seconds
+}
+
+export interface LumaJobStatus {
+  id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  videoUrl?: string;
+  error?: string;
+  progress?: number;
+}
+
+export interface LumaProcessingItem {
+  id: string;
+  sourceVideoUrl: string;
+  options: LumaProcessingOptions;
+  jobId?: string;
+  status: LumaJobStatus['status'];
+  progress: number;
+  outputUrl?: string;
+  error?: string;
+  startedAt: Date;
+  completedAt?: Date;
+}

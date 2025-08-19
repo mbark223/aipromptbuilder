@@ -9,6 +9,8 @@ import { Icons } from '@/components/icons';
 import { Separator } from '@/components/ui/separator';
 import { FeedbackCollector, VideoFeedback } from '@/components/prompt-to-video/FeedbackCollector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LumaProcessingDialog } from '@/components/luma-processing/LumaProcessingDialog';
+import { isLumaAIConfigured } from '@/lib/luma-ai';
 
 interface VideoPreviewWithFeedbackProps {
   videoUrl: string;
@@ -49,6 +51,8 @@ export function VideoPreviewWithFeedback({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // const [showFeedback, setShowFeedback] = useState(false);
+  const [showLumaDialog, setShowLumaDialog] = useState(false);
+  const hasLumaAI = isLumaAIConfigured();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -285,7 +289,17 @@ export function VideoPreviewWithFeedback({
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Feedback Button - removed as we use tabs instead */}
+                {/* Luma AI Button */}
+                {hasLumaAI && (
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowLumaDialog(true)}
+                    disabled={isLoading || !!error}
+                  >
+                    <Icons.sparkles className="mr-2 h-4 w-4" />
+                    Process with Luma AI
+                  </Button>
+                )}
 
                 {/* Download Button */}
                 {onDownload && (
@@ -335,6 +349,18 @@ export function VideoPreviewWithFeedback({
           />
         </TabsContent>
       </Tabs>
+
+      {/* Luma AI Processing Dialog */}
+      <LumaProcessingDialog
+        open={showLumaDialog}
+        onOpenChange={setShowLumaDialog}
+        videoUrl={videoUrl}
+        videoName={originalPrompt.slice(0, 50)}
+        onProcessingComplete={(outputUrl, format) => {
+          console.log('Luma AI processing complete:', outputUrl, format);
+          // You can add additional handling here if needed
+        }}
+      />
     </Card>
   );
 }
