@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { createLumaAIService, isLumaAIConfigured } from '@/lib/luma-ai';
-import { LumaProcessingOptions, LumaJobStatus } from '@/types';
+import { LumaProcessingOptions } from '@/types';
 
 interface LumaProcessingDialogProps {
   open: boolean;
@@ -125,7 +125,7 @@ export function LumaProcessingDialog({
         <DialogHeader>
           <DialogTitle>Process with Luma AI Dream Machine</DialogTitle>
           <DialogDescription>
-            Enhance your video with Luma AI's advanced processing. Choose your output format and settings.
+            Enhance your video with Luma AI&apos;s advanced processing. Choose your output format and settings.
           </DialogDescription>
         </DialogHeader>
 
