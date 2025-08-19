@@ -16,6 +16,7 @@ import { VideoPreviewWithFeedback } from './VideoPreviewWithFeedback';
 import { VideoFeedback } from '@/components/prompt-to-video/FeedbackCollector';
 import { formatToModelInputs } from '@/lib/format-utils';
 import { getDemoVideoUrl } from '@/lib/demo-video';
+import { LumaProcessingDialog } from '@/components/luma-processing/LumaProcessingDialog';
 
 interface ProcessingQueueProps {
   queue: QueueItem[];
@@ -32,6 +33,11 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
   }>({ open: false, videoUrl: '', fileName: '' });
   
   const [batchDownloadOpen, setBatchDownloadOpen] = useState(false);
+  const [lumaDialog, setLumaDialog] = useState<{
+    open: boolean;
+    videoUrl: string;
+    videoName: string;
+  } | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   // const [showFeedbackFor, setShowFeedbackFor] = useState<string | null>(null);
   // Process queue items with Replicate API
@@ -461,6 +467,22 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
                         </>
                       )}
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (item.outputs && item.outputs[0]) {
+                          setLumaDialog({
+                            open: true,
+                            videoUrl: item.outputs[0].url,
+                            videoName: item.asset.originalFile.name
+                          });
+                        }
+                      }}
+                    >
+                      <Icons.sparkles className="mr-2 h-3 w-3" />
+                      Luma AI
+                    </Button>
                     {item.outputs.map((output, idx) => (
                       <Button 
                         key={idx} 
@@ -561,6 +583,24 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
           console.log(`Batch downloading as ${format} in ${quality} quality`);
         }}
       />
+
+      {/* Luma AI Processing Dialog */}
+      {lumaDialog && (
+        <LumaProcessingDialog
+          open={lumaDialog.open}
+          onOpenChange={(open) => {
+            if (!open) {
+              setLumaDialog(null);
+            }
+          }}
+          videoUrl={lumaDialog.videoUrl}
+          videoName={lumaDialog.videoName}
+          onProcessingComplete={(outputUrl, format) => {
+            console.log('Luma AI processing complete:', outputUrl, format);
+            // Optionally, you could add the processed video to the queue or handle it differently
+          }}
+        />
+      )}
     </div>
   );
 }
