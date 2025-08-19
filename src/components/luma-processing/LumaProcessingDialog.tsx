@@ -28,7 +28,7 @@ export function LumaProcessingDialog({
   open,
   onOpenChange,
   videoUrl,
-  videoName,
+  videoName: _videoName,
   onProcessingComplete
 }: LumaProcessingDialogProps) {
   const [selectedFormat, setSelectedFormat] = useState<'1080x1080' | '1080x1920'>('1080x1080');
