@@ -1,4 +1,5 @@
 import { LumaProcessingOptions, LumaJobStatus } from '@/types';
+import { config } from './config';
 
 interface LumaAPIResponse {
   id: string;
@@ -13,9 +14,9 @@ export class LumaAIService {
   private baseUrl = 'https://api.lumalabs.ai/dream-machine/v1';
 
   constructor(apiKey?: string) {
-    const key = apiKey || process.env.NEXT_PUBLIC_LUMA_AI_API_KEY;
+    const key = apiKey || config.lumaAI.apiKey;
     if (!key) {
-      throw new Error('Luma AI API key not configured');
+      throw new Error('Luma AI API key not configured. Please add NEXT_PUBLIC_LUMA_AI_API_KEY to your .env.local file.');
     }
     this.apiKey = key;
   }
@@ -160,5 +161,5 @@ export function createLumaAIService(apiKey?: string): LumaAIService | null {
  * Check if Luma AI is configured
  */
 export function isLumaAIConfigured(): boolean {
-  return !!process.env.NEXT_PUBLIC_LUMA_AI_API_KEY;
+  return !!config.lumaAI.apiKey;
 }
