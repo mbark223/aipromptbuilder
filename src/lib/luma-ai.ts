@@ -36,6 +36,7 @@ export class LumaAIService {
         },
         body: JSON.stringify({
           prompt: options.prompt || 'Enhance this video',
+          model: 'ray-2',
           keyframes: {
             frame0: {
               type: 'image',
