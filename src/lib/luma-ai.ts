@@ -29,10 +29,9 @@ export class LumaAIService {
     options: LumaProcessingOptions
   ): Promise<{ jobId: string }> {
     try {
-      const response = await fetch(`${this.baseUrl}/generations`, {
+      const response = await fetch('/api/luma/generate', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -67,10 +66,10 @@ export class LumaAIService {
    */
   async checkJobStatus(jobId: string): Promise<LumaJobStatus> {
     try {
-      const response = await fetch(`${this.baseUrl}/generations/${jobId}`, {
+      const response = await fetch(`/api/luma/status/${jobId}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -99,10 +98,10 @@ export class LumaAIService {
    */
   async cancelJob(jobId: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/generations/${jobId}`, {
+      const response = await fetch(`/api/luma/status/${jobId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
         },
       });
 
