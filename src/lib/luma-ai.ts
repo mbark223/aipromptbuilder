@@ -38,13 +38,12 @@ export class LumaAIService {
           prompt: options.prompt || 'Enhance this video',
           keyframes: {
             frame0: {
-              type: 'video',
+              type: 'image',
               url: videoUrl
             }
           },
-          aspect_ratio: options.format === '1080x1080' ? '1:1' : '9:16',
-          loop: options.loop || false,
-          duration: options.duration || 5
+          aspect_ratio: options.format === '1080x1080' ? '1:1' : '16:9',
+          loop: options.loop || false
         }),
       });
 
