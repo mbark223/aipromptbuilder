@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     
+    // Log the request body for debugging
+    console.log('Luma AI request body:', JSON.stringify(body, null, 2));
+    
     const response = await fetch('https://api.lumalabs.ai/dream-machine/v1/generations', {
       method: 'POST',
       headers: {
