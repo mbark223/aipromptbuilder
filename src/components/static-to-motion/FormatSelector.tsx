@@ -123,11 +123,8 @@ export function FormatSelector({
                   />
                 </div>
                 
-                <div className="text-center space-y-1">
+                <div className="text-center">
                   <p className="text-sm font-mono">{format.aspectRatio}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {format.width} × {format.height}
-                  </p>
                 </div>
               </div>
             </Card>

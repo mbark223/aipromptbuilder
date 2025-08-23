@@ -14,62 +14,6 @@ interface PromptInputProps {
   onPromptsGenerated: (prompts: string[]) => void;
 }
 
-const PROMPT_TEMPLATES = [
-  {
-    category: 'Florida Sportsbook (40-65+)',
-    templates: [
-      'Florida football betting: Mature gentleman in comfortable Florida home, reviewing NFL odds on tablet with Dolphins game on TV, warm sunlight through windows, smooth UI navigation with relaxed pacing, ambient home sounds with subtle excitement, "21+ Only in FL" visible',
-      'Golf betting experience: Distinguished golfer at Florida country club, checking PGA tour odds on phone at 19th hole, upscale clubhouse ambiance, elegant camera movements showing app and golf course views, gentle background conversations and golf sounds',
-      'Florida sports bar scene: Group of mature friends at upscale sports bar, multiple games on screens while using betting apps, warm lighting with screen glow, natural interactions and app demonstrations, sports bar ambiance with cheering moments',
-      'Retirement community game day: Active retirees in Florida community center, watching games together while placing bets on tablets, bright natural lighting, group celebrations and high-fives, community atmosphere with clear app interface demonstrations',
-    ]
-  },
-  {
-    category: 'iCasino NJ',
-    templates: [
-      'Atlantic City jackpot: New Jersey player at home winning online slots, Atlantic City boardwalk visible through window, slot reels aligning with massive win animation, bright game graphics with coastal ambiance, jackpot sounds and celebration, NJ DGE seal prominent',
-      'Garden State blackjack: Player enjoying live dealer blackjack from NJ home, professional dealer on screen, perfect hand reveal moment, studio lighting for dealer with cozy home setting, card sounds and winning celebration, "Licensed in NJ" clearly visible',
-      'Jersey Shore slots: Beach-themed slot game with boardwalk symbols, player at shore house with ocean view, bonus round activation with NJ landmarks, bright beach day lighting with colorful graphics, wave sounds and slot music, NJ gaming compliance visible',
-      'Atlantic City online experience: NJ resident playing multiple casino games on tablet, AC casino partnership branding visible, switching between slots and table games, evening home ambiance with game lights, casino sounds with regulated gaming messaging',
-    ]
-  },
-  {
-    category: 'iCasino PA',
-    templates: [
-      'Pennsylvania slots paradise: PA-themed slot with Liberty Bell symbols, player in Philadelphia home winning big, Keystone State pride graphics, warm indoor lighting with vibrant slot animations, reel spins and celebration effects, PA Gaming Control Board seal visible',
-      'Pocono poker night: Online poker game with PA player avatars, Pocono mountains visible through window, winning poker hand reveal, digital table glow with evening ambiance, card shuffling and chip sounds, PA iGaming license prominent',
-      'Philly freedom spins: Historic Philadelphia themed slots, player with Independence Hall view, bonus round with fireworks animation, patriotic color scheme with warm lighting, Liberty Bell ringing sounds, state-specific responsible gaming visible',
-      'Steel City casino: Pittsburgh player enjoying various iCasino games, city skyline visible, smooth transitions between games, modern apartment setting with game lighting, urban ambiance with winning moments, PA regulatory compliance shown',
-    ]
-  },
-  {
-    category: 'iCasino MI',
-    templates: [
-      'Great Lakes mega spins: Michigan nature-themed slots, Detroit skyline view while playing, Great Lakes symbols cascading, bright slot animations with Michigan seasonal lighting, wildlife sounds and winning music, MI Gaming Control Board compliance',
-      'Motor City roulette: Live dealer roulette with Michigan player, Detroit casino partnership visible, ball landing on winning number, professional studio lights with Michigan home comfort, roulette sounds and celebration, MI regulations displayed',
-      'Pure Michigan gaming: Player enjoying Michigan-themed casino games, Great Lakes scenery visible, switching between slots with local themes, natural Michigan lighting with game glow, ambient lake sounds with gaming audio, local responsible gaming resources',
-      'Detroit online casino: Michigan resident winning at multiple games, automotive city energy in design, jackpot celebration moment, modern living space with dynamic lighting, winning sounds and excitement, Detroit partnership branding visible',
-    ]
-  },
-  {
-    category: 'Multi-State Promotions',
-    templates: [
-      'Welcome bonus reveal: New player in any legal state, bonus amount dramatically revealing on screen, account credit animation, bright inviting lighting with bonus glow effects, exciting reveal sounds with celebration music, state-specific compliance messaging',
-      'Daily promotions showcase: Calendar showing different offers for each state, smooth transitions between promotions, variety of bonuses highlighted, clean modern interface with color coding, page turn sounds and highlight effects, multi-state availability shown',
-      'VIP rewards presentation: High-value player receiving exclusive benefits, luxury aesthetic with state options, rewards accumulating animation, premium lighting with golden accents, sophisticated sounds and fanfare, available in NJ/PA/MI messaging',
-      'Responsible gaming message: Player setting limits across platforms, clear interface demonstrations, positive responsible gaming approach, bright professional lighting, calm reassuring music, state-specific helpline numbers visible',
-    ]
-  },
-  {
-    category: 'Cross-Platform Features',
-    templates: [
-      'Mobile to desktop transition: Player seamlessly switching devices, same account across platforms, smooth transition effects, consistent branding and UI, device switching sounds, cross-platform availability highlighted',
-      'Live betting action: Real-time odds updates during games, multiple sports with Florida focus, dynamic interface changes, sports broadcast lighting with UI glow, live update sounds and excitement, 21+ and geo-location indicators',
-      'Social betting experience: Friends comparing bets remotely, chat features and leaderboards, social interaction focus, warm friendly lighting, notification sounds and social audio, community features with compliance',
-      'Tutorial walkthrough: Easy onboarding for 40-65+ demographic, clear step-by-step demonstrations, simplified interface highlights, bright clear lighting for visibility, helpful guide voice with button clicks, accessibility features shown',
-    ]
-  }
-];
 
 export function PromptInput({ onPromptsGenerated }: PromptInputProps) {
   const { toast } = useToast();
@@ -78,17 +22,12 @@ export function PromptInput({ onPromptsGenerated }: PromptInputProps) {
   const [generatedPrompts, setGeneratedPrompts] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [promptAnalysis, setPromptAnalysis] = useState<{
     score: number;
     elements: Record<string, boolean>;
     suggestions: string[];
   } | null>(null);
 
-  const handleTemplateSelect = (template: string) => {
-    setBasePrompt(template);
-    setSelectedTemplate(template);
-  };
 
   const handleEnhanceWithAI = async () => {
     if (!basePrompt.trim()) {
@@ -243,31 +182,6 @@ export function PromptInput({ onPromptsGenerated }: PromptInputProps) {
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label>Quick Templates</Label>
-          <div className="space-y-4">
-            {PROMPT_TEMPLATES.map((category) => (
-              <div key={category.category}>
-                <h4 className="text-sm font-medium mb-2">{category.category}</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  {category.templates.map((template) => (
-                    <button
-                      key={template}
-                      onClick={() => handleTemplateSelect(template)}
-                      className={`text-left p-3 rounded-lg border text-sm transition-colors ${
-                        selectedTemplate === template
-                          ? 'border-primary bg-primary/10'
-                          : 'border-border hover:border-primary/50 hover:bg-accent'
-                      }`}
-                    >
-                      {template}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <div className="flex items-center gap-4">
           <div className="flex-1">
