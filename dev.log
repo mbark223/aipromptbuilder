@@ -1,0 +1,17 @@
+
+> ai-prompt-builder@0.1.2 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.4.2 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.4.48:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 883ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1780ms
+ GET / 200 in 2114ms
+ ✓ Compiled /api/test-env in 309ms
+ GET /api/test-env 200 in 467ms
+[?25h
