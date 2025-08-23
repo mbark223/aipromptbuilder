@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
     const apiKey = process.env.NEXT_PUBLIC_LUMA_AI_API_KEY;
+    const { jobId } = await params;
     
     if (!apiKey) {
       return NextResponse.json(
@@ -15,7 +16,7 @@ export async function GET(
     }
 
     const response = await fetch(
-      `https://api.lumalabs.ai/dream-machine/v1/generations/${params.jobId}`,
+      `https://api.lumalabs.ai/dream-machine/v1/generations/${jobId}`,
       {
         method: 'GET',
         headers: {
@@ -45,10 +46,11 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { jobId: string } }
+  { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
     const apiKey = process.env.NEXT_PUBLIC_LUMA_AI_API_KEY;
+    const { jobId } = await params;
     
     if (!apiKey) {
       return NextResponse.json(
@@ -58,7 +60,7 @@ export async function DELETE(
     }
 
     const response = await fetch(
-      `https://api.lumalabs.ai/dream-machine/v1/generations/${params.jobId}`,
+      `https://api.lumalabs.ai/dream-machine/v1/generations/${jobId}`,
       {
         method: 'DELETE',
         headers: {
