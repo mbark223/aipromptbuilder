@@ -54,11 +54,11 @@ export default function NanoBananaPage() {
     try {
       // Build enhanced prompt with all parameters
       let enhancedPrompt = prompt;
-      if (style) enhancedPrompt += `, ${style} style`;
-      if (lighting) enhancedPrompt += `, ${lighting} lighting`;
-      if (colorGrading) enhancedPrompt += `, ${colorGrading} color grading`;
-      if (atmosphere) enhancedPrompt += `, ${atmosphere} atmosphere`;
-      if (cameraAngle) enhancedPrompt += `, ${cameraAngle} camera angle`;
+      if (style && style !== 'none') enhancedPrompt += `, ${style} style`;
+      if (lighting && lighting !== 'none') enhancedPrompt += `, ${lighting} lighting`;
+      if (colorGrading && colorGrading !== 'none') enhancedPrompt += `, ${colorGrading} color grading`;
+      if (atmosphere && atmosphere !== 'none') enhancedPrompt += `, ${atmosphere} atmosphere`;
+      if (cameraAngle && cameraAngle !== 'none') enhancedPrompt += `, ${cameraAngle} camera angle`;
 
       const formData = new FormData();
       formData.append('image', uploadedFile);
@@ -195,7 +195,7 @@ export default function NanoBananaPage() {
                         <SelectValue placeholder="Select style" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         <SelectItem value="photorealistic">Photorealistic</SelectItem>
                         <SelectItem value="cinematic">Cinematic</SelectItem>
                         <SelectItem value="anime">Anime</SelectItem>
@@ -214,7 +214,7 @@ export default function NanoBananaPage() {
                         <SelectValue placeholder="Select lighting" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         <SelectItem value="natural">Natural</SelectItem>
                         <SelectItem value="dramatic">Dramatic</SelectItem>
                         <SelectItem value="soft">Soft</SelectItem>
@@ -233,7 +233,7 @@ export default function NanoBananaPage() {
                         <SelectValue placeholder="Select colors" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         <SelectItem value="vibrant">Vibrant</SelectItem>
                         <SelectItem value="muted">Muted</SelectItem>
                         <SelectItem value="warm">Warm</SelectItem>
@@ -252,7 +252,7 @@ export default function NanoBananaPage() {
                         <SelectValue placeholder="Select mood" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         <SelectItem value="epic">Epic</SelectItem>
                         <SelectItem value="mysterious">Mysterious</SelectItem>
                         <SelectItem value="dreamy">Dreamy</SelectItem>
@@ -271,7 +271,7 @@ export default function NanoBananaPage() {
                         <SelectValue placeholder="Select angle" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">None</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
                         <SelectItem value="eye level">Eye Level</SelectItem>
                         <SelectItem value="low angle">Low Angle</SelectItem>
                         <SelectItem value="high angle">High Angle</SelectItem>
