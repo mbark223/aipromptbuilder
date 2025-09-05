@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -118,7 +117,7 @@ export default function NanoBananaPage() {
           <span>🍌</span> Nano-Banana
         </h1>
         <p className="text-muted-foreground">
-          Google's latest AI-powered image transformation model from Gemini 2.5
+          Google&apos;s latest AI-powered image transformation model from Gemini 2.5
         </p>
       </div>
 
@@ -275,7 +274,7 @@ export default function NanoBananaPage() {
                         <SelectItem value="eye level">Eye Level</SelectItem>
                         <SelectItem value="low angle">Low Angle</SelectItem>
                         <SelectItem value="high angle">High Angle</SelectItem>
-                        <SelectItem value="bird's eye">Bird's Eye</SelectItem>
+                        <SelectItem value="bird's eye">Bird&apos;s Eye</SelectItem>
                         <SelectItem value="dutch angle">Dutch Angle</SelectItem>
                         <SelectItem value="close-up">Close-up</SelectItem>
                         <SelectItem value="wide shot">Wide Shot</SelectItem>
@@ -353,7 +352,7 @@ export default function NanoBananaPage() {
             <h3 className="font-semibold mb-2">About Nano-Banana</h3>
             <ul className="text-sm text-muted-foreground space-y-2">
               <li>• Advanced AI image transformation model</li>
-              <li>• Part of Google's Gemini 2.5 family</li>
+              <li>• Part of Google&apos;s Gemini 2.5 family</li>
               <li>• Supports creative style transfers</li>
               <li>• Fast processing with high-quality results</li>
               <li>• $0.039 per image transformation</li>

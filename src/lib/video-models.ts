@@ -436,6 +436,47 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
     ]
   },
   
+  // Google Nano-Banana
+  {
+    id: 'nano-banana',
+    name: 'Nano-Banana',
+    provider: 'Google',
+    description: 'Google\'s latest image editing model in Gemini 2.5 for image-to-video generation',
+    capabilities: ['Image-to-Video', 'Image Transformation', 'AI-Powered Effects'],
+    speed: 'fast',
+    quality: 'high',
+    costPerGeneration: 0.039,
+    replicateId: 'google/nano-banana:f0a9d34b12ad1c1cd76269a844b218ff4e64e128ddaba93e15891f47368958a0',
+    pricing: '$0.039/image',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Transformation Prompt',
+        required: true,
+        placeholder: 'Describe how to transform the image into a video...'
+      },
+      {
+        name: 'image_input',
+        type: 'image',
+        label: 'Input Image',
+        required: false,
+        placeholder: 'Upload image to transform'
+      },
+      {
+        name: 'output_format',
+        type: 'select',
+        label: 'Output Format',
+        required: false,
+        options: [
+          { value: 'jpg', label: 'JPG' },
+          { value: 'png', label: 'PNG' }
+        ],
+        defaultValue: 'jpg'
+      }
+    ]
+  },
+  
   // Existing models
   {
     id: 'stable-video-diffusion',
