@@ -59,16 +59,22 @@ export async function POST(request: NextRequest) {
     console.log('Starting Nano-Banana prediction with prompt:', fullPrompt);
     console.log('Image data URL length:', dataUrl.length);
     
-    const output = await replicate.run(
-      "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
-      {
-        input: {
-          prompt: fullPrompt,
-          image_input: [dataUrl],
-          output_format: "png"
+    let output;
+    try {
+      output = await replicate.run(
+        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+        {
+          input: {
+            prompt: fullPrompt,
+            image_input: [dataUrl],
+            output_format: "png"
+          }
         }
-      }
-    );
+      );
+    } catch (replicateError) {
+      console.error('Replicate API error:', replicateError);
+      throw new Error(`Replicate API error: ${replicateError instanceof Error ? replicateError.message : 'Unknown error'}`);
+    }
 
     // Log the full output to understand the structure
     console.log('Replicate raw output type:', typeof output);
