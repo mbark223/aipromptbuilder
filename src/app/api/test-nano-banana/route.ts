@@ -11,29 +11,61 @@ export async function GET(request: NextRequest) {
       auth: process.env.REPLICATE_API_TOKEN,
     });
 
-    // Test with a simple prompt and a small test image
+    console.log('Running test predictions...');
+    
+    // Test 1: With image_input
     const testImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
     
-    console.log('Running test prediction...');
-    
-    const output = await replicate.run(
-      "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
-      {
-        input: {
-          prompt: "A beautiful landscape",
-          image_input: [testImage],
-          output_format: "png"
+    let output1;
+    try {
+      output1 = await replicate.run(
+        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+        {
+          input: {
+            prompt: "A beautiful landscape",
+            image_input: [testImage],
+            output_format: "png"
+          }
         }
-      }
-    );
+      );
+    } catch (e) {
+      output1 = { error: e instanceof Error ? e.message : 'Failed' };
+    }
+    
+    // Test 2: Without image_input (text-to-image only)
+    let output2;
+    try {
+      output2 = await replicate.run(
+        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+        {
+          input: {
+            prompt: "A beautiful landscape painting",
+            output_format: "png"
+          }
+        }
+      );
+    } catch (e) {
+      output2 = { error: e instanceof Error ? e.message : 'Failed' };
+    }
 
     return NextResponse.json({
       success: true,
-      outputType: typeof output,
-      outputIsArray: Array.isArray(output),
-      outputKeys: output && typeof output === 'object' ? Object.keys(output) : null,
-      outputStringified: JSON.stringify(output),
-      rawOutput: output
+      test1: {
+        description: 'With image_input',
+        outputType: typeof output1,
+        outputIsArray: Array.isArray(output1),
+        outputKeys: output1 && typeof output1 === 'object' ? Object.keys(output1) : null,
+        outputStringified: JSON.stringify(output1),
+        rawOutput: output1
+      },
+      test2: {
+        description: 'Without image_input (text-to-image)',
+        outputType: typeof output2,
+        outputIsArray: Array.isArray(output2),
+        outputKeys: output2 && typeof output2 === 'object' ? Object.keys(output2) : null,
+        outputStringified: JSON.stringify(output2),
+        rawOutput: output2
+      }
     });
 
   } catch (error) {

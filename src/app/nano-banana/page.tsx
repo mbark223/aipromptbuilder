@@ -38,10 +38,10 @@ export default function NanoBananaPage() {
   };
 
   const handleGenerate = async () => {
-    if (!uploadedFile || !prompt) {
+    if (!prompt) {
       toast({
-        title: 'Missing inputs',
-        description: 'Please upload an image and enter a transformation prompt.',
+        title: 'Missing input',
+        description: 'Please enter a description for the image you want to generate.',
         variant: 'destructive',
       });
       return;
@@ -53,7 +53,14 @@ export default function NanoBananaPage() {
 
     try {
       const formData = new FormData();
-      formData.append('image', uploadedFile);
+      // Add a dummy file since the backend still expects it in FormData (we'll remove this requirement later)
+      if (uploadedFile) {
+        formData.append('image', uploadedFile);
+      } else {
+        // Create a dummy 1x1 transparent PNG
+        const dummyBlob = new Blob([''], { type: 'image/png' });
+        formData.append('image', dummyBlob, 'dummy.png');
+      }
       formData.append('prompt', prompt);
       formData.append('feedback', JSON.stringify({ 
         style: styleFeedback,
@@ -159,7 +166,7 @@ export default function NanoBananaPage() {
           <span>🍌</span> Nano-Banana
         </h1>
         <p className="text-muted-foreground">
-          Google's latest image editing model from Gemini 2.5 - Transform your images with AI
+          Google's latest text-to-image model from Gemini 2.5 - Generate images from text descriptions
         </p>
       </div>
 
@@ -169,56 +176,17 @@ export default function NanoBananaPage() {
             <h2 className="text-xl font-semibold mb-4">Input</h2>
             
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="image-upload">Upload Image</Label>
-                <div className="mt-2">
-                  {!uploadedImage ? (
-                    <label
-                      htmlFor="image-upload"
-                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-muted-foreground/50 transition-colors"
-                    >
-                      <Upload className="w-10 h-10 text-muted-foreground mb-2" />
-                      <span className="text-sm text-muted-foreground">
-                        Click to upload or drag and drop
-                      </span>
-                      <span className="text-xs text-muted-foreground mt-1">
-                        PNG, JPG, WEBP up to 10MB
-                      </span>
-                      <input
-                        id="image-upload"
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                      />
-                    </label>
-                  ) : (
-                    <div className="relative group">
-                      <img
-                        src={uploadedImage}
-                        alt="Uploaded"
-                        className="w-full h-64 object-cover rounded-lg"
-                      />
-                      <button
-                        onClick={() => {
-                          setUploadedImage(null);
-                          setUploadedFile(null);
-                          setResultImage(null);
-                        }}
-                        className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        Replace
-                      </button>
-                    </div>
-                  )}
-                </div>
+              <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-4">
+                <p className="text-sm text-yellow-800">
+                  <strong>Note:</strong> Nano-Banana is a text-to-image model. It generates images from text descriptions only and doesn't support image editing.
+                </p>
               </div>
 
               <div>
-                <Label htmlFor="prompt">Transformation Prompt</Label>
+                <Label htmlFor="prompt">Image Description</Label>
                 <Textarea
                   id="prompt"
-                  placeholder="Describe how to transform the image... (e.g., 'make it look like a watercolor painting', 'add dramatic lighting', 'change to winter scene')"
+                  placeholder="Describe the image you want to generate... (e.g., 'a watercolor painting of a sunset', 'a dramatic portrait with studio lighting', 'a snowy winter landscape')"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   className="mt-2 min-h-[100px]"
@@ -226,7 +194,7 @@ export default function NanoBananaPage() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Transformation Feedback</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">Generation Details</h3>
                 
                 <div className="space-y-3">
                   <div>
@@ -277,7 +245,7 @@ export default function NanoBananaPage() {
 
               <Button
                 onClick={handleGenerate}
-                disabled={!uploadedImage || !prompt || isProcessing}
+                disabled={!prompt || isProcessing}
                 className="w-full"
                 size="lg"
               >
@@ -289,7 +257,7 @@ export default function NanoBananaPage() {
                 ) : (
                   <>
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Transform Image
+                    Generate Image
                   </>
                 )}
               </Button>
