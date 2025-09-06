@@ -47,33 +47,47 @@ export async function POST(request: NextRequest) {
       fullPrompt += `. Additional notes: ${feedback.additional}`;
     }
 
-    // Run the Nano Banana model
+    // Run FLUX Image-to-Image model (since nano-banana doesn't exist)
     const output = await replicate.run(
-      "google/nano-banana:f0a9d34b12ad1c1cd76269a844b218ff4e64e128ddaba93e15891f47368958a0",
+      "black-forest-labs/flux-1.1-pro",
       {
         input: {
-          image: dataUrl,
           prompt: fullPrompt,
-          num_outputs: 1,
-          guidance_scale: 7.5,
-          num_inference_steps: 50,
-          image_size: 1024,
+          image: dataUrl,
+          aspect_ratio: "1:1",
+          output_format: "webp",
+          output_quality: 90,
+          safety_tolerance: 2,
+          prompt_upsampling: true
         }
       }
     );
 
-    // The output should be an array of image URLs
-    console.log('Replicate output:', output);
-    const imageUrls = output as string[];
+    // Log the full output to understand the structure
+    console.log('Replicate output:', JSON.stringify(output, null, 2));
     
-    if (!imageUrls || imageUrls.length === 0) {
-      throw new Error('No image generated');
+    // Handle different possible output formats
+    let imageUrl: string | undefined;
+    
+    if (typeof output === 'string') {
+      imageUrl = output;
+    } else if (Array.isArray(output) && output.length > 0) {
+      imageUrl = output[0];
+    } else if (output && typeof output === 'object' && 'url' in output) {
+      imageUrl = (output as any).url;
+    } else if (output && typeof output === 'object' && 'output' in output) {
+      imageUrl = (output as any).output;
+    }
+    
+    if (!imageUrl) {
+      console.error('Could not extract image URL from output:', output);
+      throw new Error('No image URL found in response');
     }
 
-    console.log('Returning image URL:', imageUrls[0]);
+    console.log('Returning image URL:', imageUrl);
     
     return NextResponse.json({
-      imageUrl: imageUrls[0],
+      imageUrl,
       prompt: fullPrompt,
       feedback,
     });

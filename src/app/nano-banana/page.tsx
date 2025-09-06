@@ -75,7 +75,7 @@ export default function NanoBananaPage() {
         setResultImage(data.imageUrl);
         toast({
           title: 'Success!',
-          description: 'Your image has been transformed using Nano-Banana.',
+          description: 'Your image has been transformed successfully.',
         });
       } else {
         throw new Error('No image URL in response');
@@ -92,14 +92,28 @@ export default function NanoBananaPage() {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (resultImage) {
-      const link = document.createElement('a');
-      link.href = resultImage;
-      link.download = `nano-banana-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      try {
+        // Fetch the image and create a blob
+        const response = await fetch(resultImage);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `transformed-image-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Download error:', error);
+        // Fallback to direct link
+        window.open(resultImage, '_blank');
+      }
     }
   };
 
@@ -107,10 +121,10 @@ export default function NanoBananaPage() {
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
-          <span>🍌</span> Nano-Banana
+          <span>🎨</span> AI Image Transformer
         </h1>
         <p className="text-muted-foreground">
-          Google&apos;s latest AI-powered image transformation model from Gemini 2.5
+          Transform your images using advanced AI models with custom style and composition feedback
         </p>
       </div>
 
