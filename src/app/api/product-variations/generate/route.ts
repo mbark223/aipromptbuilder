@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
 
     // Use Google Nano-Banana model
     console.log('Starting Nano-Banana prediction with prompt:', fullPrompt);
+    console.log('Image data URL length:', dataUrl.length);
     
     const output = await replicate.run(
       "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
@@ -89,13 +90,28 @@ export async function POST(request: NextRequest) {
     // Check if it's an object with common properties
     else if (output && typeof output === 'object') {
       // Try different common property names
-      imageUrl = output.url || output.output || output.image || output.imageUrl;
+      imageUrl = output.url || output.output || output.image || output.imageUrl || output.uri;
       console.log('Output is an object, extracted URL:', imageUrl);
+      
+      // If still not found, check if it has a data property
+      if (!imageUrl && output.data) {
+        imageUrl = output.data;
+        console.log('Found in data property:', imageUrl);
+      }
       
       // If still not found, log all properties
       if (!imageUrl) {
         console.log('Object properties:', Object.keys(output));
         console.log('Full object:', output);
+        
+        // Try to get the first string value from the object
+        for (const key of Object.keys(output)) {
+          if (typeof output[key] === 'string' && (output[key].includes('http') || output[key].includes('//'))) {
+            imageUrl = output[key];
+            console.log(`Found URL in property ${key}:`, imageUrl);
+            break;
+          }
+        }
       }
     }
     
@@ -110,6 +126,16 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
+    // Ensure imageUrl is a string before formatting
+    if (typeof imageUrl !== 'string') {
+      console.error('Image URL is not a string, it is:', typeof imageUrl, imageUrl);
+      return NextResponse.json({
+        error: 'Image URL is not a string',
+        imageUrlType: typeof imageUrl,
+        imageUrlValue: imageUrl
+      }, { status: 500 });
+    }
+    
     // Ensure the URL is properly formatted
     if (!imageUrl.startsWith('http')) {
       // If it's a relative URL, it might be from Replicate's CDN

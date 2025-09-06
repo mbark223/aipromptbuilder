@@ -102,7 +102,7 @@ export default function NanoBananaPage() {
           throw new Error('Invalid image URL format');
         }
         
-        const finalImageUrl = imageUrl.startsWith('http') ? imageUrl : `https:${imageUrl}`;
+        const finalImageUrl = (typeof imageUrl === 'string' && imageUrl.startsWith('http')) ? imageUrl : `https:${imageUrl}`;
         console.log('Setting result image:', finalImageUrl);
         setResultImage(finalImageUrl);
         toast({
