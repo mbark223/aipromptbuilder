@@ -65,7 +65,9 @@ export default function NanoBananaPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate image');
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        throw new Error(errorData.error || 'Failed to generate image');
       }
 
       const data = await response.json();
@@ -84,7 +86,7 @@ export default function NanoBananaPage() {
       console.error('Generation error:', error);
       toast({
         title: 'Generation failed',
-        description: 'Failed to transform the image. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to transform the image. Please try again.',
         variant: 'destructive',
       });
     } finally {

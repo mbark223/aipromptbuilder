@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Replicate from 'replicate';
 
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN,
-});
-
 // Handle GET request
 export async function GET(request: NextRequest) {
   return NextResponse.json({ message: 'This endpoint only accepts POST requests' }, { status: 405 });
@@ -12,6 +8,18 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if API token is available
+    if (!process.env.REPLICATE_API_TOKEN) {
+      console.error('REPLICATE_API_TOKEN is not set');
+      return NextResponse.json(
+        { error: 'API configuration error: Replicate token not found' },
+        { status: 500 }
+      );
+    }
+
+    const replicate = new Replicate({
+      auth: process.env.REPLICATE_API_TOKEN,
+    });
     const formData = await request.formData();
     const imageFile = formData.get('image') as File;
     const prompt = formData.get('prompt') as string;
@@ -47,18 +55,20 @@ export async function POST(request: NextRequest) {
       fullPrompt += `. Additional notes: ${feedback.additional}`;
     }
 
-    // Run FLUX Image-to-Image model (since nano-banana doesn't exist)
+    // Use a simpler image-to-image model
+    console.log('Starting Replicate prediction with prompt:', fullPrompt);
+    
     const output = await replicate.run(
-      "black-forest-labs/flux-1.1-pro",
+      "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
       {
         input: {
           prompt: fullPrompt,
           image: dataUrl,
-          aspect_ratio: "1:1",
-          output_format: "webp",
-          output_quality: 90,
-          safety_tolerance: 2,
-          prompt_upsampling: true
+          num_outputs: 1,
+          guidance_scale: 7.5,
+          prompt_strength: 0.8,
+          scheduler: "K_EULER",
+          num_inference_steps: 30
         }
       }
     );
@@ -93,8 +103,24 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error generating variation:', error);
+    
+    // Provide more detailed error message
+    let errorMessage = 'Failed to generate variation';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      
+      // Check for common Replicate errors
+      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        errorMessage = 'Invalid Replicate API token. Please check your configuration.';
+      } else if (error.message.includes('402')) {
+        errorMessage = 'Replicate account has insufficient credits.';
+      } else if (error.message.includes('404')) {
+        errorMessage = 'Model not found. Please check the model ID.';
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to generate variation' },
+      { error: errorMessage, details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
