@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
     console.log('Image MIME type:', mimeType);
     
     try {
-      // Use Google Nano-Banana for image editing
+      // Use Google Nano-Banana model for image editing (branded as Blendr)
       // Try with a single image string instead of array
-      console.log('Calling Nano-Banana with data URL');
+      console.log('Calling Blendr (Nano-Banana) with data URL');
       
       const prediction = await replicate.predictions.create({
         version: "adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       // Check if the prediction failed
       if (completedPrediction.status === 'failed') {
         console.error('Prediction failed:', completedPrediction.error);
-        throw new Error(`Nano-Banana prediction failed: ${completedPrediction.error || 'Unknown error'}`);
+        throw new Error(`Blendr prediction failed: ${completedPrediction.error || 'Unknown error'}`);
       }
       
       const output = completedPrediction.output || completedPrediction;

@@ -1,12 +1,13 @@
 'use client';
 
-// Nano-Banana AI Image Transformation Tool
+// Blendr AI Image Transformation Tool
 import { useState } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Loader2, Download, Sparkles } from 'lucide-react';
+import { Upload, Loader2, Download, Sparkles, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function NanoBananaPage() {
@@ -15,6 +16,8 @@ export default function NanoBananaPage() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
   const [prompt, setPrompt] = useState('');
   
   // Feedback fields
@@ -39,7 +42,7 @@ export default function NanoBananaPage() {
     if (!uploadedFile || !prompt) {
       toast({
         title: 'Missing inputs',
-        description: 'Please upload an image and enter a transformation prompt.',
+        description: 'Please upload an image and enter edit instructions.',
         variant: 'destructive',
       });
       return;
@@ -47,6 +50,8 @@ export default function NanoBananaPage() {
 
     setIsProcessing(true);
     setResultImage(null);
+    setOriginalImageUrl(null);
+    setImageError(false);
 
     try {
       const formData = new FormData();
@@ -65,21 +70,64 @@ export default function NanoBananaPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate image');
+        const errorData = await response.json();
+        console.error('API Error:', errorData);
+        
+        // Log debugging info if available
+        if (errorData.rawOutput) {
+          console.error('Raw Replicate output:', errorData.rawOutput);
+          console.error('Output type:', errorData.outputType);
+          console.error('Output keys:', errorData.outputKeys);
+        }
+        
+        throw new Error(errorData.error || 'Failed to generate image');
       }
 
       const data = await response.json();
-      setResultImage(data.imageUrl);
+      console.log('API Response:', data);
+      console.log('API Response type:', typeof data);
+      console.log('API Response keys:', Object.keys(data));
+      console.log('API Response stringified:', JSON.stringify(data, null, 2));
       
-      toast({
-        title: 'Success!',
-        description: 'Your image has been transformed using Nano-Banana.',
-      });
+      // Check different possible response structures
+      let imageUrl = data.imageUrl || data.image || data.url || data.output;
+      
+      // If the response is nested, try to extract from common structures
+      if (!imageUrl && data.data) {
+        imageUrl = data.data.imageUrl || data.data.image || data.data.url || data.data.output;
+      }
+      
+      if (imageUrl) {
+        // Ensure we have a valid URL string
+        if (typeof imageUrl !== 'string') {
+          console.error('Image URL is not a string:', imageUrl);
+          throw new Error('Invalid image URL format');
+        }
+        
+        // Convert to string to be absolutely sure
+        const imageUrlStr = String(imageUrl);
+        const finalImageUrl = imageUrlStr.includes('http') ? imageUrlStr : `https:${imageUrlStr}`;
+        
+        // Store the original URL for downloads
+        setOriginalImageUrl(finalImageUrl);
+        
+        // Use our proxy endpoint to avoid CORS issues
+        const proxiedUrl = `/api/proxy-image?url=${encodeURIComponent(finalImageUrl)}`;
+        console.log('Setting result image (proxied):', proxiedUrl);
+        setResultImage(proxiedUrl);
+        toast({
+          title: 'Success!',
+          description: 'Your image has been transformed with Blendr.',
+        });
+      } else {
+        console.error('Could not find image URL in response:', data);
+        throw new Error('No image URL in response');
+      }
     } catch (error) {
       console.error('Generation error:', error);
       toast({
         title: 'Generation failed',
-        description: 'Failed to transform the image. Please try again.',
+        description: error instanceof Error ? error.message : 'Failed to transform the image. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -87,14 +135,28 @@ export default function NanoBananaPage() {
     }
   };
 
-  const handleDownload = () => {
-    if (resultImage) {
-      const link = document.createElement('a');
-      link.href = resultImage;
-      link.download = `nano-banana-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+  const handleDownload = async () => {
+    if (originalImageUrl) {
+      try {
+        // Fetch the image using our proxy to avoid CORS
+        const response = await fetch(`/api/proxy-image?url=${encodeURIComponent(originalImageUrl)}`);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `blendr-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Download error:', error);
+        // Fallback to direct link
+        window.open(originalImageUrl, '_blank');
+      }
     }
   };
 
@@ -102,10 +164,10 @@ export default function NanoBananaPage() {
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
-          <span>🍌</span> Nano-Banana
+          <span>🎨</span> Blendr
         </h1>
         <p className="text-muted-foreground">
-          Google&apos;s latest AI-powered image transformation model from Gemini 2.5
+          AI-powered image editing - Transform your images using natural language instructions
         </p>
       </div>
 
@@ -150,6 +212,7 @@ export default function NanoBananaPage() {
                           setUploadedImage(null);
                           setUploadedFile(null);
                           setResultImage(null);
+                          setOriginalImageUrl(null);
                         }}
                         className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
                       >
@@ -161,10 +224,10 @@ export default function NanoBananaPage() {
               </div>
 
               <div>
-                <Label htmlFor="prompt">Transformation Prompt</Label>
+                <Label htmlFor="prompt">Edit Instructions</Label>
                 <Textarea
                   id="prompt"
-                  placeholder="Describe how to transform the image... (e.g., 'make it look like a watercolor painting', 'add dramatic lighting', 'change to winter scene')"
+                  placeholder="Describe how to edit the image... (e.g., 'make it look like a watercolor painting', 'add dramatic lighting', 'change to winter scene')"
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   className="mt-2 min-h-[100px]"
@@ -172,7 +235,7 @@ export default function NanoBananaPage() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Transformation Feedback</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">Edit Details</h3>
                 
                 <div className="space-y-3">
                   <div>
@@ -235,7 +298,7 @@ export default function NanoBananaPage() {
                 ) : (
                   <>
                     <Sparkles className="mr-2 h-4 w-4" />
-                    Transform Image
+                    Edit Image
                   </>
                 )}
               </Button>
@@ -245,42 +308,81 @@ export default function NanoBananaPage() {
 
         <div className="space-y-6">
           <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Output</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Output</h2>
+              {resultImage && (
+                <span className="text-sm text-green-600 font-medium">Image Ready!</span>
+              )}
+            </div>
             
             {resultImage ? (
               <div className="space-y-4">
-                <img
-                  src={resultImage}
-                  alt="Generated result"
-                  className="w-full h-64 object-cover rounded-lg"
-                />
-                <Button
-                  onClick={handleDownload}
-                  className="w-full"
-                  variant="outline"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Image
-                </Button>
+                <div className="relative">
+                  {imageError ? (
+                    <div className="flex flex-col items-center justify-center h-64 bg-muted/10 rounded-lg border border-destructive/20">
+                      <AlertCircle className="h-12 w-12 text-destructive/50 mb-3" />
+                      <p className="text-sm text-muted-foreground mb-2">Failed to load image</p>
+                      <p className="text-xs text-muted-foreground/70 text-center px-4">
+                        The image was generated but couldn't be displayed. Try downloading it instead.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="relative w-full">
+                      <img
+                        src={resultImage}
+                        alt="Generated result"
+                        className="w-full h-auto rounded-lg shadow-lg"
+                        onError={(e) => {
+                          console.error('Image failed to load:', resultImage);
+                          setImageError(true);
+                        }}
+                        onLoad={() => {
+                          console.log('Image loaded successfully:', resultImage);
+                          setImageError(false);
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Button
+                    onClick={handleDownload}
+                    className="w-full"
+                    size="lg"
+                    variant="outline"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Transformed Image
+                  </Button>
+                  {imageError && (
+                    <Button
+                      onClick={() => window.open(resultImage, '_blank')}
+                      className="w-full"
+                      size="lg"
+                      variant="secondary"
+                    >
+                      Open in New Tab
+                    </Button>
+                  )}
+                </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-muted-foreground/25 rounded-lg">
-                <span className="text-sm text-muted-foreground">
-                  Transformed image will appear here
-                </span>
+              <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-muted-foreground/25 rounded-lg bg-muted/5">
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-3" />
+                    <span className="text-sm text-muted-foreground">Processing your image...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-8 w-8 text-muted-foreground/50 mb-3" />
+                    <span className="text-sm text-muted-foreground">
+                      Transformed image will appear here
+                    </span>
+                  </>
+                )}
               </div>
             )}
-          </Card>
-
-          <Card className="p-6">
-            <h3 className="font-semibold mb-2">About Nano-Banana</h3>
-            <ul className="text-sm text-muted-foreground space-y-2">
-              <li>• Advanced AI image transformation model</li>
-              <li>• Part of Google&apos;s Gemini 2.5 family</li>
-              <li>• Supports creative style transfers</li>
-              <li>• Fast processing with high-quality results</li>
-              <li>• $0.039 per image transformation</li>
-            </ul>
           </Card>
         </div>
       </div>
