@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     console.log('Replicate output:', JSON.stringify(output, null, 2));
     
     // Handle different possible output formats
-    let imageUrl: string | undefined;
+    let imageUrl: any = null;
     
     // First check if output is already a string URL
     if (typeof output === 'string') {
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         
         // Try to get the first string value from the object
         for (const key of Object.keys(output)) {
-          if (typeof output[key] === 'string' && (output[key].includes('http') || output[key].includes('//'))) {
+          if (typeof output[key] === 'string' && output[key].includes && (output[key].includes('http') || output[key].includes('//'))) {
             imageUrl = output[key];
             console.log(`Found URL in property ${key}:`, imageUrl);
             break;
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    // Ensure imageUrl is a string before formatting
+    // Ensure imageUrl is a string before any string operations
     if (typeof imageUrl !== 'string') {
       console.error('Image URL is not a string, it is:', typeof imageUrl, imageUrl);
       return NextResponse.json({
@@ -136,10 +136,17 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
     
+    // Now we know imageUrl is definitely a string
     // Ensure the URL is properly formatted
-    if (!imageUrl.startsWith('http')) {
+    if (!imageUrl.includes('http')) {
       // If it's a relative URL, it might be from Replicate's CDN
-      imageUrl = imageUrl.startsWith('//') ? `https:${imageUrl}` : `https://${imageUrl}`;
+      if (imageUrl.indexOf('//') === 0) {
+        imageUrl = `https:${imageUrl}`;
+      } else if (imageUrl.indexOf('/') === 0) {
+        imageUrl = `https://replicate.delivery${imageUrl}`;
+      } else {
+        imageUrl = `https://${imageUrl}`;
+      }
     }
 
     console.log('Returning image URL:', imageUrl);
@@ -154,21 +161,24 @@ export async function POST(request: NextRequest) {
     
     // Provide more detailed error message
     let errorMessage = 'Failed to generate variation';
+    let errorDetails = 'Unknown error';
+    
     if (error instanceof Error) {
       errorMessage = error.message;
+      errorDetails = error.message;
       
       // Check for common Replicate errors
-      if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+      if (error.message && error.message.includes && error.message.includes('401') || (error.message && error.message.includes && error.message.includes('Unauthorized'))) {
         errorMessage = 'Invalid Replicate API token. Please check your configuration.';
-      } else if (error.message.includes('402')) {
+      } else if (error.message && error.message.includes && error.message.includes('402')) {
         errorMessage = 'Replicate account has insufficient credits.';
-      } else if (error.message.includes('404')) {
+      } else if (error.message && error.message.includes && error.message.includes('404')) {
         errorMessage = 'Model not found. Please check the model ID.';
       }
     }
     
     return NextResponse.json(
-      { error: errorMessage, details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: errorMessage, details: errorDetails },
       { status: 500 }
     );
   }
