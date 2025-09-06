@@ -59,16 +59,34 @@ export async function POST(request: NextRequest) {
     console.log('Starting Nano-Banana prediction with prompt:', fullPrompt);
     
     // Run the model and handle the response
-    const output = await replicate.run(
-      "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
-      {
-        input: {
-          prompt: fullPrompt,
-          image_input: [dataUrl],
-          output_format: "png"
+    console.log('Calling Replicate with inputs:', {
+      prompt_length: fullPrompt.length,
+      image_data_url_length: dataUrl.length,
+      image_type: mimeType
+    });
+    
+    let output;
+    try {
+      output = await replicate.run(
+        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+        {
+          input: {
+            prompt: fullPrompt,
+            image_input: [dataUrl],
+            output_format: "png"
+          }
         }
-      }
-    );
+      );
+    } catch (replicateError) {
+      console.error('Replicate run error:', replicateError);
+      
+      // Return detailed error information
+      return NextResponse.json({
+        error: 'Replicate API error',
+        details: replicateError instanceof Error ? replicateError.message : String(replicateError),
+        errorType: replicateError instanceof Error ? replicateError.constructor.name : typeof replicateError
+      }, { status: 500 });
+    }
 
     console.log('Raw Replicate output:', JSON.stringify(output, null, 2));
 
