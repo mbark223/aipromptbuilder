@@ -90,6 +90,12 @@ export async function POST(request: NextRequest) {
       throw new Error('No image URL found in response');
     }
 
+    // Ensure the URL is properly formatted
+    if (!imageUrl.startsWith('http')) {
+      // If it's a relative URL, it might be from Replicate's CDN
+      imageUrl = imageUrl.startsWith('//') ? `https:${imageUrl}` : `https://${imageUrl}`;
+    }
+
     console.log('Returning image URL:', imageUrl);
     
     return NextResponse.json({

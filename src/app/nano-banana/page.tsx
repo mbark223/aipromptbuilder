@@ -2,11 +2,12 @@
 
 // Nano-Banana AI Image Transformation Tool
 import { useState } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Loader2, Download, Sparkles } from 'lucide-react';
+import { Upload, Loader2, Download, Sparkles, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function NanoBananaPage() {
@@ -15,6 +16,7 @@ export default function NanoBananaPage() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
   const [prompt, setPrompt] = useState('');
   
   // Feedback fields
@@ -47,6 +49,7 @@ export default function NanoBananaPage() {
 
     setIsProcessing(true);
     setResultImage(null);
+    setImageError(false);
 
     try {
       const formData = new FormData();
@@ -74,7 +77,10 @@ export default function NanoBananaPage() {
       console.log('API Response:', data);
       
       if (data.imageUrl) {
-        setResultImage(data.imageUrl);
+        // Ensure we have a valid URL
+        const imageUrl = data.imageUrl.startsWith('http') ? data.imageUrl : `https:${data.imageUrl}`;
+        console.log('Setting result image:', imageUrl);
+        setResultImage(imageUrl);
         toast({
           title: 'Success!',
           description: 'Your image has been transformed with Nano-Banana.',
@@ -276,21 +282,57 @@ export default function NanoBananaPage() {
             {resultImage ? (
               <div className="space-y-4">
                 <div className="relative">
-                  <img
-                    src={resultImage}
-                    alt="Generated result"
-                    className="w-full h-auto rounded-lg shadow-lg"
-                  />
+                  {imageError ? (
+                    <div className="flex flex-col items-center justify-center h-64 bg-muted/10 rounded-lg border border-destructive/20">
+                      <AlertCircle className="h-12 w-12 text-destructive/50 mb-3" />
+                      <p className="text-sm text-muted-foreground mb-2">Failed to load image</p>
+                      <p className="text-xs text-muted-foreground/70 text-center px-4">
+                        The image was generated but couldn't be displayed. Try downloading it instead.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="relative w-full">
+                      <img
+                        src={resultImage}
+                        alt="Generated result"
+                        className="w-full h-auto rounded-lg shadow-lg"
+                        onError={(e) => {
+                          console.error('Image failed to load:', resultImage);
+                          setImageError(true);
+                        }}
+                        onLoad={() => {
+                          console.log('Image loaded successfully:', resultImage);
+                          setImageError(false);
+                        }}
+                      />
+                      {/* Show the URL for debugging */}
+                      <div className="mt-2 p-2 bg-muted/50 rounded text-xs text-muted-foreground break-all">
+                        Debug: {resultImage}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <Button
-                  onClick={handleDownload}
-                  className="w-full"
-                  size="lg"
-                  variant="outline"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Transformed Image
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    onClick={handleDownload}
+                    className="w-full"
+                    size="lg"
+                    variant="outline"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Transformed Image
+                  </Button>
+                  {imageError && (
+                    <Button
+                      onClick={() => window.open(resultImage, '_blank')}
+                      className="w-full"
+                      size="lg"
+                      variant="secondary"
+                    >
+                      Open in New Tab
+                    </Button>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-muted-foreground/25 rounded-lg bg-muted/5">
