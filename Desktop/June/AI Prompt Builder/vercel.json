@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd ai-prompt-builder && rm -rf .next && npm run build",
+  "outputDirectory": "ai-prompt-builder/.next",
+  "devCommand": "cd ai-prompt-builder && npm run dev",
+  "installCommand": "cd ai-prompt-builder && npm install",
+  "framework": "nextjs",
+  "github": {
+    "silent": false
+  },
+  "root": "ai-prompt-builder"
+}
