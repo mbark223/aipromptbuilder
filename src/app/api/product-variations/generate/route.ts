@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Replicate from 'replicate';
+import { mockBrandGuidelines } from '@/lib/auth';
 
 // Handle GET request
 export async function GET(request: NextRequest) {
@@ -62,6 +63,16 @@ export async function POST(request: NextRequest) {
     if (feedback.colors && feedback.colors.trim()) {
       fullPrompt += `. Color theme: ${feedback.colors}`;
     }
+    
+    // Inject brand guidelines if brandId is provided
+    if (feedback.brandId && mockBrandGuidelines[feedback.brandId as keyof typeof mockBrandGuidelines]) {
+      const brand = mockBrandGuidelines[feedback.brandId as keyof typeof mockBrandGuidelines];
+      fullPrompt += `. IMPORTANT BRAND GUIDELINES: Use only these colors: ${brand.colors.primary.join(', ')}.`;
+      fullPrompt += ` Style must be ${brand.style}.`;
+      fullPrompt += ` Include these brand elements: ${brand.keywords.join(', ')}.`;
+      fullPrompt += ` Restrictions: ${brand.restrictions.join(', ')}.`;
+    }
+    
     if (feedback.additional && feedback.additional.trim()) {
       fullPrompt += `. Additional notes: ${feedback.additional}`;
     }
