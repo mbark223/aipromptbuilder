@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, Loader2, Download, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -17,14 +16,12 @@ export default function NanoBananaPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
   const [prompt, setPrompt] = useState('');
-  const [outputFormat, setOutputFormat] = useState('jpg');
   
-  // Transformation parameters
-  const [style, setStyle] = useState('');
-  const [lighting, setLighting] = useState('');
-  const [colorGrading, setColorGrading] = useState('');
-  const [atmosphere, setAtmosphere] = useState('');
-  const [cameraAngle, setCameraAngle] = useState('');
+  // Feedback fields
+  const [styleFeedback, setStyleFeedback] = useState('');
+  const [colorsFeedback, setColorsFeedback] = useState('');
+  const [compositionFeedback, setCompositionFeedback] = useState('');
+  const [additionalFeedback, setAdditionalFeedback] = useState('');
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -52,24 +49,14 @@ export default function NanoBananaPage() {
     setResultImage(null);
 
     try {
-      // Build enhanced prompt with all parameters
-      let enhancedPrompt = prompt;
-      if (style && style !== 'none') enhancedPrompt += `, ${style} style`;
-      if (lighting && lighting !== 'none') enhancedPrompt += `, ${lighting} lighting`;
-      if (colorGrading && colorGrading !== 'none') enhancedPrompt += `, ${colorGrading} color grading`;
-      if (atmosphere && atmosphere !== 'none') enhancedPrompt += `, ${atmosphere} atmosphere`;
-      if (cameraAngle && cameraAngle !== 'none') enhancedPrompt += `, ${cameraAngle} camera angle`;
-
       const formData = new FormData();
       formData.append('image', uploadedFile);
-      formData.append('prompt', enhancedPrompt);
-      formData.append('parameters', JSON.stringify({ 
-        outputFormat,
-        style,
-        lighting,
-        colorGrading,
-        atmosphere,
-        cameraAngle
+      formData.append('prompt', prompt);
+      formData.append('feedback', JSON.stringify({ 
+        style: styleFeedback,
+        colors: colorsFeedback,
+        composition: compositionFeedback,
+        additional: additionalFeedback
       }));
 
       const response = await fetch('/api/product-variations/generate', {
@@ -104,7 +91,7 @@ export default function NanoBananaPage() {
     if (resultImage) {
       const link = document.createElement('a');
       link.href = resultImage;
-      link.download = `nano-banana-${Date.now()}.${outputFormat}`;
+      link.download = `nano-banana-${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -185,115 +172,51 @@ export default function NanoBananaPage() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Transformation Options</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">Transformation Feedback</h3>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-3">
                   <div>
-                    <Label htmlFor="style">Style</Label>
-                    <Select value={style} onValueChange={setStyle}>
-                      <SelectTrigger id="style" className="mt-1">
-                        <SelectValue placeholder="Select style" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="photorealistic">Photorealistic</SelectItem>
-                        <SelectItem value="cinematic">Cinematic</SelectItem>
-                        <SelectItem value="anime">Anime</SelectItem>
-                        <SelectItem value="watercolor">Watercolor</SelectItem>
-                        <SelectItem value="oil painting">Oil Painting</SelectItem>
-                        <SelectItem value="sketch">Sketch</SelectItem>
-                        <SelectItem value="3d render">3D Render</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="style-feedback">Style Preferences</Label>
+                    <Textarea
+                      id="style-feedback"
+                      placeholder="Describe the style you want (e.g., photorealistic, watercolor, cinematic, anime...)"
+                      value={styleFeedback}
+                      onChange={(e) => setStyleFeedback(e.target.value)}
+                      className="mt-1 min-h-[60px]"
+                    />
                   </div>
 
                   <div>
-                    <Label htmlFor="lighting">Lighting</Label>
-                    <Select value={lighting} onValueChange={setLighting}>
-                      <SelectTrigger id="lighting" className="mt-1">
-                        <SelectValue placeholder="Select lighting" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="natural">Natural</SelectItem>
-                        <SelectItem value="dramatic">Dramatic</SelectItem>
-                        <SelectItem value="soft">Soft</SelectItem>
-                        <SelectItem value="neon">Neon</SelectItem>
-                        <SelectItem value="golden hour">Golden Hour</SelectItem>
-                        <SelectItem value="studio">Studio</SelectItem>
-                        <SelectItem value="backlit">Backlit</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="colors-feedback">Color Adjustments</Label>
+                    <Textarea
+                      id="colors-feedback"
+                      placeholder="Specify color preferences (e.g., vibrant colors, warm tones, monochrome...)"
+                      value={colorsFeedback}
+                      onChange={(e) => setColorsFeedback(e.target.value)}
+                      className="mt-1 min-h-[60px]"
+                    />
                   </div>
 
                   <div>
-                    <Label htmlFor="color-grading">Color Grading</Label>
-                    <Select value={colorGrading} onValueChange={setColorGrading}>
-                      <SelectTrigger id="color-grading" className="mt-1">
-                        <SelectValue placeholder="Select colors" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="vibrant">Vibrant</SelectItem>
-                        <SelectItem value="muted">Muted</SelectItem>
-                        <SelectItem value="warm">Warm</SelectItem>
-                        <SelectItem value="cool">Cool</SelectItem>
-                        <SelectItem value="monochrome">Monochrome</SelectItem>
-                        <SelectItem value="vintage">Vintage</SelectItem>
-                        <SelectItem value="cyberpunk">Cyberpunk</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="composition-feedback">Composition Feedback</Label>
+                    <Textarea
+                      id="composition-feedback"
+                      placeholder="Describe composition changes (e.g., close-up view, wide angle, bird's eye view...)"
+                      value={compositionFeedback}
+                      onChange={(e) => setCompositionFeedback(e.target.value)}
+                      className="mt-1 min-h-[60px]"
+                    />
                   </div>
 
                   <div>
-                    <Label htmlFor="atmosphere">Atmosphere</Label>
-                    <Select value={atmosphere} onValueChange={setAtmosphere}>
-                      <SelectTrigger id="atmosphere" className="mt-1">
-                        <SelectValue placeholder="Select mood" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="epic">Epic</SelectItem>
-                        <SelectItem value="mysterious">Mysterious</SelectItem>
-                        <SelectItem value="dreamy">Dreamy</SelectItem>
-                        <SelectItem value="energetic">Energetic</SelectItem>
-                        <SelectItem value="calm">Calm</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="whimsical">Whimsical</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="camera-angle">Camera Angle</Label>
-                    <Select value={cameraAngle} onValueChange={setCameraAngle}>
-                      <SelectTrigger id="camera-angle" className="mt-1">
-                        <SelectValue placeholder="Select angle" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="eye level">Eye Level</SelectItem>
-                        <SelectItem value="low angle">Low Angle</SelectItem>
-                        <SelectItem value="high angle">High Angle</SelectItem>
-                        <SelectItem value="bird's eye">Bird&apos;s Eye</SelectItem>
-                        <SelectItem value="dutch angle">Dutch Angle</SelectItem>
-                        <SelectItem value="close-up">Close-up</SelectItem>
-                        <SelectItem value="wide shot">Wide Shot</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="format">Output Format</Label>
-                    <Select value={outputFormat} onValueChange={setOutputFormat}>
-                      <SelectTrigger id="format" className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="jpg">JPG</SelectItem>
-                        <SelectItem value="png">PNG</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="additional-feedback">Additional Notes</Label>
+                    <Textarea
+                      id="additional-feedback"
+                      placeholder="Any other specific requirements or details..."
+                      value={additionalFeedback}
+                      onChange={(e) => setAdditionalFeedback(e.target.value)}
+                      className="mt-1 min-h-[60px]"
+                    />
                   </div>
                 </div>
               </div>
