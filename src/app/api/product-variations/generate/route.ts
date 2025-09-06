@@ -57,19 +57,37 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('Starting prediction with prompt:', fullPrompt);
+    console.log('Image data URL length:', dataUrl.length);
+    console.log('Image MIME type:', mimeType);
     
     try {
       // Use Google Nano-Banana for image editing
-      const output = await replicate.run(
-        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
-        {
-          input: {
-            prompt: fullPrompt,
-            image_input: [dataUrl],
-            output_format: "png"
-          }
+      // Try with a single image string instead of array
+      console.log('Calling Nano-Banana with data URL');
+      
+      const prediction = await replicate.predictions.create({
+        version: "adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+        input: {
+          prompt: fullPrompt,
+          image_input: [dataUrl],
+          output_format: "png"
         }
-      );
+      });
+
+      console.log('Created prediction:', prediction);
+      
+      // Use replicate.wait for proper polling
+      const completedPrediction = await replicate.wait(prediction);
+      
+      console.log('Completed prediction:', completedPrediction);
+      
+      // Check if the prediction failed
+      if (completedPrediction.status === 'failed') {
+        console.error('Prediction failed:', completedPrediction.error);
+        throw new Error(`Nano-Banana prediction failed: ${completedPrediction.error || 'Unknown error'}`);
+      }
+      
+      const output = completedPrediction.output || completedPrediction;
 
       console.log('Replicate output:', output);
       console.log('Output type:', typeof output);
@@ -90,9 +108,14 @@ export async function POST(request: NextRequest) {
       else if (!output) {
         throw new Error('No output received from model');
       }
-      // If output is an empty object
+      // If output is an empty object - specific handling for Nano-Banana
       else if (typeof output === 'object' && Object.keys(output).length === 0) {
-        throw new Error('Model returned empty response - it may not support image_input parameter');
+        console.error('Nano-Banana returned empty object. This might be a model issue.');
+        // Try to use the prediction URL if available
+        if ((output as any).id || (output as any).urls) {
+          console.log('Found prediction data in empty-looking object:', output);
+        }
+        throw new Error('Nano-Banana returned empty response. The model might be temporarily unavailable or having issues.');
       }
       // Try to extract URL from object
       else {
