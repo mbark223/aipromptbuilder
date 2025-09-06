@@ -41,16 +41,26 @@ export async function POST(request: NextRequest) {
     const mimeType = imageFile.type;
     const dataUrl = `data:${mimeType};base64,${base64}`;
 
-    // Build the full prompt with feedback
+    // Build the full prompt with element-specific feedback
     let fullPrompt = prompt;
+    
+    // Add element-specific instructions first for priority
+    if (feedback.elements && feedback.elements.trim()) {
+      fullPrompt += `. Focus on these elements: ${feedback.elements}`;
+    }
+    if (feedback.location && feedback.location.trim()) {
+      fullPrompt += `. Located at: ${feedback.location}`;
+    }
+    if (feedback.changes && feedback.changes.trim()) {
+      fullPrompt += `. Apply these specific changes: ${feedback.changes}`;
+    }
+    
+    // Add style and theme options
     if (feedback.style && feedback.style.trim()) {
-      fullPrompt += `. Style: ${feedback.style}`;
+      fullPrompt += `. Overall style: ${feedback.style}`;
     }
     if (feedback.colors && feedback.colors.trim()) {
-      fullPrompt += `. Colors: ${feedback.colors}`;
-    }
-    if (feedback.composition && feedback.composition.trim()) {
-      fullPrompt += `. Composition: ${feedback.composition}`;
+      fullPrompt += `. Color theme: ${feedback.colors}`;
     }
     if (feedback.additional && feedback.additional.trim()) {
       fullPrompt += `. Additional notes: ${feedback.additional}`;

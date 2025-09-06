@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Upload, Loader2, Download, Sparkles, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function NanoBananaPage() {
+export default function BlendrPage() {
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -20,11 +20,18 @@ export default function NanoBananaPage() {
   const [imageError, setImageError] = useState(false);
   const [prompt, setPrompt] = useState('');
   
-  // Feedback fields
-  const [styleFeedback, setStyleFeedback] = useState('');
-  const [colorsFeedback, setColorsFeedback] = useState('');
-  const [compositionFeedback, setCompositionFeedback] = useState('');
-  const [additionalFeedback, setAdditionalFeedback] = useState('');
+  // Element-specific fields
+  const [elementSelection, setElementSelection] = useState('');
+  const [locationReference, setLocationReference] = useState('');
+  const [specificChanges, setSpecificChanges] = useState('');
+  
+  // Advanced options
+  const [overallStyle, setOverallStyle] = useState('');
+  const [colorTheme, setColorTheme] = useState('');
+  const [additionalNotes, setAdditionalNotes] = useState('');
+  
+  // Quick selection state
+  const [selectedQuickElements, setSelectedQuickElements] = useState<string[]>([]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -58,10 +65,12 @@ export default function NanoBananaPage() {
       formData.append('image', uploadedFile);
       formData.append('prompt', prompt);
       formData.append('feedback', JSON.stringify({ 
-        style: styleFeedback,
-        colors: colorsFeedback,
-        composition: compositionFeedback,
-        additional: additionalFeedback
+        elements: elementSelection,
+        location: locationReference,
+        changes: specificChanges,
+        style: overallStyle,
+        colors: colorTheme,
+        additional: additionalNotes
       }));
 
       const response = await fetch('/api/product-variations/generate', {
@@ -213,6 +222,15 @@ export default function NanoBananaPage() {
                           setUploadedFile(null);
                           setResultImage(null);
                           setOriginalImageUrl(null);
+                          // Reset all form fields
+                          setPrompt('');
+                          setElementSelection('');
+                          setLocationReference('');
+                          setSpecificChanges('');
+                          setOverallStyle('');
+                          setColorTheme('');
+                          setAdditionalNotes('');
+                          setSelectedQuickElements([]);
                         }}
                         className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
                       >
@@ -234,52 +252,121 @@ export default function NanoBananaPage() {
                 />
               </div>
 
-              <div className="space-y-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Edit Details</h3>
-                
-                <div className="space-y-3">
-                  <div>
-                    <Label htmlFor="style-feedback">Style Preferences</Label>
-                    <Textarea
-                      id="style-feedback"
-                      placeholder="Describe the style you want (e.g., photorealistic, watercolor, cinematic, anime...)"
-                      value={styleFeedback}
-                      onChange={(e) => setStyleFeedback(e.target.value)}
-                      className="mt-1 min-h-[60px]"
-                    />
+              <div className="space-y-6">
+                {/* Highlight Specific Elements Section */}
+                <div className="space-y-4 border border-muted rounded-lg p-4 bg-muted/5">
+                  <h3 className="text-sm font-medium flex items-center gap-2">
+                    <span className="text-lg">🎯</span> Highlight Specific Elements
+                  </h3>
+                  
+                  {/* Quick Selection Buttons */}
+                  <div className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">Quick Selection (click to add to description)</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {['Background', 'Foreground', 'People', 'Sky', 'Objects', 'Text', 'Faces'].map((element) => (
+                        <Button
+                          key={element}
+                          type="button"
+                          variant={selectedQuickElements.includes(element) ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => {
+                            const newSelection = selectedQuickElements.includes(element)
+                              ? selectedQuickElements.filter(e => e !== element)
+                              : [...selectedQuickElements, element];
+                            setSelectedQuickElements(newSelection);
+                            setElementSelection(newSelection.join(', '));
+                          }}
+                        >
+                          {element}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="element-selection">What elements do you want to edit?</Label>
+                      <Textarea
+                        id="element-selection"
+                        placeholder="e.g., 'the person in the foreground', 'the car', 'the building on the left', 'the sky and clouds'"
+                        value={elementSelection}
+                        onChange={(e) => setElementSelection(e.target.value)}
+                        className="mt-1 min-h-[50px]"
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="colors-feedback">Color Adjustments</Label>
-                    <Textarea
-                      id="colors-feedback"
-                      placeholder="Specify color preferences (e.g., vibrant colors, warm tones, monochrome...)"
-                      value={colorsFeedback}
-                      onChange={(e) => setColorsFeedback(e.target.value)}
-                      className="mt-1 min-h-[60px]"
-                    />
+                    <div>
+                      <Label htmlFor="location-reference">Where in the image?</Label>
+                      <div className="mt-1 mb-2 grid grid-cols-3 gap-1 text-xs">
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">top-left</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">top-center</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">top-right</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">mid-left</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">center</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">mid-right</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">bottom-left</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">bottom-center</div>
+                        <div className="text-center p-1 bg-muted/50 rounded text-muted-foreground">bottom-right</div>
+                      </div>
+                      <Textarea
+                        id="location-reference"
+                        placeholder="e.g., 'top-left corner', 'center background', 'right side of the image', 'bottom half'"
+                        value={locationReference}
+                        onChange={(e) => setLocationReference(e.target.value)}
+                        className="min-h-[50px]"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="specific-changes">What changes for these elements?</Label>
+                      <Textarea
+                        id="specific-changes"
+                        placeholder="e.g., 'make the sky more dramatic with sunset colors', 'blur the background', 'change the car color to red', 'remove the text'"
+                        value={specificChanges}
+                        onChange={(e) => setSpecificChanges(e.target.value)}
+                        className="mt-1 min-h-[50px]"
+                      />
+                    </div>
                   </div>
+                </div>
 
-                  <div>
-                    <Label htmlFor="composition-feedback">Composition Feedback</Label>
-                    <Textarea
-                      id="composition-feedback"
-                      placeholder="Describe composition changes (e.g., close-up view, wide angle, bird's eye view...)"
-                      value={compositionFeedback}
-                      onChange={(e) => setCompositionFeedback(e.target.value)}
-                      className="mt-1 min-h-[60px]"
-                    />
-                  </div>
+                {/* Advanced Options Section */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium text-muted-foreground">Advanced Options</h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="overall-style">Overall Style</Label>
+                      <Textarea
+                        id="overall-style"
+                        placeholder="e.g., 'photorealistic', 'oil painting', 'anime style', 'vintage film'"
+                        value={overallStyle}
+                        onChange={(e) => setOverallStyle(e.target.value)}
+                        className="mt-1 min-h-[40px]"
+                      />
+                    </div>
 
-                  <div>
-                    <Label htmlFor="additional-feedback">Additional Notes</Label>
-                    <Textarea
-                      id="additional-feedback"
-                      placeholder="Any other specific requirements or details..."
-                      value={additionalFeedback}
-                      onChange={(e) => setAdditionalFeedback(e.target.value)}
-                      className="mt-1 min-h-[60px]"
-                    />
+                    <div>
+                      <Label htmlFor="color-theme">Color Theme</Label>
+                      <Textarea
+                        id="color-theme"
+                        placeholder="e.g., 'warm sunset tones', 'cool blues', 'high contrast black and white'"
+                        value={colorTheme}
+                        onChange={(e) => setColorTheme(e.target.value)}
+                        className="mt-1 min-h-[40px]"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="additional-notes">Additional Notes</Label>
+                      <Textarea
+                        id="additional-notes"
+                        placeholder="Any other specific requirements..."
+                        value={additionalNotes}
+                        onChange={(e) => setAdditionalNotes(e.target.value)}
+                        className="mt-1 min-h-[40px]"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
