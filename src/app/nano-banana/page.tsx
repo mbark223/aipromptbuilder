@@ -16,6 +16,7 @@ export default function NanoBananaPage() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
   const [prompt, setPrompt] = useState('');
   
@@ -49,6 +50,7 @@ export default function NanoBananaPage() {
 
     setIsProcessing(true);
     setResultImage(null);
+    setOriginalImageUrl(null);
     setImageError(false);
 
     try {
@@ -105,8 +107,14 @@ export default function NanoBananaPage() {
         // Convert to string to be absolutely sure
         const imageUrlStr = String(imageUrl);
         const finalImageUrl = imageUrlStr.includes('http') ? imageUrlStr : `https:${imageUrlStr}`;
-        console.log('Setting result image:', finalImageUrl);
-        setResultImage(finalImageUrl);
+        
+        // Store the original URL for downloads
+        setOriginalImageUrl(finalImageUrl);
+        
+        // Use our proxy endpoint to avoid CORS issues
+        const proxiedUrl = `/api/proxy-image?url=${encodeURIComponent(finalImageUrl)}`;
+        console.log('Setting result image (proxied):', proxiedUrl);
+        setResultImage(proxiedUrl);
         toast({
           title: 'Success!',
           description: 'Your image has been edited successfully.',
@@ -128,10 +136,10 @@ export default function NanoBananaPage() {
   };
 
   const handleDownload = async () => {
-    if (resultImage) {
+    if (originalImageUrl) {
       try {
-        // Fetch the image and create a blob
-        const response = await fetch(resultImage);
+        // Fetch the image using our proxy to avoid CORS
+        const response = await fetch(`/api/proxy-image?url=${encodeURIComponent(originalImageUrl)}`);
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         
@@ -147,7 +155,7 @@ export default function NanoBananaPage() {
       } catch (error) {
         console.error('Download error:', error);
         // Fallback to direct link
-        window.open(resultImage, '_blank');
+        window.open(originalImageUrl, '_blank');
       }
     }
   };
@@ -204,6 +212,7 @@ export default function NanoBananaPage() {
                           setUploadedImage(null);
                           setUploadedFile(null);
                           setResultImage(null);
+                          setOriginalImageUrl(null);
                         }}
                         className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
                       >
@@ -332,10 +341,6 @@ export default function NanoBananaPage() {
                           setImageError(false);
                         }}
                       />
-                      {/* Show the URL for debugging */}
-                      <div className="mt-2 p-2 bg-muted/50 rounded text-xs text-muted-foreground break-all">
-                        Debug: {resultImage}
-                      </div>
                     </div>
                   )}
                 </div>
