@@ -59,18 +59,14 @@ export async function POST(request: NextRequest) {
     console.log('Starting prediction with prompt:', fullPrompt);
     
     try {
-      // Use InstructPix2Pix for reliable image-to-image transformation
-      // This model is specifically designed for instruction-based image editing
+      // Use Google Nano-Banana for image editing
       const output = await replicate.run(
-        "timothybrooks/instruct-pix2pix:30c1d0b916a6f8efce20493f5d61ee27491ab2a60437c13c588468b9810ec23f",
+        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
         {
           input: {
-            image: dataUrl,
             prompt: fullPrompt,
-            image_guidance_scale: 1.5,  // How similar to keep to original (1-3)
-            text_guidance_scale: 7.5,   // How closely to follow the prompt (1-20)
-            num_inference_steps: 20,    // Quality/speed tradeoff (10-50)
-            seed: -1                    // Random seed
+            image_input: [dataUrl],
+            output_format: "png"
           }
         }
       );

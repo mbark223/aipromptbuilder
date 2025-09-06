@@ -1,6 +1,6 @@
 'use client';
 
-// Image Editor using InstructPix2Pix
+// Nano-Banana AI Image Transformation Tool
 import { useState } from 'react';
 import Image from 'next/image';
 import { Card } from '@/components/ui/card';
@@ -117,7 +117,7 @@ export default function NanoBananaPage() {
         setResultImage(proxiedUrl);
         toast({
           title: 'Success!',
-          description: 'Your image has been edited successfully.',
+          description: 'Your image has been transformed with Nano-Banana.',
         });
       } else {
         console.error('Could not find image URL in response:', data);
@@ -145,7 +145,7 @@ export default function NanoBananaPage() {
         
         const link = document.createElement('a');
         link.href = url;
-        link.download = `edited-image-${Date.now()}.png`;
+        link.download = `nano-banana-${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -164,10 +164,10 @@ export default function NanoBananaPage() {
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
-          <span>🎨</span> AI Image Editor
+          <span>🍌</span> Nano-Banana
         </h1>
         <p className="text-muted-foreground">
-          Edit your images using natural language instructions - powered by InstructPix2Pix
+          Google's latest image editing model from Gemini 2.5 - Edit images using text instructions
         </p>
       </div>
 
