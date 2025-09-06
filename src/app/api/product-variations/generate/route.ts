@@ -95,25 +95,28 @@ export async function POST(request: NextRequest) {
     } 
     // Check if it's an object with common properties
     else if (output && typeof output === 'object') {
+      const outputObj = output as Record<string, any>;
+      
       // Try different common property names
-      imageUrl = output.url || output.output || output.image || output.imageUrl || output.uri;
+      imageUrl = outputObj.url || outputObj.output || outputObj.image || outputObj.imageUrl || outputObj.uri;
       console.log('Output is an object, extracted URL:', imageUrl);
       
       // If still not found, check if it has a data property
-      if (!imageUrl && output.data) {
-        imageUrl = output.data;
+      if (!imageUrl && outputObj.data) {
+        imageUrl = outputObj.data;
         console.log('Found in data property:', imageUrl);
       }
       
       // If still not found, log all properties
       if (!imageUrl) {
-        console.log('Object properties:', Object.keys(output));
-        console.log('Full object:', output);
+        console.log('Object properties:', Object.keys(outputObj));
+        console.log('Full object:', outputObj);
         
         // Try to get the first string value from the object
-        for (const key of Object.keys(output)) {
-          if (typeof output[key] === 'string' && output[key].includes && (output[key].includes('http') || output[key].includes('//'))) {
-            imageUrl = output[key];
+        for (const key of Object.keys(outputObj)) {
+          const value = outputObj[key];
+          if (typeof value === 'string' && value.includes && (value.includes('http') || value.includes('//'))) {
+            imageUrl = value;
             console.log(`Found URL in property ${key}:`, imageUrl);
             break;
           }
