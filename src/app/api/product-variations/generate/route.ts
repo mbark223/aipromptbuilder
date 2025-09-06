@@ -22,18 +22,24 @@ export async function POST(request: NextRequest) {
     });
 
     const formData = await request.formData();
-    // Image is optional now since Nano-Banana is text-to-image
-    const imageFile = formData.get('image') as File | null;
+    const imageFile = formData.get('image') as File;
     const prompt = formData.get('prompt') as string;
     const feedbackStr = formData.get('feedback') as string;
     const feedback = JSON.parse(feedbackStr || '{}');
 
-    if (!prompt) {
+    if (!imageFile || !prompt) {
       return NextResponse.json(
-        { error: 'Prompt is required' },
+        { error: 'Image and prompt are required' },
         { status: 400 }
       );
     }
+
+    // Convert the image file to a base64 data URL
+    const bytes = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64 = buffer.toString('base64');
+    const mimeType = imageFile.type;
+    const dataUrl = `data:${mimeType};base64,${base64}`;
 
     // Build the full prompt with feedback
     let fullPrompt = prompt;
@@ -53,15 +59,18 @@ export async function POST(request: NextRequest) {
     console.log('Starting prediction with prompt:', fullPrompt);
     
     try {
-      // Use the simpler run method which handles polling automatically
-      // Note: Nano-Banana appears to be text-to-image only, not image-to-image
+      // Use InstructPix2Pix for reliable image-to-image transformation
+      // This model is specifically designed for instruction-based image editing
       const output = await replicate.run(
-        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+        "timothybrooks/instruct-pix2pix:30c1d0b916a6f8efce20493f5d61ee27491ab2a60437c13c588468b9810ec23f",
         {
           input: {
+            image: dataUrl,
             prompt: fullPrompt,
-            // Removed image_input as Nano-Banana doesn't support it
-            output_format: "png"
+            image_guidance_scale: 1.5,  // How similar to keep to original (1-3)
+            text_guidance_scale: 7.5,   // How closely to follow the prompt (1-20)
+            num_inference_steps: 20,    // Quality/speed tradeoff (10-50)
+            seed: -1                    // Random seed
           }
         }
       );

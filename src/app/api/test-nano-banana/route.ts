@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
 
     console.log('Running test predictions...');
     
-    // Test 1: With image_input
-    const testImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+    // Test 1: With image_input as data URL
+    const testImageDataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
     
     let output1;
     try {
@@ -22,8 +22,8 @@ export async function GET(request: NextRequest) {
         "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
         {
           input: {
-            prompt: "A beautiful landscape",
-            image_input: [testImage],
+            prompt: "Add a red filter to this image",
+            image_input: [testImageDataUrl],
             output_format: "png"
           }
         }
@@ -32,10 +32,29 @@ export async function GET(request: NextRequest) {
       output1 = { error: e instanceof Error ? e.message : 'Failed' };
     }
     
-    // Test 2: Without image_input (text-to-image only)
+    // Test 2: With image_input as public URL
+    const testImageUrl = "https://replicate.delivery/pbxt/JMV5OrIhPSgFykUv0M0SqPsecftEckSGnuLQkeF5qIhNr2tE/out-0.png";
+    
     let output2;
     try {
       output2 = await replicate.run(
+        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+        {
+          input: {
+            prompt: "Turn this into a watercolor painting",
+            image_input: [testImageUrl],
+            output_format: "png"
+          }
+        }
+      );
+    } catch (e) {
+      output2 = { error: e instanceof Error ? e.message : 'Failed' };
+    }
+    
+    // Test 3: Without image_input (to see if it's text-to-image)
+    let output3;
+    try {
+      output3 = await replicate.run(
         "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
         {
           input: {
@@ -45,7 +64,7 @@ export async function GET(request: NextRequest) {
         }
       );
     } catch (e) {
-      output2 = { error: e instanceof Error ? e.message : 'Failed' };
+      output3 = { error: e instanceof Error ? e.message : 'Failed' };
     }
 
     return NextResponse.json({
@@ -59,12 +78,20 @@ export async function GET(request: NextRequest) {
         rawOutput: output1
       },
       test2: {
-        description: 'Without image_input (text-to-image)',
+        description: 'With image_input as public URL',
         outputType: typeof output2,
         outputIsArray: Array.isArray(output2),
         outputKeys: output2 && typeof output2 === 'object' ? Object.keys(output2) : null,
         outputStringified: JSON.stringify(output2),
         rawOutput: output2
+      },
+      test3: {
+        description: 'Without image_input (text-to-image)',
+        outputType: typeof output3,
+        outputIsArray: Array.isArray(output3),
+        outputKeys: output3 && typeof output3 === 'object' ? Object.keys(output3) : null,
+        outputStringified: JSON.stringify(output3),
+        rawOutput: output3
       }
     });
 
