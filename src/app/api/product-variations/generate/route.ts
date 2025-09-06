@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
     const replicate = new Replicate({
       auth: process.env.REPLICATE_API_TOKEN,
     });
+
     const formData = await request.formData();
     const imageFile = formData.get('image') as File;
     const prompt = formData.get('prompt') as string;
@@ -55,139 +56,91 @@ export async function POST(request: NextRequest) {
       fullPrompt += `. Additional notes: ${feedback.additional}`;
     }
 
-    // Use Google Nano-Banana model
     console.log('Starting Nano-Banana prediction with prompt:', fullPrompt);
-    console.log('Image data URL length:', dataUrl.length);
     
-    let output;
-    try {
-      output = await replicate.run(
-        "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
-        {
-          input: {
-            prompt: fullPrompt,
-            image_input: [dataUrl],
-            output_format: "png"
-          }
+    // Run the model and handle the response
+    const output = await replicate.run(
+      "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
+      {
+        input: {
+          prompt: fullPrompt,
+          image_input: [dataUrl],
+          output_format: "png"
         }
-      );
-    } catch (replicateError) {
-      console.error('Replicate API error:', replicateError);
-      throw new Error(`Replicate API error: ${replicateError instanceof Error ? replicateError.message : 'Unknown error'}`);
-    }
+      }
+    );
 
-    // Log the full output to understand the structure
-    console.log('Replicate raw output type:', typeof output);
-    console.log('Replicate output:', JSON.stringify(output, null, 2));
+    console.log('Raw Replicate output:', JSON.stringify(output, null, 2));
+
+    // Extract image URL from the output
+    let imageUrl: string = '';
     
-    // Handle different possible output formats
-    let imageUrl: any = null;
+    if (!output) {
+      throw new Error('No output from Replicate');
+    }
     
-    // First check if output is already a string URL
+    // Convert output to string if needed
     if (typeof output === 'string') {
       imageUrl = output;
-      console.log('Output is a string:', imageUrl);
-    } 
-    // Check if it's an array (common for image models)
-    else if (Array.isArray(output) && output.length > 0) {
-      imageUrl = output[0];
-      console.log('Output is an array, first element:', imageUrl);
-    } 
-    // Check if it's an object with common properties
-    else if (output && typeof output === 'object') {
-      const outputObj = output as Record<string, any>;
+    } else if (Array.isArray(output) && output.length > 0) {
+      imageUrl = String(output[0]);
+    } else if (output && typeof output === 'object') {
+      // Try to find a URL in the object
+      const outputStr = JSON.stringify(output);
+      console.log('Output as string:', outputStr);
       
-      // Try different common property names
-      imageUrl = outputObj.url || outputObj.output || outputObj.image || outputObj.imageUrl || outputObj.uri;
-      console.log('Output is an object, extracted URL:', imageUrl);
-      
-      // If still not found, check if it has a data property
-      if (!imageUrl && outputObj.data) {
-        imageUrl = outputObj.data;
-        console.log('Found in data property:', imageUrl);
-      }
-      
-      // If still not found, log all properties
-      if (!imageUrl) {
-        console.log('Object properties:', Object.keys(outputObj));
-        console.log('Full object:', outputObj);
-        
-        // Try to get the first string value from the object
-        for (const key of Object.keys(outputObj)) {
-          const value = outputObj[key];
-          if (typeof value === 'string' && value.includes && (value.includes('http') || value.includes('//'))) {
-            imageUrl = value;
-            console.log(`Found URL in property ${key}:`, imageUrl);
-            break;
-          }
-        }
-      }
-    }
-    
-    if (!imageUrl) {
-      console.error('Could not extract image URL from output:', output);
-      // Return the raw output for debugging
-      return NextResponse.json({
-        error: 'Could not extract image URL',
-        rawOutput: output,
-        outputType: typeof output,
-        outputKeys: output && typeof output === 'object' ? Object.keys(output) : null
-      }, { status: 500 });
-    }
-
-    // Ensure imageUrl is a string before any string operations
-    if (typeof imageUrl !== 'string') {
-      console.error('Image URL is not a string, it is:', typeof imageUrl, imageUrl);
-      return NextResponse.json({
-        error: 'Image URL is not a string',
-        imageUrlType: typeof imageUrl,
-        imageUrlValue: imageUrl
-      }, { status: 500 });
-    }
-    
-    // Now we know imageUrl is definitely a string
-    // Ensure the URL is properly formatted
-    if (!imageUrl.includes('http')) {
-      // If it's a relative URL, it might be from Replicate's CDN
-      if (imageUrl.indexOf('//') === 0) {
-        imageUrl = `https:${imageUrl}`;
-      } else if (imageUrl.indexOf('/') === 0) {
-        imageUrl = `https://replicate.delivery${imageUrl}`;
+      // Extract any URL-like string from the stringified output
+      const urlMatch = outputStr.match(/https?:\/\/[^\s"'}]+/);
+      if (urlMatch) {
+        imageUrl = urlMatch[0];
+        console.log('Extracted URL from output:', imageUrl);
       } else {
-        imageUrl = `https://${imageUrl}`;
+        // If no URL found, return the whole output for debugging
+        return NextResponse.json({
+          error: 'Could not find image URL in output',
+          rawOutput: output,
+          outputString: outputStr
+        }, { status: 500 });
       }
+    } else {
+      throw new Error(`Unexpected output type: ${typeof output}`);
     }
 
-    console.log('Returning image URL:', imageUrl);
+    // Ensure we have a valid URL
+    if (!imageUrl) {
+      throw new Error('No image URL extracted');
+    }
+
+    // Clean up the URL if needed
+    imageUrl = String(imageUrl).trim();
     
+    console.log('Final image URL:', imageUrl);
+
     return NextResponse.json({
       imageUrl,
       prompt: fullPrompt,
       feedback,
     });
+
   } catch (error) {
-    console.error('Error generating variation:', error);
+    console.error('Error in generate route:', error);
     
-    // Provide more detailed error message
-    let errorMessage = 'Failed to generate variation';
-    let errorDetails = 'Unknown error';
-    
+    let errorMessage = 'Failed to generate image';
     if (error instanceof Error) {
       errorMessage = error.message;
-      errorDetails = error.message;
       
       // Check for common Replicate errors
-      if (error.message && error.message.includes && error.message.includes('401') || (error.message && error.message.includes && error.message.includes('Unauthorized'))) {
-        errorMessage = 'Invalid Replicate API token. Please check your configuration.';
-      } else if (error.message && error.message.includes && error.message.includes('402')) {
-        errorMessage = 'Replicate account has insufficient credits.';
-      } else if (error.message && error.message.includes && error.message.includes('404')) {
-        errorMessage = 'Model not found. Please check the model ID.';
+      if (errorMessage.includes('401')) {
+        errorMessage = 'Invalid Replicate API token';
+      } else if (errorMessage.includes('402')) {
+        errorMessage = 'Insufficient Replicate credits';
+      } else if (errorMessage.includes('404')) {
+        errorMessage = 'Model not found';
       }
     }
     
     return NextResponse.json(
-      { error: errorMessage, details: errorDetails },
+      { error: errorMessage },
       { status: 500 }
     );
   }
