@@ -252,7 +252,7 @@ export default function NanoBananaPage() {
                 <img
                   src={resultImage}
                   alt="Generated result"
-                  className="w-full h-64 object-cover rounded-lg"
+                  className="w-full h-auto rounded-lg"
                 />
                 <Button
                   onClick={handleDownload}
@@ -264,23 +264,12 @@ export default function NanoBananaPage() {
                 </Button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+              <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-muted-foreground/25 rounded-lg">
                 <span className="text-sm text-muted-foreground">
                   Transformed image will appear here
                 </span>
               </div>
             )}
-          </Card>
-
-          <Card className="p-6">
-            <h3 className="font-semibold mb-2">About Nano-Banana</h3>
-            <ul className="text-sm text-muted-foreground space-y-2">
-              <li>• Advanced AI image transformation model</li>
-              <li>• Part of Google&apos;s Gemini 2.5 family</li>
-              <li>• Supports creative style transfers</li>
-              <li>• Fast processing with high-quality results</li>
-              <li>• $0.039 per image transformation</li>
-            </ul>
           </Card>
         </div>
       </div>
