@@ -55,20 +55,16 @@ export async function POST(request: NextRequest) {
       fullPrompt += `. Additional notes: ${feedback.additional}`;
     }
 
-    // Use a simpler image-to-image model
-    console.log('Starting Replicate prediction with prompt:', fullPrompt);
+    // Use Google Nano-Banana model
+    console.log('Starting Nano-Banana prediction with prompt:', fullPrompt);
     
     const output = await replicate.run(
-      "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
+      "google/nano-banana:adfd722f0c8b5abd782eac022a625a14fb812951de19618dfc4979f6651a00b4",
       {
         input: {
           prompt: fullPrompt,
-          image: dataUrl,
-          num_outputs: 1,
-          guidance_scale: 7.5,
-          prompt_strength: 0.8,
-          scheduler: "K_EULER",
-          num_inference_steps: 30
+          image_input: [dataUrl],
+          output_format: "png"
         }
       }
     );
