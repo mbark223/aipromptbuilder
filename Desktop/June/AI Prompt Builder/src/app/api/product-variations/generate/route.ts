@@ -5,13 +5,18 @@ const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
+// Handle GET request
+export async function GET(request: NextRequest) {
+  return NextResponse.json({ message: 'This endpoint only accepts POST requests' }, { status: 405 });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const imageFile = formData.get('image') as File;
     const prompt = formData.get('prompt') as string;
-    const parametersStr = formData.get('parameters') as string;
-    const parameters = JSON.parse(parametersStr || '{}');
+    const feedbackStr = formData.get('feedback') as string;
+    const feedback = JSON.parse(feedbackStr || '{}');
 
     if (!imageFile || !prompt) {
       return NextResponse.json(
@@ -27,27 +32,24 @@ export async function POST(request: NextRequest) {
     const mimeType = imageFile.type;
     const dataUrl = `data:${mimeType};base64,${base64}`;
 
-    // Build the full prompt based on parameters
+    // Build the full prompt with feedback
     let fullPrompt = prompt;
-    if (parameters.backgroundColor) {
-      fullPrompt += `, background color: ${parameters.backgroundColor}`;
+    if (feedback.style && feedback.style.trim()) {
+      fullPrompt += `. Style: ${feedback.style}`;
     }
-    if (parameters.lighting) {
-      fullPrompt += `, ${parameters.lighting} lighting`;
+    if (feedback.colors && feedback.colors.trim()) {
+      fullPrompt += `. Colors: ${feedback.colors}`;
     }
-    if (parameters.angle) {
-      fullPrompt += `, ${parameters.angle} angle view`;
+    if (feedback.composition && feedback.composition.trim()) {
+      fullPrompt += `. Composition: ${feedback.composition}`;
     }
-    if (parameters.season) {
-      fullPrompt += `, ${parameters.season} season theme`;
-    }
-    if (parameters.environment) {
-      fullPrompt += `, ${parameters.environment} environment`;
+    if (feedback.additional && feedback.additional.trim()) {
+      fullPrompt += `. Additional notes: ${feedback.additional}`;
     }
 
     // Run the Nano Banana model
     const output = await replicate.run(
-      "google/nano-banana:latest",
+      "google/nano-banana:f0a9d34b12ad1c1cd76269a844b218ff4e64e128ddaba93e15891f47368958a0",
       {
         input: {
           image: dataUrl,
@@ -70,7 +72,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       imageUrl: imageUrls[0],
       prompt: fullPrompt,
-      parameters,
+      feedback,
     });
   } catch (error) {
     console.error('Error generating variation:', error);
