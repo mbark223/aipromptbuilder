@@ -69,17 +69,12 @@ export default function NanoBananaPage() {
       }
 
       const data = await response.json();
-      console.log('API Response:', data);
+      setResultImage(data.imageUrl);
       
-      if (data.imageUrl) {
-        setResultImage(data.imageUrl);
-        toast({
-          title: 'Success!',
-          description: 'Your image has been transformed using Nano-Banana.',
-        });
-      } else {
-        throw new Error('No image URL in response');
-      }
+      toast({
+        title: 'Success!',
+        description: 'Your image has been transformed using Nano-Banana.',
+      });
     } catch (error) {
       console.error('Generation error:', error);
       toast({
@@ -250,49 +245,42 @@ export default function NanoBananaPage() {
 
         <div className="space-y-6">
           <Card className="p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Output</h2>
-              {resultImage && (
-                <span className="text-sm text-green-600 font-medium">Image Ready!</span>
-              )}
-            </div>
+            <h2 className="text-xl font-semibold mb-4">Output</h2>
             
             {resultImage ? (
               <div className="space-y-4">
-                <div className="relative">
-                  <img
-                    src={resultImage}
-                    alt="Generated result"
-                    className="w-full h-auto rounded-lg shadow-lg"
-                  />
-                </div>
+                <img
+                  src={resultImage}
+                  alt="Generated result"
+                  className="w-full h-64 object-cover rounded-lg"
+                />
                 <Button
                   onClick={handleDownload}
                   className="w-full"
-                  size="lg"
                   variant="outline"
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  Download Transformed Image
+                  Download Image
                 </Button>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center min-h-[400px] border-2 border-dashed border-muted-foreground/25 rounded-lg bg-muted/5">
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-3" />
-                    <span className="text-sm text-muted-foreground">Processing your image...</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="h-8 w-8 text-muted-foreground/50 mb-3" />
-                    <span className="text-sm text-muted-foreground">
-                      Transformed image will appear here
-                    </span>
-                  </>
-                )}
+              <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                <span className="text-sm text-muted-foreground">
+                  Transformed image will appear here
+                </span>
               </div>
             )}
+          </Card>
+
+          <Card className="p-6">
+            <h3 className="font-semibold mb-2">About Nano-Banana</h3>
+            <ul className="text-sm text-muted-foreground space-y-2">
+              <li>• Advanced AI image transformation model</li>
+              <li>• Part of Google&apos;s Gemini 2.5 family</li>
+              <li>• Supports creative style transfers</li>
+              <li>• Fast processing with high-quality results</li>
+              <li>• $0.039 per image transformation</li>
+            </ul>
           </Card>
         </div>
       </div>

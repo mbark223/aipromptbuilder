@@ -63,12 +63,15 @@ export async function POST(request: NextRequest) {
     );
 
     // The output should be an array of image URLs
+    console.log('Replicate output:', output);
     const imageUrls = output as string[];
     
     if (!imageUrls || imageUrls.length === 0) {
       throw new Error('No image generated');
     }
 
+    console.log('Returning image URL:', imageUrls[0]);
+    
     return NextResponse.json({
       imageUrl: imageUrls[0],
       prompt: fullPrompt,
