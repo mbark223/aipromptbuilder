@@ -70,22 +70,47 @@ export default function NanoBananaPage() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('API Error:', errorData);
+        
+        // Log debugging info if available
+        if (errorData.rawOutput) {
+          console.error('Raw Replicate output:', errorData.rawOutput);
+          console.error('Output type:', errorData.outputType);
+          console.error('Output keys:', errorData.outputKeys);
+        }
+        
         throw new Error(errorData.error || 'Failed to generate image');
       }
 
       const data = await response.json();
       console.log('API Response:', data);
+      console.log('API Response type:', typeof data);
+      console.log('API Response keys:', Object.keys(data));
+      console.log('API Response stringified:', JSON.stringify(data, null, 2));
       
-      if (data.imageUrl) {
-        // Ensure we have a valid URL
-        const imageUrl = data.imageUrl.startsWith('http') ? data.imageUrl : `https:${data.imageUrl}`;
-        console.log('Setting result image:', imageUrl);
-        setResultImage(imageUrl);
+      // Check different possible response structures
+      let imageUrl = data.imageUrl || data.image || data.url || data.output;
+      
+      // If the response is nested, try to extract from common structures
+      if (!imageUrl && data.data) {
+        imageUrl = data.data.imageUrl || data.data.image || data.data.url || data.data.output;
+      }
+      
+      if (imageUrl) {
+        // Ensure we have a valid URL string
+        if (typeof imageUrl !== 'string') {
+          console.error('Image URL is not a string:', imageUrl);
+          throw new Error('Invalid image URL format');
+        }
+        
+        const finalImageUrl = imageUrl.startsWith('http') ? imageUrl : `https:${imageUrl}`;
+        console.log('Setting result image:', finalImageUrl);
+        setResultImage(finalImageUrl);
         toast({
           title: 'Success!',
           description: 'Your image has been transformed with Nano-Banana.',
         });
       } else {
+        console.error('Could not find image URL in response:', data);
         throw new Error('No image URL in response');
       }
     } catch (error) {

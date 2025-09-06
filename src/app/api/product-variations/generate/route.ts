@@ -70,24 +70,44 @@ export async function POST(request: NextRequest) {
     );
 
     // Log the full output to understand the structure
+    console.log('Replicate raw output type:', typeof output);
     console.log('Replicate output:', JSON.stringify(output, null, 2));
     
     // Handle different possible output formats
     let imageUrl: string | undefined;
     
+    // First check if output is already a string URL
     if (typeof output === 'string') {
       imageUrl = output;
-    } else if (Array.isArray(output) && output.length > 0) {
+      console.log('Output is a string:', imageUrl);
+    } 
+    // Check if it's an array (common for image models)
+    else if (Array.isArray(output) && output.length > 0) {
       imageUrl = output[0];
-    } else if (output && typeof output === 'object' && 'url' in output) {
-      imageUrl = (output as any).url;
-    } else if (output && typeof output === 'object' && 'output' in output) {
-      imageUrl = (output as any).output;
+      console.log('Output is an array, first element:', imageUrl);
+    } 
+    // Check if it's an object with common properties
+    else if (output && typeof output === 'object') {
+      // Try different common property names
+      imageUrl = output.url || output.output || output.image || output.imageUrl;
+      console.log('Output is an object, extracted URL:', imageUrl);
+      
+      // If still not found, log all properties
+      if (!imageUrl) {
+        console.log('Object properties:', Object.keys(output));
+        console.log('Full object:', output);
+      }
     }
     
     if (!imageUrl) {
       console.error('Could not extract image URL from output:', output);
-      throw new Error('No image URL found in response');
+      // Return the raw output for debugging
+      return NextResponse.json({
+        error: 'Could not extract image URL',
+        rawOutput: output,
+        outputType: typeof output,
+        outputKeys: output && typeof output === 'object' ? Object.keys(output) : null
+      }, { status: 500 });
     }
 
     // Ensure the URL is properly formatted
