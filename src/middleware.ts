@@ -1,28 +1,24 @@
-import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export default withAuth(
-  function middleware(req) {
-    // Add any custom middleware logic here if needed
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized({ req, token }) {
-        // Protect all /blendr routes
-        if (req.nextUrl.pathname.startsWith("/blendr")) {
-          return !!token;
-        }
-        // Protect all /dashboard routes
-        if (req.nextUrl.pathname.startsWith("/dashboard")) {
-          return !!token;
-        }
-        // Allow all other routes
-        return true;
-      },
-    },
+export async function middleware(request: NextRequest) {
+  const token = await getToken({ req: request });
+  
+  // Check if the request is for protected routes
+  const isProtectedRoute = 
+    request.nextUrl.pathname.startsWith("/blendr") ||
+    request.nextUrl.pathname.startsWith("/dashboard");
+    
+  if (isProtectedRoute && !token) {
+    // Redirect to login page if not authenticated
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", request.url);
+    return NextResponse.redirect(loginUrl);
   }
-);
+  
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: ["/blendr/:path*", "/dashboard/:path*"],

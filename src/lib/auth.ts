@@ -1,7 +1,8 @@
-import { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import type { NextAuthConfig } from "next-auth";
 
 // Mock user data - in production, this would come from a database
 const mockUsers = [
@@ -60,9 +61,9 @@ const loginSchema = z.object({
   password: z.string().min(6),
 });
 
-export const authOptions: NextAuthOptions = {
+const authConfig: NextAuthConfig = {
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -127,6 +128,8 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
 
 // Types for TypeScript
 declare module "next-auth" {
