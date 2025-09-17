@@ -34,15 +34,9 @@ export function formatToResolution(format: Format): string {
   // For vertical formats, use the width as the "height" for resolution naming
   const primaryDimension = Math.max(width, height);
   
-  // Map common dimensions to resolution strings
-  if (primaryDimension >= 2160) return '4K';
-  if (primaryDimension >= 1440 && primaryDimension < 2160) return '1440p';
-  if (primaryDimension >= 1080 && primaryDimension < 1440) return '1080p';
-  if (primaryDimension === 720 || (primaryDimension > 720 && primaryDimension < 1080)) return '720p';
-  if (primaryDimension >= 480) return '480p';
-  
-  // For non-standard dimensions, use the value
-  return `${primaryDimension}p`;
+  // Map to Replicate API accepted values (only "720p" or "1080p")
+  if (primaryDimension >= 1080) return '1080p';
+  return '720p';
 }
 
 /**
