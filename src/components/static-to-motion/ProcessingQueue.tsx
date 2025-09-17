@@ -83,13 +83,25 @@ export function ProcessingQueue({ queue, onUpdateQueue, model, modelInputs }: Pr
         const primaryFormat = processingItem.formats[0];
         const formatInputs = primaryFormat ? formatToModelInputs(primaryFormat) : {};
         
+        // Debug logging
+        console.log('Processing format:', primaryFormat);
+        console.log('Format inputs:', formatInputs);
+        
         // Process the video generation with format information
-        const result = await replicateService.generateVideo(model, {
+        const finalInputs: any = {
           prompt: (modelInputs.prompt as string) || processingItem.prompt || 'Generate a video',
           ...modelInputs,
           ...formatInputs, // This adds aspect_ratio and resolution
-          image: processingItem.asset.originalFile.url
-        });
+        };
+        
+        // Only add image if it exists (for image-to-video, not prompt-to-video)
+        if (processingItem.asset.originalFile.url) {
+          finalInputs.image = processingItem.asset.originalFile.url;
+        }
+        
+        console.log('Final inputs to generateVideo:', finalInputs);
+        
+        const result = await replicateService.generateVideo(model, finalInputs);
 
         // Update queue with success
         onUpdateQueue((currentQueue) =>

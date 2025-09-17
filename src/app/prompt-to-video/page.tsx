@@ -10,20 +10,20 @@ import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { AnimationModel, QueueItem, Format } from '@/types';
 import { getTextToVideoModels } from '@/lib/video-models';
 
-// Default formats for video generation - optimized for betting content
-const DEFAULT_FORMATS: Format[] = [
-  { aspectRatio: '1:1', width: 1080, height: 1080, name: '1:1 Square (Social Feed)', custom: false },
-  { aspectRatio: '9:16', width: 1080, height: 1920, name: '9:16 Vertical (Stories/Reels)', custom: false },
-  { aspectRatio: '16:9', width: 1920, height: 1080, name: '16:9 Horizontal (Web/Desktop)', custom: false },
-  { aspectRatio: '4:5', width: 864, height: 1080, name: '4:5 Portrait (Feed)', custom: false },
+// Veo-3 specific format options - matching Replicate's setup
+const VEO3_FORMATS: Format[] = [
+  { aspectRatio: '16:9', width: 1280, height: 720, name: '720p Horizontal (16:9)', custom: false },
+  { aspectRatio: '9:16', width: 720, height: 1280, name: '720p Vertical (9:16)', custom: false },
+  { aspectRatio: '16:9', width: 1920, height: 1080, name: '1080p Horizontal (16:9)', custom: false },
+  { aspectRatio: '9:16', width: 1080, height: 1920, name: '1080p Vertical (9:16)', custom: false },
 ];
 
 export default function PromptToVideoPage() {
   const textToVideoModels = getTextToVideoModels();
   const [prompts, setPrompts] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(textToVideoModels[0]);
-  // Default to both 1:1 and 9:16 formats for multi-format generation
-  const [selectedFormats, setSelectedFormats] = useState<Format[]>([DEFAULT_FORMATS[0], DEFAULT_FORMATS[1]]);
+  // Default to 1080p Vertical (9:16) format
+  const [selectedFormats, setSelectedFormats] = useState<Format[]>([VEO3_FORMATS[3]]);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'create' | 'configure' | 'queue'>('create');
@@ -56,9 +56,9 @@ export default function PromptToVideoPage() {
               size: 0,
               format: 'mp4' as 'jpg' | 'png' | 'webp' | 'svg',
               dimensions: {
-                width: 1920,
-                height: 1080,
-                aspectRatio: '16:9'
+                width: selectedFormats[0]?.width || 1920,
+                height: selectedFormats[0]?.height || 1080,
+                aspectRatio: selectedFormats[0]?.aspectRatio || '16:9'
               }
             },
             processedVersions: [],
@@ -111,7 +111,7 @@ export default function PromptToVideoPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">Prompt → Video</h1>
         <p className="text-muted-foreground">
-          Generate videos directly from text prompts using AI models - create multiple formats (1:1, 9:16) from the same prompt
+          Generate videos directly from text prompts using Google's Veo-3 model
         </p>
       </div>
 

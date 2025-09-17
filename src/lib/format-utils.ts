@@ -29,16 +29,20 @@ export function formatToAspectRatio(format: Format): string {
  * Convert height to resolution string (e.g., 1080 → '1080p', 720 → '720p')
  */
 export function formatToResolution(format: Format): string {
-  const { height } = format;
+  const { width, height } = format;
   
-  // Map common heights to resolution strings
-  if (height >= 2160) return '4K';
-  if (height >= 1080) return '1080p';
-  if (height >= 720) return '720p';
-  if (height >= 480) return '480p';
+  // For vertical formats, use the width as the "height" for resolution naming
+  const primaryDimension = Math.max(width, height);
   
-  // For non-standard heights, use the height value
-  return `${height}p`;
+  // Map common dimensions to resolution strings
+  if (primaryDimension >= 2160) return '4K';
+  if (primaryDimension >= 1440 && primaryDimension < 2160) return '1440p';
+  if (primaryDimension >= 1080 && primaryDimension < 1440) return '1080p';
+  if (primaryDimension === 720 || (primaryDimension > 720 && primaryDimension < 1080)) return '720p';
+  if (primaryDimension >= 480) return '480p';
+  
+  // For non-standard dimensions, use the value
+  return `${primaryDimension}p`;
 }
 
 /**

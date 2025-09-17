@@ -13,6 +13,7 @@ export interface ReplicateInput {
   fps?: number;
   camera_fixed?: boolean;
   prompt_optimizer?: boolean;
+  audio_enabled?: boolean;
 }
 
 export interface ReplicateOutput {
@@ -146,6 +147,18 @@ export class ReplicateService {
         }
       });
     }
+
+    // Always preserve aspect_ratio and resolution if provided, even if not in model inputs
+    // Many models accept these parameters without explicitly declaring them
+    if (inputs.aspect_ratio && !formattedInputs.aspect_ratio) {
+      formattedInputs.aspect_ratio = inputs.aspect_ratio;
+    }
+    if (inputs.resolution && !formattedInputs.resolution) {
+      formattedInputs.resolution = inputs.resolution;
+    }
+
+    // Log for debugging
+    console.log('Formatted inputs for model:', model.id, formattedInputs);
 
     return formattedInputs;
   }

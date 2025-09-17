@@ -22,15 +22,18 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
         placeholder: 'Describe your video with subject, action, style, camera motion...'
       },
       {
-        name: 'resolution',
-        type: 'select',
-        label: 'Resolution',
+        name: 'negative_prompt',
+        type: 'text',
+        label: 'Negative Prompt (Optional)',
         required: false,
-        options: [
-          { value: '720p', label: '720p' },
-          { value: '1080p', label: '1080p' }
-        ],
-        defaultValue: '720p'
+        placeholder: 'What to avoid in the video...'
+      },
+      {
+        name: 'seed',
+        type: 'number',
+        label: 'Seed (Optional)',
+        required: false,
+        placeholder: 'Random seed for reproducibility'
       },
       {
         name: 'duration',
@@ -93,6 +96,18 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
         defaultValue: 24,
         min: 12,
         max: 30
+      },
+      {
+        name: 'aspect_ratio',
+        type: 'select',
+        label: 'Aspect Ratio',
+        required: false,
+        options: [
+          { value: '16:9', label: '16:9 (Horizontal)' },
+          { value: '9:16', label: '9:16 (Vertical)' },
+          { value: '1:1', label: '1:1 (Square)' }
+        ],
+        defaultValue: '16:9'
       }
     ]
   },
@@ -533,8 +548,9 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
 
 // Filter models by capability
 export function getTextToVideoModels() {
+  // Only return Veo-3 for prompt-to-video feature
   return VIDEO_GENERATION_MODELS.filter(model => 
-    model.capabilities.includes('Text-to-Video')
+    model.id === 'veo-3' && model.capabilities.includes('Text-to-Video')
   );
 }
 

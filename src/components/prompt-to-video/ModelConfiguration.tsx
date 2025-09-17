@@ -5,9 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { AnimationModel, Format } from '@/types';
-import { ModelSelector } from '@/components/static-to-motion/ModelSelector';
 import { ModelInputFields } from '@/components/static-to-motion/ModelInputFields';
-import { FormatSelector } from '@/components/static-to-motion/FormatSelector';
+import { Veo3FormatSelector } from './Veo3FormatSelector';
 import { NumberInput } from '@/components/ui/number-input';
 
 interface ModelConfigurationProps {
@@ -31,14 +30,29 @@ export function ModelConfiguration({
   videosPerPrompt,
   onVideosPerPromptChange,
 }: ModelConfigurationProps) {
+  // For Veo-3 specific UI
+  const veo3Formats = [
+    { aspectRatio: '16:9', width: 1280, height: 720, name: '720p Horizontal (16:9)', custom: false },
+    { aspectRatio: '9:16', width: 720, height: 1280, name: '720p Vertical (9:16)', custom: false },
+    { aspectRatio: '16:9', width: 1920, height: 1080, name: '1080p Horizontal (16:9)', custom: false },
+    { aspectRatio: '9:16', width: 1080, height: 1920, name: '1080p Vertical (9:16)', custom: false },
+  ];
+
   return (
     <div className="space-y-6">
+      {/* Veo-3 Model Badge */}
       <div>
-        <Label className="text-base font-semibold mb-3 block">Select Video Model</Label>
-        <ModelSelector
-          selectedModel={selectedModel}
-          onSelectModel={onSelectModel}
-        />
+        <Label className="text-base font-semibold mb-3 block">Video Model</Label>
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold">{selectedModel.name}</h3>
+              <p className="text-sm text-muted-foreground">{selectedModel.provider}</p>
+            </div>
+            <Badge variant="default">Selected</Badge>
+          </div>
+          <p className="text-sm mt-2">{selectedModel.description}</p>
+        </Card>
       </div>
 
       <Separator />
@@ -78,11 +92,10 @@ export function ModelConfiguration({
       <Separator />
 
       <div>
-        <Label className="text-base font-semibold mb-3 block">Output Formats</Label>
-        <FormatSelector
-          selectedFormats={selectedFormats}
-          onSelectFormats={onSelectFormats}
-          multiSelect={true}
+        <Veo3FormatSelector
+          formats={veo3Formats}
+          selectedFormat={selectedFormats[0] || veo3Formats[3]} // Default to 1080p Vertical
+          onSelectFormat={(format) => onSelectFormats([format])}
         />
       </div>
 
