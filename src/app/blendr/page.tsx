@@ -71,8 +71,7 @@ export default function BlendrPage() {
         changes: specificChanges,
         style: overallStyle,
         colors: colorTheme,
-        additional: additionalNotes,
-        brandId: brandGuidelines?.id
+        additional: additionalNotes
       }));
 
       const response = await fetch('/api/product-variations/generate', {
