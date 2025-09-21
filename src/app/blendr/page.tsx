@@ -175,11 +175,6 @@ export default function BlendrPage() {
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
           <span>🎨</span> Blendr
-          {brandGuidelines && (
-            <Badge variant="outline" className="ml-2 font-normal">
-              {brandGuidelines.name} Brand Mode
-            </Badge>
-          )}
         </h1>
         <p className="text-muted-foreground">
           AI-powered image editing - Transform your images using natural language instructions
@@ -259,33 +254,7 @@ export default function BlendrPage() {
               </div>
 
               <div className="space-y-6">
-                {/* Brand Guidelines Section */}
-                {brandGuidelines && (
-                  <div className="space-y-3 border border-primary/20 rounded-lg p-4 bg-primary/5">
-                    <h3 className="text-sm font-medium flex items-center gap-2">
-                      <Palette className="h-4 w-4" /> Brand Guidelines Applied
-                    </h3>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">Colors:</span>
-                        <div className="flex gap-1">
-                          {brandGuidelines.colors.primary.map((color, idx) => (
-                            <div
-                              key={idx}
-                              className="w-6 h-6 rounded border"
-                              style={{ backgroundColor: color }}
-                              title={color}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                      <div>
-                        <span className="text-xs text-muted-foreground">Style: </span>
-                        <span className="text-xs">{brandGuidelines.style}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* Brand Guidelines Section - Removed */}
                 
                 {/* Highlight Specific Elements Section */}
                 <div className="space-y-4 border border-muted rounded-lg p-4 bg-muted/5">
