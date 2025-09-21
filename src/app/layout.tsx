@@ -18,7 +18,6 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "@/components/ui/toaster";
-import { AuthSessionProvider } from "@/components/providers/session-provider";
 
 export default function RootLayout({
   children,
@@ -30,10 +29,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthSessionProvider>
-          {children}
-          <Toaster />
-        </AuthSessionProvider>
+        {children}
+        <Toaster />
       </body>
     </html>
   );
