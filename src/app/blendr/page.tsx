@@ -9,12 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Upload, Loader2, Download, Sparkles, AlertCircle, Palette } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useBrand } from '@/contexts/BrandContext';
 import { Badge } from '@/components/ui/badge';
 
 export default function BlendrPage() {
   const { toast } = useToast();
-  const { brandGuidelines } = useBrand();
   const [isProcessing, setIsProcessing] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);

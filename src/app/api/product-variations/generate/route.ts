@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Replicate from 'replicate';
-import { mockBrandGuidelines } from '@/lib/auth';
 
 // Handle GET request
 export async function GET(request: NextRequest) {
