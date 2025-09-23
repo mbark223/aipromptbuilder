@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppLayout } from '../app-layout';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -303,8 +302,7 @@ const SAMPLE_TEMPLATES = [
 
 export default function TemplatesPage() {
   return (
-    <AppLayout>
-      <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Templates</h1>
           <p className="text-muted-foreground">
@@ -343,8 +341,7 @@ export default function TemplatesPage() {
             </TabsContent>
           ))}
         </Tabs>
-      </div>
-    </AppLayout>
+    </div>
   );
 }
 

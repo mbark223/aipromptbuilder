@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { AppLayout } from '../app-layout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -129,8 +128,7 @@ export default function ExportPage() {
   const exportData = generateExportData();
 
   return (
-    <AppLayout>
-      <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">Export Prompts</h1>
           <p className="text-muted-foreground">
@@ -274,7 +272,6 @@ export default function ExportPage() {
             </Card>
           </div>
         </div>
-      </div>
-    </AppLayout>
+    </div>
   );
 }
