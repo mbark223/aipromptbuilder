@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Header() {
   return (
@@ -8,7 +9,14 @@ export function Header() {
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">AI Prompt Builder</span>
+            <Image 
+              src="/logo.png" 
+              alt="Worthy Ad Builder" 
+              width={28} 
+              height={28}
+              className="object-contain"
+            />
+            <span className="font-bold">Worthy Ad Builder</span>
           </Link>
         </div>
       </div>

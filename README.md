@@ -1,6 +1,6 @@
-# AI Prompt Builder for Video Generation
+# Worthy Ad Builder
 
-A Next.js application for creating, managing, and optimizing prompts for AI video generation platforms like Veo and Flows, with integrated Replicate API support for video generation.
+A professional Next.js application for creating, managing, and optimizing video advertisements using AI-powered tools and integrated Replicate API support for video generation.
 
 ## Features
 

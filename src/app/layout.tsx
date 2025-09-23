@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI Prompt Builder",
-  description: "Create and manage prompts for AI video generation",
+  title: "Worthy Ad Builder",
+  description: "Create professional video ads with AI-powered tools",
 };
 
 import { Toaster } from "@/components/ui/toaster";
