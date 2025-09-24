@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AppLayout } from './app-layout';
 import { FormatSelector } from '@/components/format/FormatSelector';
 import { FormatPreview } from '@/components/format/FormatPreview';
 import { PromptBuilder } from '@/components/prompt/PromptBuilder';
@@ -35,12 +34,11 @@ function HomeContent() {
 
 
   return (
-    <AppLayout>
-      <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto py-6 space-y-6">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Create New Prompt</h1>
+          <h1 className="text-3xl font-bold mb-2">Create New Ad Campaign</h1>
           <p className="text-muted-foreground">
-            Build and customize your AI video generation prompts
+            Build professional video ads with AI-powered creative tools
           </p>
         </div>
 
@@ -127,8 +125,7 @@ function HomeContent() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
-    </AppLayout>
+    </div>
   );
 }
 

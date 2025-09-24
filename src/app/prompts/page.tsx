@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { AppLayout } from '../app-layout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -36,8 +35,7 @@ export default function PromptsPage() {
   const uniqueFormats = Array.from(new Set(prompts.map(p => p.format.aspectRatio)));
 
   return (
-    <AppLayout>
-      <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold mb-2">All Prompts</h1>
@@ -144,7 +142,6 @@ export default function PromptsPage() {
             ))
           )}
         </div>
-      </div>
-    </AppLayout>
+    </div>
   );
 }
