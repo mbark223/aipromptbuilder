@@ -551,16 +551,6 @@ export function ModelSelector({
             <span className="text-sm text-muted-foreground">Quality:</span>
             {getQualityBadge(selectedModel.quality)}
           </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Cost:</span>
-            <span className="text-sm font-medium">
-              {selectedModel.pricing || (selectedModel.costPerGeneration === 0 
-                ? 'Free' 
-                : `$${selectedModel.costPerGeneration.toFixed(2)}/generation`)
-              }
-            </span>
-          </div>
         </div>
 
         <div>
