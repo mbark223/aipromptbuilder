@@ -11,7 +11,8 @@ import {
   IconTemplate,
   IconFolder,
   IconFileExport,
-  IconFileText
+  IconFileText,
+  IconLogout,
 } from "@tabler/icons-react";
 import { Sidebar, SidebarBody, SidebarLink, Logo } from "./Sidebar";
 import { cn } from "@/lib/utils";
@@ -102,6 +103,15 @@ export function AppSidebar() {
               />
             ))}
           </div>
+        </div>
+        <div className="border-t border-neutral-200 pt-4 dark:border-neutral-700">
+          <a
+            href="/api/auth/logout"
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-neutral-200 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white"
+          >
+            <IconLogout className="h-5 w-5" />
+            <span>Log out</span>
+          </a>
         </div>
       </SidebarBody>
     </Sidebar>

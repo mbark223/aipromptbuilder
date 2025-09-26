@@ -27,8 +27,30 @@ function normalizeError(error: unknown, fallback = "Something went wrong") {
   return fallback;
 }
 
+async function ensureCsrfToken(): Promise<string> {
+  let csrf = readCookie(CSRF_COOKIE_NAME);
+  if (csrf) {
+    return csrf;
+  }
+
+  await fetch("/api/auth/csrf", {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept": "application/json",
+    },
+  }).catch(() => undefined);
+
+  csrf = readCookie(CSRF_COOKIE_NAME);
+  if (csrf) {
+    return csrf;
+  }
+
+  throw new Error("Unable to establish a secure session. Please refresh the page and try again.");
+}
+
 async function createSession(idToken: string, redirect: string) {
-  const csrf = readCookie(CSRF_COOKIE_NAME) ?? "";
+  const csrf = await ensureCsrfToken();
 
   const response = await fetch("/api/auth/session", {
     method: "POST",
@@ -101,11 +123,11 @@ export function useFirebaseAuth() {
         await createSession(idToken, redirect);
       } catch (error) {
         const code = (error as { code?: string }).code;
-        const message =
-          code === "auth/popup-closed-by-user"
-            ? "Sign-in canceled"
-            : normalizeError(error);
-        throw new Error(message);
+        const normalized = normalizeError(error);
+        if (code === "auth/popup-closed-by-user") {
+          throw new Error("Sign-in canceled");
+        }
+        throw new Error(normalized);
       }
     },
     [auth],
