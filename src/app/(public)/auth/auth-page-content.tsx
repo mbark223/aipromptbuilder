@@ -2,23 +2,47 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard } from "@/components/auth/AuthCard";
+import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
 
 export function AuthPageContent() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/";
+  const router = useRouter();
+  const { completeRedirectSignIn } = useFirebaseAuth();
 
   useEffect(() => {
-    const hasCsrf = document.cookie
-      .split(";")
-      .map((entry) => entry.trim().startsWith("fbCsrf="))
-      .some(Boolean);
+    let cancelled = false;
 
-    if (!hasCsrf) {
-      void fetch("/api/auth/csrf", { credentials: "include" });
-    }
-  }, []);
+    void (async () => {
+      const hasCsrf = document.cookie
+        .split(";")
+        .map((entry) => entry.trim().startsWith("fbCsrf="))
+        .some(Boolean);
+
+      if (!hasCsrf) {
+        try {
+          await fetch("/api/auth/csrf", { credentials: "include" });
+        } catch {
+          // Ignore; createSession will request again if needed
+        }
+      }
+
+      try {
+        const finished = await completeRedirectSignIn(redirect);
+        if (finished && !cancelled) {
+          router.replace(redirect);
+        }
+      } catch {
+        // Swallow redirect completion errors; user can retry interactively
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [completeRedirectSignIn, redirect, router]);
 
   return (
     <div className="min-h-screen bg-background">

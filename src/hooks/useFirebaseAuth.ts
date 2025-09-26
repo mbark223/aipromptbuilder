@@ -4,8 +4,10 @@ import { useCallback } from "react";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  getRedirectResult,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase/client";
@@ -69,6 +71,14 @@ async function createSession(idToken: string, redirect: string) {
   }
 }
 
+function isCrossOriginIsolated() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return Boolean((window as Window & { crossOriginIsolated?: boolean }).crossOriginIsolated);
+}
+
 export function useFirebaseAuth() {
   const auth = getFirebaseAuth();
 
@@ -114,20 +124,52 @@ export function useFirebaseAuth() {
 
   const signInWithGoogle = useCallback(
     async (redirect: string) => {
-      try {
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({ prompt: "select_account" });
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
 
+      if (isCrossOriginIsolated()) {
+        await signInWithRedirect(auth, provider);
+        return;
+      }
+
+      try {
         const credential = await signInWithPopup(auth, provider);
         const idToken = await credential.user.getIdToken(true);
         await createSession(idToken, redirect);
       } catch (error) {
         const code = (error as { code?: string }).code;
-        const normalized = normalizeError(error);
-        if (code === "auth/popup-closed-by-user") {
-          throw new Error("Sign-in canceled");
+        const shouldFallback =
+          isCrossOriginIsolated() ||
+          code === "auth/popup-blocked" ||
+          code === "auth/cancelled-popup-request" ||
+          code === "auth/popup-closed-by-user" ||
+          code === "auth/operation-not-supported-in-this-environment";
+
+        if (shouldFallback) {
+          await signInWithRedirect(auth, provider);
+          return;
         }
-        throw new Error(normalized);
+
+        const normalized = normalizeError(error);
+        throw new Error(code === "auth/popup-closed-by-user" ? "Sign-in canceled" : normalized);
+      }
+    },
+    [auth],
+  );
+
+  const completeRedirectSignIn = useCallback(
+    async (redirect: string): Promise<boolean> => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (!result || !result.user) {
+          return false;
+        }
+
+        const idToken = await result.user.getIdToken(true);
+        await createSession(idToken, redirect);
+        return true;
+      } catch (error) {
+        throw new Error(normalizeError(error));
       }
     },
     [auth],
@@ -148,6 +190,7 @@ export function useFirebaseAuth() {
     signInWithEmail,
     signUpWithEmail,
     signInWithGoogle,
+    completeRedirectSignIn,
     logout,
   };
 }

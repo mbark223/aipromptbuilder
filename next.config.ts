@@ -26,8 +26,22 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Allow Google auth popup flow to retain window.opener
+        source: '/auth',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups',
+          },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'unsafe-none',
+          },
+        ],
+      },
+      {
         // Apply strict CORS headers to other non-API routes
-        source: '/((?!api|video-cutter).*)',
+        source: '/((?!api|video-cutter|auth).*)',
         headers: [
           {
             key: 'Cross-Origin-Embedder-Policy',
@@ -53,7 +67,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization',
+            value: 'Content-Type, Authorization, X-Requested-With, X-CSRF-Token',
           },
         ],
       },
