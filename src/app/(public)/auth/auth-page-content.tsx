@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -7,6 +8,17 @@ import { AuthCard } from "@/components/auth/AuthCard";
 export function AuthPageContent() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/";
+
+  useEffect(() => {
+    const hasCsrf = document.cookie
+      .split(";")
+      .map((entry) => entry.trim().startsWith("fbCsrf="))
+      .some(Boolean);
+
+    if (!hasCsrf) {
+      void fetch("/api/auth/csrf", { credentials: "include" });
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">

@@ -40,6 +40,33 @@ export function middleware(request: NextRequest) {
   const hasSession = Boolean(request.cookies.get(SESSION_COOKIE_NAME)?.value);
   const isPublic = isPublicPath(pathname);
 
+  if (pathname === "/auth") {
+    const response = NextResponse.next();
+
+    if (!request.cookies.get(CSRF_COOKIE_NAME)?.value) {
+      response.cookies.set({
+        name: CSRF_COOKIE_NAME,
+        value: crypto.randomUUID(),
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 2 * 24 * 60 * 60,
+      });
+    }
+
+    if (hasSession) {
+      const targetPath = safeRedirect(
+        request.nextUrl.searchParams.get("redirect"),
+      );
+      if (targetPath !== pathname) {
+        return NextResponse.redirect(new URL(targetPath, request.url));
+      }
+    }
+
+    return response;
+  }
+
   if (!hasSession && !isPublic) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/auth";
@@ -49,24 +76,9 @@ export function middleware(request: NextRequest) {
 
   if (hasSession && isPublic) {
     const targetPath = safeRedirect(request.nextUrl.searchParams.get("redirect"));
-    // Only redirect if we have a valid target that's not the current path
     if (targetPath !== pathname) {
       return NextResponse.redirect(new URL(targetPath, request.url));
     }
-  }
-
-  if (isPublic && !request.cookies.get(CSRF_COOKIE_NAME)?.value) {
-    const response = NextResponse.next();
-    response.cookies.set({
-      name: CSRF_COOKIE_NAME,
-      value: crypto.randomUUID(),
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 2 * 24 * 60 * 60,
-    });
-    return response;
   }
 
   return NextResponse.next();
