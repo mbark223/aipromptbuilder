@@ -1,9 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-
-const SESSION_COOKIE_NAME =
-  process.env.NODE_ENV === "production" ? "__Secure-fbSession" : "fbSession";
-const CSRF_COOKIE_NAME = "fbCsrf";
+import { CSRF_COOKIE_NAME, SESSION_COOKIE_NAME } from "@/lib/auth/constants";
 const PUBLIC_PATHS = ["/auth"];
 
 function isPublicPath(pathname: string) {

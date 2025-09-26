@@ -1,8 +1,8 @@
+import "server-only";
+
 import { cookies } from "next/headers";
 import { adminAuth } from "@/lib/firebase/admin";
-
-const SESSION_COOKIE_NAME =
-  process.env.NODE_ENV === "production" ? "__Secure-fbSession" : "fbSession";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/constants";
 
 export async function getUserFromCookies() {
   const jar = await cookies();

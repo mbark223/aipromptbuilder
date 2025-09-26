@@ -1,8 +1,8 @@
+import "server-only";
+
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebase/admin";
-
-const SESSION_COOKIE_NAME =
-  process.env.NODE_ENV === "production" ? "__Secure-fbSession" : "fbSession";
+import { SESSION_COOKIE_NAME } from "@/lib/auth/constants";
 
 export async function GET(request: NextRequest) {
   const redirectUrl = new URL("/auth", request.url);

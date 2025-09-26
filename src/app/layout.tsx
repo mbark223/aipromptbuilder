@@ -1,5 +1,9 @@
+import "server-only";
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import "./globals.css";
 import { AppLayout } from "./app-layout";
 
@@ -19,12 +23,31 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "@/components/ui/toaster";
+import { getUserFromCookies } from "@/lib/auth/getUserFromCookies";
 
-export default function RootLayout({
+const PUBLIC_PATH_PREFIXES = ["/auth"];
+
+function isPublicPath(pathname: string) {
+  return PUBLIC_PATH_PREFIXES.some((prefix) =>
+    pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headerList = await headers();
+  const currentPath = headerList.get("next-url") ?? "/";
+
+  if (!isPublicPath(currentPath)) {
+    const user = await getUserFromCookies();
+    if (!user) {
+      redirect(`/auth?redirect=${encodeURIComponent(currentPath)}`);
+    }
+  }
+
   return (
     <html lang="en">
       <body

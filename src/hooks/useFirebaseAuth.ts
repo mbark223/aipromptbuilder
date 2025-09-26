@@ -9,8 +9,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase/client";
-
-const CSRF_COOKIE_NAME = "fbCsrf";
+import { CSRF_COOKIE_NAME } from "@/lib/auth/constants";
 
 function readCookie(name: string): string | null {
   if (typeof document === "undefined") {

@@ -1,13 +1,15 @@
+import "server-only";
+
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebase/admin";
+import {
+  CSRF_COOKIE_NAME,
+  SESSION_COOKIE_NAME,
+  SESSION_MAX_AGE_MS,
+} from "@/lib/auth/constants";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const SESSION_COOKIE_NAME =
-  process.env.NODE_ENV === "production" ? "__Secure-fbSession" : "fbSession";
-const CSRF_COOKIE_NAME = "fbCsrf";
-const SESSION_MAX_AGE_MS = 5 * 24 * 60 * 60 * 1000; // 5 days
 
 function safeRedirect(target: unknown) {
   const redirect = typeof target === "string" ? target : "/";
