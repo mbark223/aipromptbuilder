@@ -49,7 +49,10 @@ export function middleware(request: NextRequest) {
 
   if (hasSession && isPublic) {
     const targetPath = safeRedirect(request.nextUrl.searchParams.get("redirect"));
-    return NextResponse.redirect(new URL(targetPath, request.url));
+    // Only redirect if we have a valid target that's not the current path
+    if (targetPath !== pathname) {
+      return NextResponse.redirect(new URL(targetPath, request.url));
+    }
   }
 
   if (isPublic && !request.cookies.get(CSRF_COOKIE_NAME)?.value) {

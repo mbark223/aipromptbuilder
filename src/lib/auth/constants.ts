@@ -1,5 +1,6 @@
-export const SESSION_COOKIE_NAME =
-  process.env.NODE_ENV === "production" ? "__Secure-fbSession" : "fbSession";
+// Use consistent cookie name across environments to avoid issues
+// The secure flag is set separately based on environment
+export const SESSION_COOKIE_NAME = "fbSession";
 
 export const CSRF_COOKIE_NAME = "fbCsrf";
 
