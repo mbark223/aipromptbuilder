@@ -6,14 +6,10 @@ import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { IconBrandGoogle, IconArrowRight } from "@tabler/icons-react";
+import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
 
 type AuthMode = "signin" | "signup";
 
@@ -23,6 +19,8 @@ interface AuthCardProps {
 
 export function AuthCard({ redirect = "/" }: AuthCardProps) {
   const router = useRouter();
+  const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useFirebaseAuth();
+
   const [mode, setMode] = React.useState<AuthMode>("signin");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -41,23 +39,29 @@ export function AuthCard({ redirect = "/" }: AuthCardProps) {
     setError(null);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, mode, redirect }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data?.message ?? "Unable to authenticate");
+      if (mode === "signin") {
+        await signInWithEmail(email, password, redirect);
+      } else {
+        await signUpWithEmail(email, password, redirect);
       }
-
       router.replace(redirect);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Something went wrong";
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await signInWithGoogle(redirect);
+      router.replace(redirect);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
       setError(message);
     } finally {
       setLoading(false);
@@ -86,6 +90,7 @@ export function AuthCard({ redirect = "/" }: AuthCardProps) {
           onPasswordChange={setPassword}
           onSubmit={handleSubmit}
           onModeSwitch={handleModeChange}
+          onGoogle={handleGoogle}
           redirect={redirect}
         />
       </TabsContent>
@@ -101,6 +106,7 @@ export function AuthCard({ redirect = "/" }: AuthCardProps) {
           onPasswordChange={setPassword}
           onSubmit={handleSubmit}
           onModeSwitch={handleModeChange}
+          onGoogle={handleGoogle}
           redirect={redirect}
         />
       </TabsContent>
@@ -119,6 +125,7 @@ interface AuthFormProps {
   onPasswordChange: (value: string) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onModeSwitch: (mode: AuthMode) => void;
+  onGoogle: () => void;
 }
 
 function AuthForm({
@@ -132,20 +139,20 @@ function AuthForm({
   onPasswordChange,
   onSubmit,
   onModeSwitch,
+  onGoogle,
 }: AuthFormProps) {
-  const encodedRedirect = React.useMemo(
-    () => encodeURIComponent(redirect),
-    [redirect]
-  );
-
   return (
     <div className="rounded-xl border bg-card p-6 shadow">
       <div className="space-y-4">
-        <Button variant="outline" className="w-full" asChild>
-          <Link href={`/api/auth/login?method=google&redirect=${encodedRedirect}`}>
-            <IconBrandGoogle aria-hidden className="mr-2 h-4 w-4" />
-            Continue with Google
-          </Link>
+        <Button
+          variant="outline"
+          className="w-full"
+          type="button"
+          onClick={onGoogle}
+          disabled={loading}
+        >
+          <IconBrandGoogle aria-hidden className="mr-2 h-4 w-4" />
+          Continue with Google
         </Button>
 
         <div className="relative">

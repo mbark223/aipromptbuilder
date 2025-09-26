@@ -1,12 +1,14 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-const AUTH_COOKIE = "auth";
+const SESSION_COOKIE_NAME =
+  process.env.NODE_ENV === "production" ? "__Secure-fbSession" : "fbSession";
+const CSRF_COOKIE_NAME = "fbCsrf";
 const PUBLIC_PATHS = ["/auth"];
 
 function isPublicPath(pathname: string) {
-  return PUBLIC_PATHS.some((path) =>
-    pathname === path || pathname.startsWith(`${path}/`)
+  return PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
 }
 
@@ -20,7 +22,9 @@ function isAssetPath(pathname: string) {
 }
 
 function safeRedirect(target: string | null) {
-  if (!target) return "/";
+  if (!target) {
+    return "/";
+  }
 
   if (!target.startsWith("/") || target.startsWith("//")) {
     return "/";
@@ -30,30 +34,39 @@ function safeRedirect(target: string | null) {
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
 
   if (pathname.startsWith("/api") || isAssetPath(pathname)) {
     return NextResponse.next();
   }
 
-  const isAuthenticated = request.cookies.get(AUTH_COOKIE)?.value === "true";
+  const hasSession = Boolean(request.cookies.get(SESSION_COOKIE_NAME)?.value);
+  const isPublic = isPublicPath(pathname);
 
-  if (!isAuthenticated && !isPublicPath(pathname)) {
+  if (!hasSession && !isPublic) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/auth";
-    redirectUrl.searchParams.set(
-      "redirect",
-      `${pathname}${request.nextUrl.search}`
-    );
+    redirectUrl.searchParams.set("redirect", `${pathname}${search}`);
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (isAuthenticated && isPublicPath(pathname)) {
-    const targetPath = safeRedirect(
-      request.nextUrl.searchParams.get("redirect")
-    );
-    const destination = new URL(targetPath, request.url);
-    return NextResponse.redirect(destination);
+  if (hasSession && isPublic) {
+    const targetPath = safeRedirect(request.nextUrl.searchParams.get("redirect"));
+    return NextResponse.redirect(new URL(targetPath, request.url));
+  }
+
+  if (isPublic && !request.cookies.get(CSRF_COOKIE_NAME)?.value) {
+    const response = NextResponse.next();
+    response.cookies.set({
+      name: CSRF_COOKIE_NAME,
+      value: crypto.randomUUID(),
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 2 * 24 * 60 * 60,
+    });
+    return response;
   }
 
   return NextResponse.next();
