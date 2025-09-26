@@ -138,11 +138,14 @@ export function useFirebaseAuth() {
         await createSession(idToken, redirect);
       } catch (error) {
         const code = (error as { code?: string }).code;
+        if (code === "auth/popup-closed-by-user") {
+          throw new Error("Sign-in canceled");
+        }
+
         const shouldFallback =
           isCrossOriginIsolated() ||
           code === "auth/popup-blocked" ||
           code === "auth/cancelled-popup-request" ||
-          code === "auth/popup-closed-by-user" ||
           code === "auth/operation-not-supported-in-this-environment";
 
         if (shouldFallback) {
@@ -151,7 +154,7 @@ export function useFirebaseAuth() {
         }
 
         const normalized = normalizeError(error);
-        throw new Error(code === "auth/popup-closed-by-user" ? "Sign-in canceled" : normalized);
+        throw new Error(normalized);
       }
     },
     [auth],
