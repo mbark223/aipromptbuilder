@@ -1,7 +1,10 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase/admin";
+import {
+  getAdminAuth,
+  isFirebaseAdminConfigured,
+} from "@/lib/firebase/admin";
 import {
   CSRF_COOKIE_NAME,
   SESSION_COOKIE_NAME,
@@ -79,7 +82,13 @@ export async function POST(request: NextRequest) {
     return jsonResponse(400, { message: "Missing idToken" });
   }
 
+  if (!isFirebaseAdminConfigured()) {
+    return jsonResponse(500, { message: "Authentication service unavailable" });
+  }
+
   try {
+    const adminAuth = getAdminAuth();
+
     await adminAuth.verifyIdToken(idToken, true);
     const sessionCookie = await adminAuth.createSessionCookie(idToken, {
       expiresIn: SESSION_MAX_AGE_MS,
@@ -102,7 +111,14 @@ export async function DELETE(request: NextRequest) {
     return response;
   }
 
+  if (!isFirebaseAdminConfigured()) {
+    clearSessionCookie(response);
+    return response;
+  }
+
   try {
+    const adminAuth = getAdminAuth();
+
     const decoded = await adminAuth.verifySessionCookie(session, true);
     await adminAuth.revokeRefreshTokens(decoded.uid);
   } catch (error) {

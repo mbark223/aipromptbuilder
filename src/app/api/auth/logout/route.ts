@@ -1,7 +1,10 @@
 import "server-only";
 
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase/admin";
+import {
+  getAdminAuth,
+  isFirebaseAdminConfigured,
+} from "@/lib/firebase/admin";
 import { SESSION_COOKIE_NAME } from "@/lib/auth/constants";
 
 export async function GET(request: NextRequest) {
@@ -10,8 +13,9 @@ export async function GET(request: NextRequest) {
 
   const session = request.cookies.get(SESSION_COOKIE_NAME)?.value;
 
-  if (session) {
+  if (session && isFirebaseAdminConfigured()) {
     try {
+      const adminAuth = getAdminAuth();
       const decoded = await adminAuth.verifySessionCookie(session, true);
       await adminAuth.revokeRefreshTokens(decoded.uid);
     } catch (error) {
