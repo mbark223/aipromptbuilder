@@ -11,13 +11,19 @@ import {
   IconTemplate,
   IconFolder,
   IconFileExport,
-  IconFileText
+  IconFileText,
+  IconLogout,
 } from "@tabler/icons-react";
 import { Sidebar, SidebarBody, SidebarLink, Logo } from "./Sidebar";
 import { cn } from "@/lib/utils";
+import { useFirebaseAuth } from "@/hooks/useFirebaseAuth";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useFirebaseAuth();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   
   const links = [
@@ -102,6 +108,33 @@ export function AppSidebar() {
               />
             ))}
           </div>
+        </div>
+        <div className="border-t border-neutral-200 pt-4 dark:border-neutral-700">
+          <button
+            type="button"
+            onClick={async () => {
+              if (isLoggingOut) return;
+              setIsLoggingOut(true);
+              try {
+                await logout();
+              } catch (error) {
+                console.error("Failed to log out", error);
+              } finally {
+                router.replace("/auth");
+                setIsLoggingOut(false);
+              }
+            }}
+            className={cn(
+              "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
+              "text-neutral-600 transition hover:bg-neutral-200 hover:text-neutral-900",
+              "dark:text-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-white",
+              isLoggingOut && "opacity-70 cursor-not-allowed"
+            )}
+            disabled={isLoggingOut}
+          >
+            <IconLogout className="h-5 w-5" />
+            <span>{isLoggingOut ? "Logging out…" : "Log out"}</span>
+          </button>
         </div>
       </SidebarBody>
     </Sidebar>
