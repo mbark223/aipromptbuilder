@@ -121,6 +121,7 @@ export class ReplicateService {
       'google/veo-3',
       'bytedance/seedance-1-pro',
       'minimax/hailuo-02',
+      'openai/sora-2',
     ];
 
     // Return 'latest' for official models to signal using the models endpoint

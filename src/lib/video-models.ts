@@ -178,6 +178,59 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
     ]
   },
   
+  // OpenAI Sora 2
+  {
+    id: 'sora-2',
+    name: 'Sora 2',
+    provider: 'OpenAI',
+    description: 'OpenAI\'s flagship video generation model with synced audio capabilities',
+    capabilities: ['Text-to-Video', 'Image-to-Video', 'Native Audio', 'HD Quality'],
+    speed: 'moderate',
+    quality: 'very-high',
+    costPerGeneration: 0.014,
+    replicateId: 'openai/sora-2',
+    pricing: '$0.0001/second',
+    inputs: [
+      {
+        name: 'prompt',
+        type: 'text',
+        label: 'Video Prompt',
+        required: true,
+        placeholder: 'Describe your video in detail...'
+      },
+      {
+        name: 'seconds',
+        type: 'select',
+        label: 'Duration',
+        required: false,
+        options: [
+          { value: '4', label: '4 seconds' },
+          { value: '8', label: '8 seconds' },
+          { value: '12', label: '12 seconds' }
+        ],
+        defaultValue: '8'
+      },
+      {
+        name: 'aspect_ratio',
+        type: 'select',
+        label: 'Aspect Ratio',
+        required: false,
+        options: [
+          { value: 'landscape', label: 'Landscape (1280x720)' },
+          { value: 'portrait', label: 'Portrait (720x1280)' }
+        ],
+        defaultValue: 'landscape'
+      },
+      {
+        name: 'openai_api_key',
+        type: 'text',
+        label: 'OpenAI API Key',
+        required: true,
+        placeholder: 'Your OpenAI API key...'
+      }
+    ]
+  },
+  
   // ByteDance SeedDance
   {
     id: 'seedance-1-pro',
@@ -548,9 +601,9 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
 
 // Filter models by capability
 export function getTextToVideoModels() {
-  // Only return Veo-3 for prompt-to-video feature
+  // Only return Veo-3 and Sora-2 for prompt-to-video feature
   return VIDEO_GENERATION_MODELS.filter(model => 
-    model.id === 'veo-3' && model.capabilities.includes('Text-to-Video')
+    (model.id === 'veo-3' || model.id === 'sora-2') && model.capabilities.includes('Text-to-Video')
   );
 }
 
