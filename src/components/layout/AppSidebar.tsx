@@ -28,13 +28,6 @@ export function AppSidebar() {
   
   const links = [
     {
-      label: "Dashboard",
-      href: "/",
-      icon: (
-        <IconLayoutDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-      ),
-    },
-    {
       label: "Static → Motion",
       href: "/static-to-motion",
       icon: (
