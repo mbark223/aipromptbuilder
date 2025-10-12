@@ -208,7 +208,16 @@ export async function trimVideo(
     onProgress?.('Video processed successfully', 100);
     
     // Convert to Blob
-    return new Blob([outputData], { type: 'video/mp4' });
+    if (outputData instanceof Uint8Array) {
+      // Create a new ArrayBuffer and copy the data
+      const buffer = new ArrayBuffer(outputData.length);
+      const view = new Uint8Array(buffer);
+      view.set(outputData);
+      return new Blob([buffer], { type: 'video/mp4' });
+    } else {
+      // If it's a string or other type, convert it
+      return new Blob([outputData as BlobPart], { type: 'video/mp4' });
+    }
   } catch (error) {
     console.error('FFmpeg processing error:', error);
     throw new Error('Failed to process video. Please try again.');
