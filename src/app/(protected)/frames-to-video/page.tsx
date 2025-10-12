@@ -69,14 +69,6 @@ export default function FramesToVideoPage() {
         </p>
       </div>
 
-      <Alert className="border-green-500/50 bg-green-500/10">
-        <Icons.info className="h-4 w-4 text-green-600" />
-        <AlertDescription>
-          <strong>Veo-2 Fast is now available!</strong> This model is optimized specifically for frame interpolation, 
-          providing smooth transitions between your uploaded frames. It offers faster processing times while maintaining 
-          high quality output. Select your model below to get started.
-        </AlertDescription>
-      </Alert>
 
       <Card className="p-6">
         <div className="space-y-4">
