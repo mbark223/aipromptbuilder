@@ -148,6 +148,7 @@ export default function PromptToVideoPage() {
                 // Reset model inputs
                 setModelInputs({});
               }}
+              availableModels={textToVideoModels}
             />
           </div>
           <div className="text-sm text-muted-foreground">

@@ -13,6 +13,7 @@ import { getAllVideoModels } from '@/lib/openrouter-models';
 interface ModelSelectorProps {
   selectedModel: AnimationModel;
   onSelectModel: (model: AnimationModel) => void;
+  availableModels?: AnimationModel[];
 }
 
 const BASE_MODELS: AnimationModel[] = [
@@ -404,10 +405,11 @@ const BASE_MODELS: AnimationModel[] = [
 
 export function ModelSelector({
   selectedModel,
-  onSelectModel
+  onSelectModel,
+  availableModels
 }: ModelSelectorProps) {
   // Get all available models including OpenRouter models
-  const AVAILABLE_MODELS = getAllVideoModels(BASE_MODELS);
+  const AVAILABLE_MODELS = availableModels || getAllVideoModels(BASE_MODELS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProvider, setSelectedProvider] = useState<string>('all');
 
@@ -415,7 +417,7 @@ export function ModelSelector({
   const providers = useMemo(() => {
     const uniqueProviders = [...new Set(AVAILABLE_MODELS.map(m => m.provider))];
     return ['all', ...uniqueProviders.sort()];
-  }, [AVAILABLE_MODELS]);
+  }, []);
 
   // Filter models based on search and provider
   const filteredModels = useMemo(() => {
