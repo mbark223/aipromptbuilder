@@ -205,8 +205,7 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
         required: false,
         defaultValue: 8,
         min: 4,
-        max: 12,
-        step: 4
+        max: 12
       },
       {
         name: 'aspect_ratio',
