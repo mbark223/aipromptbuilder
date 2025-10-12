@@ -9,6 +9,8 @@ import { VideoGenerationPanel } from '@/components/prompt-to-video/VideoGenerati
 import { ProcessingQueue } from '@/components/static-to-motion/ProcessingQueue';
 import { AnimationModel, QueueItem, Format } from '@/types';
 import { getTextToVideoModels } from '@/lib/video-models';
+import { ModelSelector } from '@/components/static-to-motion/ModelSelector';
+import { Label } from '@/components/ui/label';
 
 // Veo-3 specific format options - matching Replicate's setup
 const VEO3_FORMATS: Format[] = [
@@ -18,12 +20,29 @@ const VEO3_FORMATS: Format[] = [
   { aspectRatio: '9:16', width: 1080, height: 1920, name: '1080p Vertical (9:16)', custom: false },
 ];
 
+// Sora 2 format options
+const SORA2_FORMATS: Format[] = [
+  { aspectRatio: '16:9', width: 1280, height: 720, name: 'Landscape (1280x720)', custom: false },
+  { aspectRatio: '9:16', width: 720, height: 1280, name: 'Portrait (720x1280)', custom: false },
+];
+
 export default function PromptToVideoPage() {
   const textToVideoModels = getTextToVideoModels();
   const [prompts, setPrompts] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<AnimationModel>(textToVideoModels[0]);
-  // Default to 1080p Vertical (9:16) format
-  const [selectedFormats, setSelectedFormats] = useState<Format[]>([VEO3_FORMATS[3]]);
+  
+  // Get formats based on selected model
+  const getFormatsForModel = (model: AnimationModel): Format[] => {
+    if (model.id === 'sora-2') {
+      return SORA2_FORMATS;
+    }
+    return VEO3_FORMATS;
+  };
+  
+  // Default format based on model
+  const [selectedFormats, setSelectedFormats] = useState<Format[]>([
+    selectedModel.id === 'sora-2' ? SORA2_FORMATS[0] : VEO3_FORMATS[3]
+  ]);
   const [modelInputs, setModelInputs] = useState<Record<string, string | number | boolean | null>>({});
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
   const [activeView, setActiveView] = useState<'create' | 'configure' | 'queue'>('create');
@@ -111,9 +130,31 @@ export default function PromptToVideoPage() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">Prompt → Video</h1>
         <p className="text-muted-foreground">
-          Generate videos directly from text prompts using Google's Veo-3 model
+          Generate videos directly from text prompts using advanced AI models
         </p>
       </div>
+
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div>
+            <Label className="text-base font-semibold mb-3 block">Select Video Model</Label>
+            <ModelSelector
+              selectedModel={selectedModel}
+              onSelectModel={(model) => {
+                setSelectedModel(model);
+                // Reset formats when switching models
+                const newFormats = getFormatsForModel(model);
+                setSelectedFormats([newFormats[model.id === 'sora-2' ? 0 : 3] || newFormats[0]]);
+                // Reset model inputs
+                setModelInputs({});
+              }}
+            />
+          </div>
+          <div className="text-sm text-muted-foreground">
+            <strong>{selectedModel.name}</strong> - {selectedModel.description}
+          </div>
+        </div>
+      </Card>
 
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'create' | 'configure' | 'queue')}>
         <TabsList className="grid w-full grid-cols-3 max-w-xl">

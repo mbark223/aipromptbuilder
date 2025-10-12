@@ -30,17 +30,28 @@ export function ModelConfiguration({
   videosPerPrompt,
   onVideosPerPromptChange,
 }: ModelConfigurationProps) {
-  // For Veo-3 specific UI
-  const veo3Formats = [
-    { aspectRatio: '16:9', width: 1280, height: 720, name: '720p Horizontal (16:9)', custom: false },
-    { aspectRatio: '9:16', width: 720, height: 1280, name: '720p Vertical (9:16)', custom: false },
-    { aspectRatio: '16:9', width: 1920, height: 1080, name: '1080p Horizontal (16:9)', custom: false },
-    { aspectRatio: '9:16', width: 1080, height: 1920, name: '1080p Vertical (9:16)', custom: false },
-  ];
+  // Get formats based on selected model
+  const getFormatsForModel = () => {
+    if (selectedModel.id === 'sora-2') {
+      return [
+        { aspectRatio: '16:9', width: 1280, height: 720, name: 'Landscape (1280x720)', custom: false },
+        { aspectRatio: '9:16', width: 720, height: 1280, name: 'Portrait (720x1280)', custom: false },
+      ];
+    }
+    // Veo-3 formats
+    return [
+      { aspectRatio: '16:9', width: 1280, height: 720, name: '720p Horizontal (16:9)', custom: false },
+      { aspectRatio: '9:16', width: 720, height: 1280, name: '720p Vertical (9:16)', custom: false },
+      { aspectRatio: '16:9', width: 1920, height: 1080, name: '1080p Horizontal (16:9)', custom: false },
+      { aspectRatio: '9:16', width: 1080, height: 1920, name: '1080p Vertical (9:16)', custom: false },
+    ];
+  };
+  
+  const modelFormats = getFormatsForModel();
 
   return (
     <div className="space-y-6">
-      {/* Veo-3 Model Badge */}
+      {/* Model Badge */}
       <div>
         <Label className="text-base font-semibold mb-3 block">Video Model</Label>
         <Card className="p-4">
@@ -93,8 +104,8 @@ export function ModelConfiguration({
 
       <div>
         <Veo3FormatSelector
-          formats={veo3Formats}
-          selectedFormat={selectedFormats[0] || veo3Formats[3]} // Default to 1080p Vertical
+          formats={modelFormats}
+          selectedFormat={selectedFormats[0] || modelFormats[selectedModel.id === 'sora-2' ? 0 : 3] || modelFormats[0]}
           onSelectFormat={(format) => onSelectFormats([format])}
         />
       </div>
