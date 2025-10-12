@@ -53,6 +53,14 @@ export async function POST(request: NextRequest) {
       inputKeys: Object.keys(input || {})
     });
 
+    // Special handling for Sora 2 - add OpenAI API key
+    if (modelId === 'openai/sora-2' || model === 'openai/sora-2') {
+      const openaiKey = process.env.OPENAI_API_KEY;
+      if (openaiKey) {
+        input.openai_api_key = openaiKey;
+      }
+    }
+
     // Determine the correct endpoint and request body
     let endpoint: string;
     let requestBody: { version?: string; input: Record<string, unknown> };

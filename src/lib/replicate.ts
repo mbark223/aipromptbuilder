@@ -149,11 +149,20 @@ export class ReplicateService {
       });
     }
 
-    // Always preserve aspect_ratio and resolution if provided, even if not in model inputs
-    // Many models accept these parameters without explicitly declaring them
-    if (inputs.aspect_ratio && !formattedInputs.aspect_ratio) {
+    // Special handling for Sora 2 aspect ratio mapping
+    if (model.id === 'sora-2' && inputs.aspect_ratio) {
+      // Map format aspect ratios to Sora 2 expected values
+      const aspectRatioMap: Record<string, string> = {
+        '16:9': 'landscape',
+        '9:16': 'portrait',
+        '1:1': 'landscape' // Default to landscape for square
+      };
+      formattedInputs.aspect_ratio = aspectRatioMap[inputs.aspect_ratio] || 'landscape';
+    } else if (inputs.aspect_ratio && !formattedInputs.aspect_ratio) {
+      // For other models, preserve aspect_ratio as is
       formattedInputs.aspect_ratio = inputs.aspect_ratio;
     }
+    
     if (inputs.resolution && !formattedInputs.resolution) {
       formattedInputs.resolution = inputs.resolution;
     }

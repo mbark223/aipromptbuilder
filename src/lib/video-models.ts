@@ -200,15 +200,13 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
       },
       {
         name: 'seconds',
-        type: 'select',
-        label: 'Duration',
+        type: 'number',
+        label: 'Duration (seconds)',
         required: false,
-        options: [
-          { value: '4', label: '4 seconds' },
-          { value: '8', label: '8 seconds' },
-          { value: '12', label: '12 seconds' }
-        ],
-        defaultValue: '8'
+        defaultValue: 8,
+        min: 4,
+        max: 12,
+        step: 4
       },
       {
         name: 'aspect_ratio',
@@ -220,13 +218,6 @@ export const VIDEO_GENERATION_MODELS: AnimationModel[] = [
           { value: 'portrait', label: 'Portrait (720x1280)' }
         ],
         defaultValue: 'landscape'
-      },
-      {
-        name: 'openai_api_key',
-        type: 'text',
-        label: 'OpenAI API Key',
-        required: true,
-        placeholder: 'Your OpenAI API key...'
       }
     ]
   },
