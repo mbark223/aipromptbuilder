@@ -61,8 +61,16 @@ export async function POST(request: NextRequest) {
         keyLength: openaiKey?.length || 0 
       });
       
-      // Add the API key - using direct value as fallback for now
-      input.openai_api_key = openaiKey || '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';
+      // Check if API key exists in environment
+      if (!openaiKey) {
+        return NextResponse.json(
+          { error: 'OpenAI API key is required for Sora 2 model. Please set OPENAI_API_KEY in your environment variables.' },
+          { status: 400 }
+        );
+      }
+      
+      // Add the API key from environment
+      input.openai_api_key = openaiKey;
     }
 
     // Determine the correct endpoint and request body
