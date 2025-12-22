@@ -1,5 +1,6 @@
 'use client';
 
+// Static Sizes Feature - Generate multiple image sizes with AI-powered suggestions
 import React, { useState } from 'react';
 import { StaticSizesUploader } from '@/components/static-sizes/StaticSizesUploader';
 import { SizeSelector } from '@/components/static-sizes/SizeSelector';
