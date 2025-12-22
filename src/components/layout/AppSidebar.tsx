@@ -13,6 +13,7 @@ import {
   IconFileExport,
   IconFileText,
   IconLogout,
+  IconResize,
 } from "@tabler/icons-react";
 import { Sidebar, SidebarBody, SidebarLink, Logo } from "./Sidebar";
 import { cn } from "@/lib/utils";
@@ -39,6 +40,13 @@ export function AppSidebar() {
       href: "/frames-to-video",
       icon: (
         <IconVideo className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      ),
+    },
+    {
+      label: "Static Sizes",
+      href: "/static-sizes",
+      icon: (
+        <IconResize className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
