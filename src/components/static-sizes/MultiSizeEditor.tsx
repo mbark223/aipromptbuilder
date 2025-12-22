@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { 
-  IconType, 
+  IconTypography, 
   IconPalette, 
   IconAdjustments, 
   IconBrush,
@@ -71,7 +71,7 @@ export function MultiSizeEditor({ images, onApplyEdits }: MultiSizeEditorProps) 
   };
 
   const tabs = [
-    { id: 'text', label: 'Text', icon: IconType },
+    { id: 'text', label: 'Text', icon: IconTypography },
     { id: 'filter', label: 'Filters', icon: IconFilter },
     { id: 'adjust', label: 'Adjust', icon: IconAdjustments },
     { id: 'overlay', label: 'Overlay', icon: IconBrush }
